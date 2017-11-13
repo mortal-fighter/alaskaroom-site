@@ -1,14 +1,15 @@
 module.exports = {
 	app: {
-		mode: 'production',
-		port: 2017,
-		emailAdmin: 'kirillmybox@rambler.ru'
+		mode: 'development',
+		port: 80,
+		emailAdmin: 'kirillmybox@rambler.ru',
+		secret: 'холоднаяводабрррр!'
 	},
 	database: {
-		host: '78.140.140.200',
+		host: '127.0.0.1',
 		port: 3306,
-		user: 'onemarkt',
-		password: 'zW91uL1nl9',
+		user: 'root',
+		password: '',
 		database: 'onemarkt_alaskaroom'
 	},
 	logger: {

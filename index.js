@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const config = require('./config/common');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const logger = require('log4js').getLogger();
 
@@ -16,7 +17,10 @@ app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({extended: true, limit: '5mb'}));
 app.use(bodyParser.text());
 
+app.use(cookieParser());
+
 app.use(compression());
+
 
 app.use(express.static('public'));
 app.set('views', './view/');
