@@ -1,0 +1,728 @@
+﻿* html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+body {
+	margin: 0 auto;
+	background-color: white;
+	line-height: 1;
+	font-family: 'Roboto', sans-serif;
+	background-color: #fff;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+.top {
+	display: block;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    height: 50px;
+    background-color: white;
+    border-bottom: 1px solid #e4e4e4;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.top a {
+	display: inline-block;
+	margin: 18px 20px;
+	text-decoration: none;
+	color: #484848;
+	font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 15px;
+}
+
+.top-logo {
+	color: #5cb0da !important;
+	font-size: 20px !important;
+	margin: 15px !important;
+	font-weight: 500 !important;
+}
+
+.top-menu {
+	float: right;
+}
+
+.menu-prime {
+	display: none !important;
+    color: #5cb0da !important;
+    padding: 9px 25px;
+    border: 1px solid #5cb0da;
+    border-color: #5cb0da;
+    margin: 9px !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.4px;
+}
+
+.menu-prime:hover {
+	background-color: #3e8cb3;
+	border-color: #3e8cb3;
+	color: white !important;
+}
+
+.wrp {
+	display: block;
+	width: 1000px;
+	height: auto;
+	margin: 0 auto;
+}
+
+.cover {
+	display: block;
+	width: 100%;
+	height: auto;
+	overflow: hidden;
+}
+
+.cover h2 {
+	display: block;
+    text-align: center;
+    margin: 80px 0px;
+	margin-bottom: 50px;
+    color: #787878;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 45px;
+    line-height: 60px;
+    padding: 15px;
+}
+
+.cover h2 span {
+	color: #5cb0da;
+	font-weight: 500;
+	font-size: 53px !important;
+}
+
+.cover div {
+	display: block;
+	width: 31%;
+	overflow: hidden;
+	margin: 10px;
+	float: left;
+}
+
+.cover div img {
+	display: block;
+	width: 70%;
+	border-radius: 50%;
+	margin: 10px auto;
+}
+
+.cover div h3 {
+    color: #757575;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 22px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.cover-info {
+	display: block;
+	margin: 30px 0;
+	overflow: hidden;
+}
+
+.cover-info div {
+	display: block;
+	width: 30%;
+	margin: 20px 15px;
+	overflow: hidden;
+	float: left;
+}
+
+.cover-info div p {
+	color: white;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 25px;
+	background-color: #5cb0da;
+	float: left;
+	padding: 10px 16px;
+	margin-right: 15px;
+	overflow: hidden;
+}
+ 
+.cover-info div h2 {
+	color: #5cb0da;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 25px;
+    margin: 0px 10px;
+    margin-bottom: 10px;
+}
+
+.cover-info div h3 {
+	color: #484848;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+	line-height: 21px;
+	overflow: hidden;
+}
+
+.action {
+	display: block;
+	width: 100%;
+	border-bottom: 1px solid #bcbcbc;
+	border-top: 1px solid #bcbcbc;
+	margin: 30px auto;
+	text-align: center;
+	overflow: hidden;
+}
+
+.action h3 {
+	color: #585858;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 27px;
+	text-align: center;
+	margin: 50px 20px;
+	margin-bottom: 30px;
+}
+
+.action h2 {
+	display: block;
+    width: 600px;
+    color: #757575;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 17px;
+    margin: 10px auto;
+    line-height: 25px;
+}
+
+.action form {
+	display: block;
+	width: 100%;
+	height: auto;
+	margin: 0 auto;
+}
+
+.action-input {
+	display: block;
+    width: 30%;
+    height: 47px;
+    float: left;
+    border: 1px solid #aeaeae;
+    border-radius: 2px;
+    margin: 10px;
+    padding-left: 15px;
+	font-size: 18px;
+	color: #444;
+}
+
+.action-btn {
+	display: block;
+	width: 30%;
+	height: 50px;
+	float: left;
+	background-color: #fd8000;
+	border: none;
+	letter-spacing: 0.4px;
+	color: white;
+	font-size: 19px;
+	margin: 10px 10px;
+	border-radius: 2px;
+	margin-bottom: 20px;
+	outline: none;
+	cursor: pointer;
+}
+
+.action-btn:hover {
+	background-color: #74adca;
+}
+
+.action p {
+	display: block;
+    width: 600px;
+    color: #757575;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    margin: 10px auto;
+	margin-bottom: 40px;
+}
+
+.roommate-cover {
+	display: block;
+	width: 100%;
+	border-bottom: 1px solid #bcbcbc;
+	border-top: 1px solid #bcbcbc;
+	margin: 30px auto;
+	text-align: center;
+	overflow: hidden;
+}
+
+.roommate-cover h3 {
+	color: #5cb0da;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 40px;
+	text-align: center;
+	margin: 50px 20px;
+	margin-bottom: 20px;
+}
+
+.roommate-cover h2 {
+	display: block;
+    width: 600px;
+    color: #757575;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 17px;
+    margin: 10px auto;
+	margin-bottom: 30px;
+    line-height: 25px;
+}
+
+.room-ex {
+	display: block;
+    width: 31%;
+    float: left;
+    margin: 14px 10px;
+}
+
+.room-ex img {
+	display: block;
+	width: 100%;
+	height: 190px;
+}
+
+.room-ex h5 {
+    display: block;
+    position: relative;
+    bottom: 60px;
+    left: -15px;
+    background-color: rgba(0, 0, 0, 0.61);
+    color: #eaeaea;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    padding: 8px 30px;
+	margin-bottom: -30px;
+    font-size: 23px;
+    overflow: hidden;
+    float: left;
+}
+
+.room-ex h4 {
+    width: 98%;
+    height: 15px;
+    color: #484848;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    margin: 10px 5px;
+	margin-bottom: 5px;
+    overflow: hidden;
+    text-align: left;
+}
+
+.room-ex p {
+    color: #787878;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 13px;
+    margin: 5px;
+	text-align: left;
+}
+
+.uni-cover {
+	display: block;
+	width: 100%;
+	margin: 30px auto;
+	padding-bottom: 30px;
+	text-align: center;
+	overflow: hidden;
+}
+
+.uni-cover h3 {
+	color: #5cb0da;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 40px;
+    text-align: center;
+    margin: 20px 20px;
+    margin-bottom: 20px;
+}
+
+.uni-cover h4 {
+	display: block;
+    width: 600px;
+    color: #757575;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 17px;
+    margin: 10px auto;
+	margin-bottom: 30px;
+    line-height: 25px;
+}
+
+.uni-cover p {
+	display: block;
+    width: 29%;
+    color: #fff;
+	background-color: rgb(0, 136, 204);
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 17px;
+    margin: 10px 10px;
+	padding: 10px;
+	float: left;
+}
+
+.footer {
+	display: block;
+	width: 100%;
+	height: 50px;
+	background-color: #333;
+	border-top: 1px solid #e4e4e4;
+    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+	margin-top: 20px;
+	overflow: hidden;
+}
+
+.footer p {
+	color: #eaeaea;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+	margin: 18px;
+	text-align: center;
+}
+
+/* Страница регистрации 1*/
+
+.personal-info {
+	display: block;
+	width: 100%;
+	margin: 0 auto;
+	overflow: hidden;
+}
+
+.personal-info h2 {
+	display: block;
+    text-align: left;
+    margin: 100px 0px;
+    margin-bottom: 50px;
+    color: #787878;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 37px;
+}
+
+.user-setup {
+	display: block;
+	width: 270px;
+	margin: 0;
+	overflow: hidden;
+	float: left;
+}
+
+.user-setup img {
+	display: block;
+	width: 40%;
+	border-radius: 50%;
+	margin: 10px auto;
+}
+
+.user-setup h3 {
+	color: #7D7D7D;
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 19px;
+	text-align: center;
+	margin: 21px auto;
+}
+
+.user-setup input {
+	display: block;
+	width: 90%;
+	height: 35px;
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+	color: #222;
+	padding-left: 10px;
+	margin: 10px auto;
+	border: 1px solid #bcbcbc;
+	border-radius: 3px;
+}
+
+.user-setup textarea {
+	display: block;
+	width: 90%;
+	height: 135px;
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+	color: #222;
+	padding-left: 10px;
+	padding-top: 10px;
+	margin: 10px auto;
+	border: 1px solid #bcbcbc;
+	border-radius: 3px;
+}
+
+.user-setup button {
+	display: block;
+	width: 90%;
+	height: 35px;
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+	color: #5cb0da;
+	background-color: transparent;
+	border: 2px solid #5cb0da;
+	margin: 30px auto;
+	cursor: pointer;
+	outline: none;
+}
+
+.user-setup button:hover {
+	background-color: #5cb0da;
+	color: white;
+}
+
+.user-setup p {
+	text-align: center;
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+	color: #787878;
+}
+
+.room-setup {
+	display: block;
+	width: 660px;
+	margin: 0 50px;
+	margin-right: 10px;
+	overflow: hidden;
+	float: left;
+}
+
+.room-setup h3 {
+	display: block;
+    margin: 15px 0px;
+    color: #787878;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 20px;
+	float: left;
+}
+
+.room-setup p {
+	display: block;
+    margin: 15px 5px;
+    color: #787878;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 20px;
+	float: left;
+}
+
+.room-setup button {
+	float: left;
+	margin: 10px 20px;
+	width: 200px;
+	height: 35px;
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+	color: #5cb0da;
+	background-color: transparent;
+	border: 1px solid #5cb0da;
+	cursor: pointer;
+	outline: none;
+}
+
+.room-setup button:hover {
+	background-color: #5cb0da;
+	color: white;
+}
+
+.room-setup h4 {
+	text-align: center;
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+	color: #787878;
+}
+
+.room-info {
+	display: block;
+	width: 660px;
+	margin: 20px 50px;
+	margin-right: 10px;
+	overflow: hidden;
+	float: left;
+}
+
+.room-info h3 {
+	display: block;
+    margin: 25px 0px;
+    color: #5cb0da;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 25px;
+}
+
+.room-info h4 {
+	display: block;
+    margin: 25px 0px;
+    color: #787878;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 25px;
+	clear: both;
+}
+
+.room-info textarea {
+	display: block;
+	width: 96%;
+	height: 135px;
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+	color: #222;
+	padding-left: 10px;
+	padding-top: 10px;
+	margin: 10px auto;
+	border: 1px solid #bcbcbc;
+	border-radius: 3px;
+}
+
+.room-parm {
+	display: block;
+	width: 120px;
+	height: 35px;
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+	color: #222;
+	padding-left: 10px;
+	margin: 10px 5px;
+	border: 1px solid #bcbcbc;
+	border-radius: 3px;
+	float: left;
+}
+
+.room-ad {
+	width: 350px !important;
+}
+
+.room-trafik {
+	width: 96% !important;
+	margin-bottom: 40px !important;
+}
+
+.room-pay {
+	display: block;
+	width: 237px;
+	height: 35px;
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+	color: #222;
+	padding-left: 10px;
+	margin: 10px 5px;
+	border: 1px solid #bcbcbc;
+	border-radius: 3px;
+	float: right;
+}
+
+.room-date {
+	width: 120px !important;
+}
+
+.room-con {
+	display: block;
+	width: 237px;
+	height: 35px;
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+	color: #222;
+	padding-left: 10px;
+	margin: 5px;
+	border: 1px solid #bcbcbc;
+	border-radius: 3px;
+	float: right;
+}
+
+.room-info p {
+	display: block;
+    margin: 20px 0px;
+	margin-right: 20px;
+    color: #5cb0da;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+	float: right;
+}
+
+.room-info h5 {
+	display: block;
+    margin: 10px 0px;
+	margin-right: 20px;
+    color: #787878;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+	float: left;
+}
+
+.room-info h5  input {
+	width: 15px;
+	height: 15px;
+	overflow: hidden;
+}
+
+.room-info img {
+	display: block;
+	width: 200px;
+	float: left;
+	margin: 10px;
+}
+
+.add-ad {
+	display: block;
+    width: 200px;
+    height: 35px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    color: white;
+    background-color: #5cb0da;
+    border: none;
+    margin: 30px auto;
+    cursor: pointer;
+    outline: none;
+	float: right;
+	clear: both;
+}
+
+.add-ad:hover {
+	background-color: #1e7cab;
+}

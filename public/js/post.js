@@ -27,25 +27,25 @@ function attachHandlers() {
 	$('#btn-about').on('click', function() { window.location.href='/about' });
 	$('#btn-schedule').on('click', function() { window.location.href='/schedule' });*/
 	
-	$('#btn-send-email').on('click', function() { 
-		var userName = $('#name').val();
-		var userEmail = $('#email').val();
+	$('#btn-invite').on('click', function() { 
+		var userName = $('#user_name').val();
+		var userEmail = $('#user_email').val();
 
 		if (userName.match(/$\s*^/)) {
 			alert('Поле \'Имя\' не может быть пустым.');
-			$('#name').focus();
+			$('#user_name').focus();
 			return;
 		}
 
 		if (!userEmail.match(/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/)) {
 			alert('Поле \'e-mail\' заполнено неправильно.');
-			$('#email').focus();
+			$('#user_email').focus();
 			return;	
 		}
 
 		$.ajax({
 			method: 'POST',
-			url: '/api/landing',
+			url: '/api/sendinvite',
 			dataType: 'json',
 			data: {
 				userName: userName,
@@ -64,7 +64,6 @@ function attachHandlers() {
 		});
 
 	});
-
 
 }
 

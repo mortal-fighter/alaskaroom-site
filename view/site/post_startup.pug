@@ -1,0 +1,125 @@
+doctype
+html(lang=ru)
+	head
+		include includes/head_common.pug
+		script(src="/js/post_startup.js", type="")
+		link(href="/css/post.css", type="text/css", rel="stylesheet")
+	body
+		include includes/header.pug
+		div.wrp
+			div.main-page
+				div.main-filter
+					form
+						p Я ищу
+						select.prime-filter(size="1", name="find[]")
+							option(value="flat", selected) Квартиру
+							option(value="roomate") Румейта
+						p С кем вы хотите снимать квартиру?
+						if locals.userSex
+							select.lower-filter(size="1", name="user_sex[]")
+								each use_sex in locals.userSex
+									if use_sex.selected
+										option(value=use_sex.value, selected)= use_sex.name 
+									else
+										option(value=use_sex.value)= use_sex.name 
+						p Важен ли возраст?
+						if locals.userAge
+							select.lower-filter(size="1", name="user_age[]")
+								each userAge in locals.userAge
+									if userAge.selected
+										option(value=userAge.value, selected)= userAge.name 
+									else
+										option(value=userAge.value)= userAge.name 
+						p СОЦИАЛЬНАЯ АКТИВНОСТЬ?
+						if locals.userSocialActivity
+							select.lower-filter(size="1", name="user_social_activity[]")
+								each userActivity in locals.userSocialActivity
+									if userActivity.selected
+										option(value=userActivity.value, selected)= userActivity.name 
+									else
+										option(value=userActivity.value)= userActivity.name 
+						p Социальная активность?
+						if locals.userHabbits
+							select.lower-filter(size="1", name="user_habbits[]")
+								each userHabbits in locals.userHabbits
+									if userHabbits.selected
+										option(value=userHabbits.value, selected)= userHabbits.name 
+									else
+										option(value=userHabbits.value)= userHabbits.name 
+						p Домашние животные?
+						if locals.userPets
+							select.lower-filter(size="1", name="user_pets[]")
+								each userPets in locals.userPets
+									if userPets.selected
+										option(value=userPets.value, selected)= userPets.name 
+									else
+										option(value=userPets.value)= userPets.name 
+						p Наличие машины?
+						if locals.userCar
+							select.lower-filter(size="1", name="user_car[]")
+								each userCar in locals.userCar
+									if userCar.selected
+										option(value=userCar.value, selected)= userCar.name 
+									else
+										option(value=userCar.value)= userCar.name 
+						p Нужен сосед с определенного вуза?
+						if locals.userUniver
+							select.lower-filter(size="1", name="user_univer[]")
+								each userUniver in locals.userUniver
+									if userUniver.selected
+										option(value=userUniver.value, selected)= userUniver.name 
+									else
+										option(value=userUniver.value)= userUniver.name 
+						p Важна ли успеваемость студента?
+						if locals.userSuccess
+							select.lower-filter(size="1", name="user_success[]")
+								each userSuccess in locals.userSuccess
+									if userSuccess.selected
+										option(value=userSuccess.value, selected)= userSuccess.name 
+									else
+										option(value=userSuccess.value)= userSuccess.name
+				div.listing
+					div.user-list
+						img(src="images/photo.jpg", alt="User")
+						h4 Влад Заев
+						p Ваш сосед: M, 21, РГЭУ РИНХ
+					div.user-list
+						img(src="images/photo.jpg", alt="User")
+						h4 Влад Заев
+						p Ваш сосед: M, 21, РГЭУ РИНХ
+					div.user-list
+						img(src="images/photo.jpg", alt="User")
+						h4 Влад Заев
+						p Ваш сосед: M, 21, РГЭУ РИНХ
+					div.room-list
+						img(src="images/room.jpg", alt="Room")
+						h5 5000 рублей
+						h4 Ростов-на-Дону, Комбайностроительный переулок 76
+						p Сосед: M, 21, РГЭУ РИНХ
+					div.room-list
+						img(src="images/room.jpg", alt="Room")
+						h5 5000 рублей
+						h4 Ростов-на-Дону, Комбайностроительный переулок 76
+						p Сосед: M, 21, РГЭУ РИНХ
+					div.room-list
+						img(src="images/room.jpg", alt="Room")
+						h5 5000 рублей
+						h4 Ростов-на-Дону, Комбайностроительный переулок 76
+						p Сосед: M, 21, РГЭУ РИНХ
+					div.room-list
+						img(src="images/room.jpg", alt="Room")
+						h5 5000 рублей
+						h4 Ростов-на-Дону, Комбайностроительный переулок 76
+						p Сосед: M, 21, РГЭУ РИНХ
+					div.room-list
+						img(src="images/room.jpg", alt="Room")
+						h5 5000 рублей
+						h4 Ростов-на-Дону, Комбайностроительный переулок 76
+						p Сосед: M, 21, РГЭУ РИНХ
+					div.room-list
+						img(src="images/room.jpg", alt="Room")
+						h5 5000 рублей
+						h4 Ростов-на-Дону, Комбайностроительный переулок 76
+						p Сосед: M, 21, РГЭУ РИНХ
+					a.load-more(href="#") Загрузить больше...
+		include includes/footer.pug

@@ -1,0 +1,95 @@
+doctype
+html(lang=ru)
+	head
+		include includes/head_common.pug
+		script(src="js/homepage.js", type="text/javascript")
+	body
+		include includes/header.pug
+		div.wrp
+			div.cover
+				h2
+					span.
+						AlaskaRoom
+						- простой и удобный сервис поиска соседа по комнате для студентов
+				div
+					img(src="images/step-3.jpg", alt="Cover")
+					h3 Отличные соседи
+				div
+					img(src="images/step-1.jpg", alt="Cover")
+					h3 Уютные комнаны
+				div
+					img(src="images/step-2.jpg", alt="Cover")
+					h3 Только студенты
+			div.action
+				h3 Получите приглашение до старта проекта!
+				h2 Вы сами позже укажите условия проживания и дату возможного въезда. Ваше объявления увидят только студенты
+				form(method="post", action="")
+					input.action-input(type="text", id="user_name", placeholder="Ваше имя")
+					input.action-input(type="email", id="user_email", placeholder="Ваш email")
+					input.action-btn(type="button", id="btn-invite", placeholder="Получить приглашение")
+				p Мы сделали вход на сайт через ВК, чтобы мы смогли отсеивать не студентов в дальнейшем
+			div.cover-info
+				div
+					p 1
+					h2 Идеальный сосед
+					h3 Вы найдете соседа, который превзойдет все ваши ожидания;
+				div
+					p 2
+					h2 Социальная жизнь
+					h3 Обретайте новых друзей и отлично проводите время вместе;
+				div
+					p 3
+					h2 Оплата пополам
+					h3 Вы увидите, какую часть от аренды квартиры будете платить;
+				div
+					p 4
+					h2 Вдали от родителей
+					h3 Мечтали наконец съехать от родителей? Это ваш шанс начать самостоятельную жизнь;
+				div
+					p 5
+					h2 Только студенты
+					h3 На сайте размещаются только объявления студентов ВУЗов; вы сами блокируете спам;
+				div
+					p 6
+					h2 Дальше больше
+					h3 Скоро вы найдете на сайте не только соседа, но и предметы для обустройства квартиры;
+			div.roommate-cover
+				h3 Последние добавленные румейты и квартиры
+				h2 После открытия сайта, вы увидите все предложения
+				
+				div.room-ex
+					img(src="images/room.jpg", alt="Room")
+					h5 5000 рублей
+					h4 Ростов-на-Дону, Комбайностроительный переулок 76
+					p Сосед: M, 21, РГЭУ РИНХ
+				div.room-ex
+					img(src="images/room1.jpg", alt="Room")
+					h5 17000 рублей
+					h4 Ростов-на-Дону, Большая Садовая 36
+					p Сосед: Ж, 22, ЮФУ
+				div.room-ex
+					img(src="images/room2.jpg", alt="Room")
+					h5 2000 рублей
+					h4 Ростов-на-Дону, Чехова 55
+					p Сосед: Сосед: M, 21, РИСИ
+				div.room-ex
+					img(src="images/room.jpg", alt="Room")
+					h5 7000 рублей
+					h4 Ростов-на-Дону, Малиновского 51В
+					p Сосед: M, 21, РГЭУ РИНХ
+				div.room-ex
+					img(src="images/room.jpg", alt="Room")
+					h5 15000 рублей
+					h4 Ростов-на-Дону, Театральный 23
+					p Сосед: M, 23, ДГТУ
+			div.uni-cover
+				h3 Популярные ВУЗЫ среди наших румейтов
+				h4 в Ростове-на-Дону
+				p РГЭУ РИНХ 
+				p ЮФУ
+				p ДГТУ 
+				p РИИЖТ 
+				p РИСИ 
+				p ИУБИП 
+		include includes/footer.pug
+		include includes/auth-popup.pug
