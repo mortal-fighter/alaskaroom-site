@@ -3,6 +3,7 @@
 const router = require('express').Router();
 const Promise = require('bluebird');
 const menuConfig = require('../../config/menu.js');
+const userCriterias = require('../../config/search-criterias.js').user;
 const connectionPromise = require('../../components/connectionPromise.js');
 const myUtil = require('../../components/myUtil.js');
 const sizeOfAsync = Promise.promisify(require('image-size'));
@@ -32,45 +33,58 @@ const uploader = multer({
 	}
 });
 
+var currentUserId = 1;
+
+
 var menuGenerated;
 
-function validate(post) {
-
-	if (!post.title) {
-		throw new Error(`Parameters validation error: ${post.title}.`);
+function validateFlat(flat) {
+	if (!flat.description) {
+		throw new Error(`Parameters validation error (flat.description): ${flat.description}.`);
 	}
+	if (!flat.description.length > 200) {
+		throw new Error(`Parameters validation error: flat.description.length = ${flat.description.length}.`);
+	}
+	if (!flat.address) {
+		throw new Error(`Parameters validation error (flat.address): ${flat.address}.`);
+	}
+	if (!flat.address.length > 200) {
+		throw new Error(`Parameters validation error: flat.address.length = ${flat.address.length}.`);
+	}
+	if (!flat.room_num) {
+		throw new Error(`Parameters validation error (flat.room_num): ${flat.room_num}.`);
+	}
+	// todo: validate room_num is integer
 	
-	if (post.title.length > 180) {
-		throw new Error(`Parameters validation error: textTitle.Length = ${post.textTitle.length}.`);
-	} 
-
-	if (post.textShort.length > 450) {
-		throw new Error(`Parameters validation error: textShort.Length = ${post.textShort.length}.`);
-	}		
-
-	if (!post.textFull) {
-		throw new Error(`Parameters validation error: textFull = ${post.textFull}.`);
+	if (!flat.flat_total_pay) {
+		throw new Error(`Parameters validation error (flat.flat_total_pay): ${flat.flat_total_pay}.`);
 	}
-
-	if (!post.isPublished) {
-		throw new Error(`Parameters validation error: isPublished = ${post.isPublished}.`);
+	// 
+	if (!flat.square) {
+		throw new Error(`Parameters validation error (flat.square): ${flat.square}.`);	
 	}
-
-	if (!post.infoTypesId) {
-		throw new Error(`Parameters validation error: infoTypesId = ${post.infoTypesId}.`);	
+	// todo: validate square is float
+	if (!flat.traffic.length > 300) {
+		throw new Error(`Parameters validation error: flat.traffic.length = ${flat.traffic.length}.`);
 	}
 }
 
-router.all('*', function(req, res, next) {
-	/*if (!req.isAuth) {
-		res.status(403).send('У Вас недостаточно прав для доступа к данному ресурсу.');
-	}*/
+function validatePost(post) {
 
-	menuGenerated = myUtil.menuGenerate(menuConfig.menuAdmin, req);
-	
+	if (!post.rent_pay) {
+		throw new Error(`Parameters validation error (post.rent_pay): ${post.rent_pay}.`);
+	}
+	// todo: validate rent_pay is float
+	if (!post.enter_date.match(/^\d{2}\.\d{2}\.\d{4}$/)) {
+		throw new Error(`Parameters validation error: post.enter_date=\'${post.enter_date}\' doesn\'t match dd.mm.yyyy format!`);
+	}
+	// todo: log validation errors?
+	// todo: validate enter_date is float
+}
 
+function formatRequestBodyForSQL(body) {
 	// The following processes data, received from the form into sql query values
-	var obj = req.body;
+	var obj = body;
 	for (var key in obj) {
 		if (obj.hasOwnProperty(key)) {
 			//convert 'true'/'false' into 1/0 (checkbox values in mind...)
@@ -95,7 +109,15 @@ router.all('*', function(req, res, next) {
 		
 		}
 	}
+}
 
+router.all('*', function(req, res, next) {
+	/*if (!req.isAuth) {
+		res.status(403).send('У Вас недостаточно прав для доступа к данному ресурсу.');
+	}*/
+
+	menuGenerated = myUtil.menuGenerate(menuConfig.menuAdmin, req);
+	
 	req['user'] = {};
 
 	next();
@@ -106,7 +128,7 @@ router.get('/', function(req, res, next) {
 	var news = null;
 	connectionPromise().then(function(connection) {
 		db = connection;
-		
+		//DATE_FORMAT(CAST(date_created AS CHAR), '%d.%m.%Y') date_created
 		var userSex = [{
 			name: 'Не важно с кем',
 			value: 'не важно',
@@ -293,136 +315,55 @@ router.get('/page/:page(\\d+)', function(req, res, next) {
 	});
 });
 
-router.get('/create', function(req, res, next) {
+router.get('/create/:type(\\S+)?', function(req, res, next) {
+	var db = null;
+	var postsFindRoommate = null;
+	var postsFindFlat = null;
+	
 	Promise.resolve().then(function() {
-		var userSex = [{
-			name: 'Не важно с кем',
-			value: 'не важно',
-			selected: true
-		}, {
-			name:  'Только с девушками',
-			value: 'женский',
-			selected: false
-		}, {
-			name:  'Только с парнями',
-			value: 'мужской',
-			selected: false
-		}];
-		var userAge = [{
-			name: 'Не важен',
-			value: 'не важно',
-			selected: true
-		}, {
-			name:  '18-25',
-			value: '18-25',
-			selected: false
-		}, {
-			name:  '18-30',
-			value: '18-30',
-			selected: false
-		}];
-		var userSocialActivity = [{
-			name: 'Не важна',
-			value: 'не важно',
-			selected: true
-		}, {
-			name:  'Интроверт',
-			value: 'интроверт',
-			selected: false
-		}, {
-			name:  'Экстраверт',
-			value: 'экстраверт',
-			selected: false
-		}];
-		var userHabbits = [{
-			name: 'Не важно',
-			value: 'не важно',
-			selected: true
-		}, {
-			name:  'Курит',
-			value: 'курение',
-			selected: false
-		}, {
-			name:  'Пьет',
-			value: 'алкоголь',
-			selected: false
-		}, {
-			name:  'Курит и пьет',
-			value: 'алкоголь и курение',
-			selected: false
-		}, {
-			name:  'Не курит и не пьет',
-			value: 'нет',
-			selected: false
-		}];
-		var userPets = [{
-			name: 'Не важно',
-			value: 'не важно',
-			selected: true
-		}, {
-			name:  'Небольшие только',
-			value: '',
-			selected: false
-		}, {
-			name:  'Обожаю живность',
-			value: '',
-			selected: false
-		}];
-		var userCar = [{
-			name: 'Не важно',
-			value: 'не важно',
-			selected: true
-		}, {
-			name:  'Есть',
-			value: 1,
-			selected: false
-		}, {
-			name:  'Нет',
-			value: 0,
-			selected: false
-		}];
-		var userUniver = [{
-			name: 'Не важно',
-			value: 'не важно',
-			selected: true
-		}, {
-			name:  'РИНХ',
-			value: 'РИНХ',
-			selected: false
-		}, {
-			name:  'ЮФУ',
-			value: 'ЮФУ',
-			selected: false
-		}];
-		var userSuccess = [{
-			name: 'Не важно',
-			value: 'не важно',
-			selected: true
-		}, {
-			name:  'Хорошист',
-			value: 'хорошист',
-			selected: false
-		}, {
-			name:  'Отличник',
-			value: 'отличник',
-			selected: false
-		}];
+		if (!req.params.type) {
+			req.params.type = 'roommate';
+		}
+		if (req.params.type !== 'roommate' && req.params.type !== 'flat') {
+			throw new Error(`Parameters validation error: req.params.type=\'${req.params.type}\' is not \'roommate\' or \'flat\'.`);
+		}
 		
+		return connectionPromise();	
+	}).then(function(connection) {
+		db = connection;
+		/*var sql = `
+			SELECT *
+			FROM Post
+			WHERE user_id = ${currentUserId}
+			  AND type = 'find-${req.params.type}';
+		`;
+		logger.log(sql);
+		return db.queryAsync(sql);*/
+	}).then(function(results) {
+		/*logger.log(results);*/
+	}).then(function() {
 		res.render('site/post_create.pug', {
 			message: '',
 			messageType: '', 
 			menu: menuGenerated,
-			userSuccess: userSuccess,
-			userUniver: userUniver,
-			userCar: userCar,
-			userPets: userPets,
-			userHabbits: userHabbits,
-			userAge: userAge,
-			userSex: userSex,
-			userSocialActivity: userSocialActivity
+			userSuccess: userCriterias.success,
+			userUniver: userCriterias.university,
+			userCar: userCriterias.car,
+			userPets: userCriterias.pets,
+			userHabbits: userCriterias.badHabbits,
+			userAge: userCriterias.age,
+			userSex: userCriterias.sex,
+			userSocialActivity: userCriterias.socialActivity,
+			type: req.params.type
 		});	
 	}).catch(function(err) {
-		logger.error(err.message, err.stack);
+		console.log(err.message);
+		if (err.message.includes('Parameters validation error')) {
+			console.log(err.message, err.stack);
+			res.render('errors/404.pug');
+			return;
+		}
+		console.error(err.message, err.stack);
 		res.render('errors/500.pug');
 	});
 });
@@ -483,118 +424,111 @@ router.get('/edit/:id(\\d+)', function(req, res, next) {
 
 router.post('/', function(req, res, next) {
 	var db = null;
-	var type;
+	var type = null;
+	var flatId = null;
+	var postId = null;
 
-	connectionPromise().then(function(connection) {
-		db = connection;
-		validate(req.body);	
-		
-		
-		// тип объявления: у меня есть квартира, я ищу румейта
-		if (req.body.room_num && req.body.flat_total_pay)
-			type = 'with-flat';
-		else {
-			// или у меня нет квартиры, я ищу румейта с квартирой
-			type = 'without-flat';
+	Promise.resolve().then(function() {
+		if (!req.body.type) {
+			throw new Error(`Parameters validation error (type): ${req.body.type}.`);
+		}
+		if (req.body.type !== 'find-roommate' && req.body.type !== 'find-flat') {
+			throw new Error(`Parameters validation error: req.body.type=\'${req.body.type}\' is not \'find-roommate\' or \'find-flat\'.`);
 		}
 
-	/*
-FLAT
-id (pk)
-room_num
-flat_total_pay
-square?
-traffic?
-util_conditioner
-util_coffee
-util_microwave
-util_internet
-	*/
-
-		var sql;
-		if (type === 'with-flat') {
-			sql = `INSERT INTO Flat(room_num, 
-										flat_total_pay,
-										square,
-										traffic,
-										util_conditioner,
-										util_coffee,
-										util_microwave,
-										util_internet)
-						VALUES (
-							${req.body.room_num},
-							${req.body.flat_total_pay},
-							${req.body.square},
-							${req.body.traffic},
-							${req.body.util_conditioner},
-							${req.body.util_coffee},
-							${req.body.util_microwave},
-							${req.body.util_internet}
-						)`;
+		// Если уже есть квартира и ищу соседа
+		if (req.body.type === 'find-roommate') {
+			validateFlat(req.body);
+			validatePost(req.body);
 		} else {
-			sql = 'SELECT 1';
+			// Ищу соседа с квартирой
+			validatePost(req.body);
 		}
-		console.log(sql);
-		return db.queryAsync(sql);
-	}).then(function(result) {
-					/*
-	POST
-Id (pk)
-description	user_sex
-type	user_activity
-enter_date?
-rent_pay	user_badhabbits
-date_created	user_pets
-date_updated	flat_room_num
-user_id (fk)	flat_total_pay
-	flat_square
-flat_util_internet	flat_util_conditioner
-flat_util_microwave	flat_util_coffee
-	*/
 
-		var sql = `INSERT INTO Post(type,
-									user_sex,
-									user_age_range,
-									user_activity,
-									user_badhabbits,
-									user_university,
-									user_pets,
-									user_car,
-									user_success,
-									enter_date,
-									rent_pay,
-									user_id	
-									)
-					VALUES (
-							${type},
-							${req.body.user_sex},
-							${req.body.user_age_range},
-							${req.body.user_activity},
-							${req.body.user_badhabbits},
-							${req.body.user_university},
-							${req.body.user_pets},
-							${req.body.user_car},
-							${req.body.user_success},
-							${req.body.enter_date},
-							${req.body.rent_pay},
-							1
-					)`;
+		return connectionPromise(); 
+	}).then(function(connection) {
+		db = connection;	
+		
+		formatRequestBodyForSQL(req.body);
+
+		if (req.body.type === 'find-roommate') {
+			var sql = 
+			`	INSERT INTO Flat(description, address, room_num, flat_total_pay, square, traffic)
+				VALUES (${req.body.description},
+					${req.body.address},
+					${req.body.room_num},
+					${req.body.flat_total_pay},
+					${req.body.square},
+					${req.body.traffic});
+			`;
+
+			console.log(sql);
+			return db.queryAsync(sql);
+		}
+	}).then(function(result) {
+		if (req.body.type === 'find-roommate') {
+			console.log(result);
+			flatId = result.insertId;
+		}
+
+		var sql = 
+		`	INSERT INTO Post(	type, 
+								enter_date, 
+								date_created,
+								date_updated,
+								rent_pay,
+								user_sex,
+								user_age_range,
+								user_activity,
+								user_badhabbits,
+								user_pets,
+								user_university,
+								user_car,
+								user_success,
+								user_id,
+								flat_id)
+			VALUES (${req.body.type},
+				STR_TO_DATE(${req.body.enter_date}, '%d.%m.%Y'),
+				NOW(),
+				NOW(),
+				${req.body.rent_pay},
+				${req.body.user_sex},
+				${req.body.user_age_range},
+				${req.body.user_activity},
+				${req.body.user_badhabbits},
+				${req.body.user_pets},
+				${req.body.user_university},
+				${req.body.user_car},
+				${req.body.user_success},
+				${currentUserId},
+				${flatId});
+		`;
+
 		console.log(sql);
 		return db.queryAsync(sql);
 	}).then(function(result) {
-		var message = 'Объявление создано';
+		postId = result.insertId;
+		logger.log('ok');
 		res.json({
-			status: 'ok',
-			message: message,
-			id: result.insertId
+			status: 'ok'
 		});
 	}).catch(function(err) {
 		logger.error(err.message, err.stack);
-		res.json({
-			status: 'not ok',
-			message: 'Ошибка при создании объявления'
-		});
-	})
+		if (flatId) {
+			logger.log('Rollback table Flat');
+			var sql = `DELETE FROM Flat WHERE id = ${flatId};`;
+			console.log(sql);
+			db.queryAsync(sql);
+		}
+		if (postId) {
+			logger.log('Rollback table Post');
+			var sql = `DELETE FROM Post WHERE id = ${postId};`;
+			console.log(sql);
+			db.queryAsync(sql);
+		}
+		res.render('errors/500.pug');
+	});
+
 });
 
 router.put('/:id(\\d+)', function(req, res, next) {

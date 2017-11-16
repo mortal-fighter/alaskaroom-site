@@ -101,6 +101,11 @@
 	color: white;
 }
 
+.look-for button.selected {
+	background-color:  #5eb0e0;
+	color: white;
+}
+
 .look-for p {
     margin: 20px 30px;
     color: #727272;

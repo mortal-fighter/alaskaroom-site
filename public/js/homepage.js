@@ -45,7 +45,11 @@ function attachHandlers() {
 	$('#btn-signup').on('click', function(e) {
 		e.preventDefault();
 		showAuth();
-	})
+	});
+	$('#btn-find-roomate').on('click', function(e) {
+		e.preventDefault();
+		window.location.href='/post/create/find-roommate';
+	});
 
 	$('#btn-invite').on('click', function() { 
 		var userName = $('#user_name').val();
