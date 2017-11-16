@@ -451,58 +451,121 @@ router.post('/', function(req, res, next) {
 		
 		formatRequestBodyForSQL(req.body);
 
-		if (req.body.type === 'find-roommate') {
+		if (req.body.type === '\'find-roommate\'') {
 			var sql = 
-			`	INSERT INTO Flat(description, address, room_num, flat_total_pay, square, traffic)
+			`	INSERT INTO Flat(	description, 
+									address, 
+									room_num, 
+									flat_total_pay, 
+									square, 
+									traffic,
+									util_conditioner,
+									util_coffee,
+									util_microwave,
+									util_internet,
+									util_parking)
 				VALUES (${req.body.description},
 					${req.body.address},
 					${req.body.room_num},
 					${req.body.flat_total_pay},
 					${req.body.square},
-					${req.body.traffic});
+					${req.body.traffic},
+					${req.body.util_conditioner},
+					${req.body.util_coffee},
+					${req.body.util_microwave},
+					${req.body.util_internet},
+					${req.body.util_parking});
 			`;
 
 			console.log(sql);
 			return db.queryAsync(sql);
 		}
 	}).then(function(result) {
-		if (req.body.type === 'find-roommate') {
+		if (req.body.type === '\'find-roommate\'') {
 			console.log(result);
 			flatId = result.insertId;
 		}
 
-		var sql = 
-		`	INSERT INTO Post(	type, 
-								enter_date, 
-								date_created,
-								date_updated,
-								rent_pay,
-								user_sex,
-								user_age_range,
-								user_activity,
-								user_badhabbits,
-								user_pets,
-								user_university,
-								user_car,
-								user_success,
-								user_id,
-								flat_id)
-			VALUES (${req.body.type},
-				STR_TO_DATE(${req.body.enter_date}, '%d.%m.%Y'),
-				NOW(),
-				NOW(),
-				${req.body.rent_pay},
-				${req.body.user_sex},
-				${req.body.user_age_range},
-				${req.body.user_activity},
-				${req.body.user_badhabbits},
-				${req.body.user_pets},
-				${req.body.user_university},
-				${req.body.user_car},
-				${req.body.user_success},
-				${currentUserId},
-				${flatId});
-		`;
+		var sql = null;
+		if (req.body.type === '\'find-flat\'') {
+			// less fields
+			sql = 
+			`	INSERT INTO Post(	type, 
+									enter_date, 
+									date_created,
+									date_updated,
+									rent_pay,
+									user_sex,
+									user_age_range,
+									user_activity,
+									user_badhabbits,
+									user_pets,
+									user_university,
+									user_car,
+									user_success,
+									user_id,
+									flat_id)
+				VALUES (${req.body.type},
+					STR_TO_DATE(${req.body.enter_date}, '%d.%m.%Y'),
+					NOW(),
+					NOW(),
+					${req.body.rent_pay},
+					${req.body.user_sex},
+					${req.body.user_age_range},
+					${req.body.user_activity},
+					${req.body.user_badhabbits},
+					${req.body.user_pets},
+					${req.body.user_university},
+					${req.body.user_car},
+					${req.body.user_success},
+					${currentUserId},
+					${flatId});
+			`;
+		} else {
+			// all fields
+			sql = 
+			`	INSERT INTO Post(	type, 
+									enter_date, 
+									date_created,
+									date_updated,
+									rent_pay,
+									user_sex,
+									user_age_range,
+									user_activity,
+									user_badhabbits,
+									user_pets,
+									user_university,
+									user_car,
+									user_success,
+									flat_conditioner,
+									flat_coffee,
+									flat_microwave,
+									flat_internet,
+									flat_parking,
+									user_id,
+									flat_id)
+				VALUES (${req.body.type},
+					STR_TO_DATE(${req.body.enter_date}, '%d.%m.%Y'),
+					NOW(),
+					NOW(),
+					${req.body.rent_pay},
+					${req.body.user_sex},
+					${req.body.user_age_range},
+					${req.body.user_activity},
+					${req.body.user_badhabbits},
+					${req.body.user_pets},
+					${req.body.user_university},
+					${req.body.user_car},
+					${req.body.user_success},
+					${req.body.util_conditioner},
+					${req.body.util_coffee},
+					${req.body.util_microwave},
+					${req.body.util_internet},
+					${req.body.util_parking},
+					${currentUserId},
+					${flatId});
+			`;
+		}
 
 		console.log(sql);
 		return db.queryAsync(sql);

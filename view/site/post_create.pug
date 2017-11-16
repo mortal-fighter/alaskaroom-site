@@ -127,19 +127,19 @@ html(lang=ru)
 					div.utilities
 						h2 УДОБСТВА В КВАРТИРЕ
 						label
-							input(type="checkbox")
+							input(id="util_conditioner", type="checkbox")
 							span Кондиционер
 						label
-							input(type="checkbox")
+							input(id="util_coffee", type="checkbox")
 							span Кофемашина
 						label
-							input(type="checkbox")
+							input(id="util_parking", type="checkbox")
 							span Парковка
 						label
-							input(type="checkbox")
-							span Транспорт
+							input(id="util_microwave", type="checkbox")
+							span Микроволновка
 						label
-							input(type="checkbox")
+							input(id="util_internet", type="checkbox")
 							span Интернет
 					div.room-photos
 						h2 ЗАГРУЗИТЕ ФОТО КВАРТИРЫ
@@ -150,5 +150,5 @@ html(lang=ru)
 						img.room-pic(src="/images/room.jpg", alt="Room photo")
 						img.room-pic(src="/images/room.jpg", alt="Room photo")
 					input.add-ad(type="button", id="btn-add-post", value="Добавить объявление")
-					input(type="hidden", id="type", value=locals.type)
+					input(type="hidden", id="type", value='find-'+locals.type)
 		include includes/footer.pug

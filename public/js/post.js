@@ -32,7 +32,7 @@ function handlersPostStartup() {
 }
 function handlersPostCreate() {
 	$('#btn-find-roommate').on('click', function() {
-		$('#type').val('find-roomate');
+		$('#type').val('find-roommate');
 		$('.room-info, .utilities, .room-photos').fadeIn(200);
 
 		$(this).addClass('selected');
@@ -55,14 +55,14 @@ function handlersPostCreate() {
 			form.rent_pay = $('#rent_pay').val();
 			form.flat_total_pay = $('#flat_total_pay').val();
 			form.enter_date = $('#enter_date').val();
-			form.user_sex = $('#user_sex').val();
-			form.user_age_range = $('#user_age_range').val();
-			form.user_activity = $('#user_activity').val();
-			form.user_badhabbits = $('#user_badhabbits').val();
-			form.user_pets = $('#user_pets').val();
-			form.user_car = $('#user_car').val();
-			form.user_university = $('#user_university').val();
-			form.user_success = $('#user_success').val();
+			form.user_sex = processInputSelect('user_sex');
+			form.user_age_range = processInputSelect('user_age_range');
+			form.user_activity = processInputSelect('user_activity');
+			form.user_badhabbits = processInputSelect('user_badhabbits');
+			form.user_pets = processInputSelect('user_pets');
+			form.user_car = processInputSelect('user_car');
+			form.user_university = processInputSelect('user_university');
+			form.user_success = processInputSelect('user_success');
 
 			if (form.type === 'find-roommate') {
 				form.description = $('#description').val();
@@ -70,33 +70,39 @@ function handlersPostCreate() {
 				form.square = $('#square').val();
 				form.room_num = $('#room_num').val();
 				form.traffic = $('#traffic').val();
+
+				form.util_conditioner = $('#util_conditioner').prop('checked');
+				form.util_coffee = $('#util_coffee').prop('checked');
+				form.util_parking = $('#util_parking').prop('checked');
+				form.util_microwave = $('#util_microwave').prop('checked');
+				form.util_internet = $('#util_internet').prop('checked');
 			}
 
 			console.log(form);
 
-			/*$.ajax({
+			$.ajax({
 				method: 'POST',
 				url: '/post',
 				dataType: 'json',
 				data: form,
 				success: function(result) {
-					if (result.code === 'ok') {
-						_showPopup(result.message);
+					if (result.status === 'ok') {
+						alert('ok: ' + result.message);
 					} else {
-						_showPopup(result.message);
+						alert('not ok: ' + result.message);
 					}
 				},
 				error: function() {
-					_showPopup('Ошибка сетевого соединения. Сожалеем.');
+					alert('Ошибка сетевого соединения. Сожалеем.');
 				}
-			});*/
+			});
 		}
 	});
 }
 
 /* VALIDATION */
 function validatePostCreate() {
-
+	return true;
 }
 
 
