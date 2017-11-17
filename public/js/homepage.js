@@ -23,34 +23,7 @@ function _initPopup() {
 	});
 }
 
-
-function initAuth() {
-	$('#btn-close-auth').on('click', function(e) {
-		e.preventDefault();
-		closeAuth();	
-	});
-	$('#btn-enter-site').on('click', function(e) {
-		e.preventDefault();
-		window.location.href='/post';
-	})
-}
-function showAuth() {
-	$('.auth-popup').fadeIn(400);
-}
-function closeAuth() {
-	$('.auth-popup').fadeOut(400);
-}
-
-function attachHandlers() {
-	$('#btn-signup').on('click', function(e) {
-		e.preventDefault();
-		showAuth();
-	});
-	$('#btn-find-roomate').on('click', function(e) {
-		e.preventDefault();
-		window.location.href='/post/create/find-roommate';
-	});
-
+function handlersHomepage() {
 	$('#btn-invite').on('click', function() { 
 		var userName = $('#user_name').val();
 		var userEmail = $('#user_email').val();
@@ -93,7 +66,6 @@ function attachHandlers() {
 
 $(document).ready(function() {
 	//_initPopup();
-	initAuth();
-	attachHandlers();
+	handlersHomepage();
 });
 

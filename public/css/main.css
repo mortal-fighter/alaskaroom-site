@@ -493,7 +493,7 @@ ol, ul {
     border-radius: 3px;
 }
 
-.close-auth {
+.auth-popup .close-auth {
 	float: right;
 	margin: 10px;
 	text-decoration: none;
@@ -513,7 +513,7 @@ ol, ul {
 	color: #787878;
 }
 
-.enter-site{
+.auth-popup .enter-site {
 	display: block;
 	width: 50%;
 	text-decoration: none;
