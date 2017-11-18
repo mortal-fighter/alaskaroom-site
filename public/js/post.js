@@ -1,27 +1,5 @@
 'use strict';
 
-/* MESSAGE POPUP */
-function closePopup() {
-	$('body').removeClass('stop-scrolling');
-	$('#popup-window').fadeOut(400);
-}
-function showPopup(message) {
-	if (message) {
-		$('#popup-window .popup-content').html(message);
-	}
-	$('body').addClass('stop-scrolling');
-	$('#popup-window').height($(document).height());
-	$('#popup-window').fadeIn(400);
-}
-function initPopup() {
-	$('.popup-header, .popup-content').on('click', function(evt) {
-		evt.stopPropagation();
-	});
-	$('#popup-window, .popup-close').on('click', function() {
-		closePopup();	
-	});
-}
-
 /* HANDLERS UI CONTROLS */
 function handlersPostStartup() {
 	$('#btn-header-find-roomate').on('click', function(e) {
@@ -87,13 +65,13 @@ function handlersPostCreate() {
 				data: form,
 				success: function(result) {
 					if (result.status === 'ok') {
-						alert('ok: ' + result.message);
+						alert('success', 'Новое объявление с идентификатором ' + result.id + ' было успешно создано');
 					} else {
-						alert('not ok: ' + result.message);
+						alert('error', 'Возникла ошибка при создании объявления');
 					}
 				},
 				error: function() {
-					alert('Ошибка сетевого соединения. Сожалеем.');
+					alert('error', 'Ошибка соединения с сервером. Пожалуйста, оставайтесь на местах и повторите запрос позже!');
 				}
 			});
 		}
@@ -102,6 +80,87 @@ function handlersPostCreate() {
 
 /* VALIDATION */
 function validatePostCreate() {
+	if ($('#type').val() === 'find-roommate') {
+		var description = $('#description');
+		if (description.val().length > 200) {
+			description.focus();
+			alert('Длина поля "Описание квартиры" превышает допустимый размер');
+			return false;
+		}
+		if (description.val() === '' || description.val() === ' ') {
+			description.focus();
+			alert('Поле "Описание квартиры" не может быть пустым');
+			return false;
+		}
+
+		var address = $('#address');
+		if (address.val() === '' || address.val() === ' ') {
+			address.focus();
+			alert('Поле "Адрес" не может быть пустым');
+			return false;
+		}
+		if (address.val().length > 200) {
+			address.focus();
+			alert('Длина поля "Адрес" превышает допустимый размер');
+			return false;
+		}
+
+		var square = $('#square');
+		if (square.val() === '' || square.val() === ' ') {
+			square.focus();
+			alert('Поле "Площадь" не может быть пустым');
+			return false;
+		}
+		if (square.val().length > 50) {
+			square.focus();
+			alert('Длина поля "Площадь" превышает допустимый размер');
+			return false;
+		}
+
+		var room_num = $('#room_num');
+		if (room_num.val() === '' || room_num.val() === ' ') {
+			room_num.focus();
+			alert('Поле "Кол-во комнат" не может быть пустым');
+			return false;
+		}
+		if (!room_num.val().match(/^\d+$/)) {
+			room_num.focus();
+			alert('Поле "Кол-во комнат" должно быть числом');
+			return false;
+		}
+		
+		var traffic = $('#traffic');
+		if (traffic.val() && traffic.val().length > 300) {
+			traffic.focus();
+			alert('Длина поля "Общественный транспорт" превышает допустимый размер');
+			return false;	
+		} 
+	}
+
+	var rent_pay = $('#rent_pay');
+	if (rent_pay.val() === '' || rent_pay.val() === ' ') {
+		rent_pay.focus();
+		alert('Поле "Плата румейта" не может быть пустым');
+		return false;
+	}
+	if (!rent_pay.val().match(/^\d+$/)) {
+		rent_pay.focus();
+		alert('Поле "Плата румейта" должно быть числом');
+		return false;
+	}
+
+	var flat_total_pay = $('#flat_total_pay');
+	if (flat_total_pay.val() === '' || flat_total_pay.val() === ' ') {
+		flat_total_pay.focus();
+		alert('Поле "Общая аренда" не может быть пустым');
+		return false;
+	}
+	if (!flat_total_pay.val().match(/^\d+$/)) {
+		flat_total_pay.focus();
+		alert('Поле "Общая аренда" должно быть числом');
+		return false;
+	}
+
 	return true;
 }
 
