@@ -841,3 +841,100 @@ ol, ul {
 .add-ad:hover {
 	background-color: #1e7cab;
 }
+
+/* MESSAGE POPUP */
+#popup-window {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background: rgba(255,255,255,0.95);
+}
+
+.popup-layout {
+    position: fixed;
+    width: 100%;
+}
+
+.popup-container {
+    margin: 100px auto 50px auto;
+}
+
+.popup-header {
+    height: 30px;
+    background: #11719e;
+    border-radius: 5px 5px 0 0;
+}
+
+.popup-content {
+    background: lightgray;
+    padding: 20px;
+    text-align: center;
+    overflow: auto;
+}
+
+.popup-close {
+    height: 20px;
+    color: #fff;
+    background: transparent;
+    font-size: 14px;
+    padding: 5px 15px;
+    float: right;
+    border-radius: 0 5px 0 0;
+}
+
+.popup-close:hover {
+    cursor: pointer;
+}
+
+.popup-container-small {
+  width: 300px;  
+}
+
+.popup-container-medium {
+  width: 500px;  
+}
+
+.popup-container-large {
+  width: 800px;  
+}
+
+.popup-container-small .popup-content {
+    min-height: 50px;
+}
+
+.popup-container-medium .popup-content {
+    min-height: 100px;
+}
+
+.popup-container-large .popup-content {
+    min-height: 300px;
+}
+
+.p-scroll {
+  overflow: scroll;
+}
+
+.popup-content h3 {
+    color: #11719e;
+    text-align: left;
+}
+
+.popup-content p {
+    color: #111;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.popup-content .text-full {
+    font-size: 14px;
+    color: #555;
+}
+.stop-scrolling {
+  height: 100%;
+  overflow: hidden;
+}

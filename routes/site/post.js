@@ -572,8 +572,10 @@ router.post('/', function(req, res, next) {
 	}).then(function(result) {
 		postId = result.insertId;
 		logger.log('ok');
+		// todo: store messages in config file in filesystem (priority:low)
 		res.json({
-			status: 'ok'
+			status: 'ok',
+			id: postId
 		});
 	}).catch(function(err) {
 		logger.error(err.message, err.stack);

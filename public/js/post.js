@@ -2,13 +2,17 @@
 
 /* HANDLERS UI CONTROLS */
 function handlersPostStartup() {
-	$('#btn-header-find-roomate').on('click', function(e) {
-		e.preventDefault();
-		window.location.href='/post/create/find-roommate';
-	});
-	//todo: move all of this to the main.js
 }
 function handlersPostCreate() {
+	$('#enter_date').datepicker({
+		dayNames: [ "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота" ],
+		dayNamesShort: [ "Вос", "Пон", "Вто", "Сре", "Чет", "Пят", "Суб" ],
+		dayNamesMin: [ "Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб" ],
+		monthNames: [ "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" ],
+		monthNamesShort: [ "Янв", "Фев", "Мар", "Апр", "Май", "Инь", "Иль", "Авг", "Сен", "Окт", "Ноя", "Дек" ],
+		dateFormat: "dd.mm.yy"
+	});
+
 	$('#btn-find-roommate').on('click', function() {
 		$('#type').val('find-roommate');
 		$('.room-info, .utilities, .room-photos').fadeIn(200);
@@ -56,8 +60,6 @@ function handlersPostCreate() {
 				form.util_internet = $('#util_internet').prop('checked');
 			}
 
-			console.log(form);
-
 			$.ajax({
 				method: 'POST',
 				url: '/post',
@@ -65,13 +67,13 @@ function handlersPostCreate() {
 				data: form,
 				success: function(result) {
 					if (result.status === 'ok') {
-						alert('success', 'Новое объявление с идентификатором ' + result.id + ' было успешно создано');
+						showPopup('success', 'Новое объявление с идентификатором ' + result.id + ' было успешно создано');
 					} else {
-						alert('error', 'Возникла ошибка при создании объявления');
+						showPopup('error', 'Возникла ошибка при создании объявления');
 					}
 				},
 				error: function() {
-					alert('error', 'Ошибка соединения с сервером. Пожалуйста, оставайтесь на местах и повторите запрос позже!');
+					showPopup('error', 'Ошибка соединения с сервером. Пожалуйста, оставайтесь на местах и повторите запрос позже!');
 				}
 			});
 		}
@@ -180,7 +182,6 @@ function processInputSelect(id) {
 }
 
 $(document).ready(function() {
-	initPopup();
 	handlersPostStartup();
 	handlersPostCreate();
 });
