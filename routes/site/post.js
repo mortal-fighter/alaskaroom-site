@@ -685,37 +685,51 @@ router.post('/upload_photos', uploader.array('uploads'), function(req, res, next
 		return Promise.all(promises);
 	
 	}).then(function(dimensionsArray) {
-		var sql = `	INSERT INTO info_units_photos(src_small, src_big, info_unit_id, width, height, date_created)
+		var sql = `	INSERT INTO Photo(	src_small, 
+										src_orig, 
+										width_small, 
+										height_small, 
+										width_orig, 
+										height_orig,
+										date_created,
+										date_updated,
+										flat_id)
 					VALUES 
 			`;
-
+		//todo: abstract photo upload
+		//todo: compress photo
 		for (var i = 0; i < req.files.length; i++) {
 			
 			var hrefSmallImg = convertResourceLocator(req.files[i].path);
 			newPhotoHref.push(hrefSmallImg);
 
-			sql += `('${hrefSmallImg}', '${hrefSmallImg}', ${req.body.infoUnitId}, ${dimensionsArray[i].width}, ${dimensionsArray[i].height}, NOW())`;
+			sql += `('	${hrefSmallImg}', 
+						'${hrefSmallImg}', 
+						${dimensionsArray[i].width}, 
+						${dimensionsArray[i].height}, 
+						${dimensionsArray[i].width}, 
+						${dimensionsArray[i].height}, 
+						NOW(),
+						NOW(),
+						${req.body.flat_id})`;
 			if (i !== (req.files.length - 1)) {
 				sql += ', ';
 			}
 		}	
 
 		return db.queryAsync(sql);
-	
 	}).then(function(result) {
 		
 		res.json({
-			code: 200,
-			newPhotos: newPhotoHref,
-			message: 'Фотографии успешно добавлены'
+			status: 'ok',
+			newPhotos: newPhotoHref
 		});
 
 	}).catch(function(err) {
 	
 		logger.error(err.message, err.stack);
 		res.json({
-			code: 404,
-			message: 'Ошибка при добавлении фотографий'
+			status: 'not ok'
 		});
 	
 	});
