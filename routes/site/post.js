@@ -429,6 +429,7 @@ router.post('/', function(req, res, next) {
 	var type = null;
 	var flatId = null;
 	var postId = null;
+	var photoFlag = null;
 
 	Promise.resolve().then(function() {
 		if (!req.body.type) {
@@ -572,8 +573,14 @@ router.post('/', function(req, res, next) {
 		console.log(sql);
 		return db.queryAsync(sql);
 	}).then(function(result) {
+		console.log(result);
 		postId = result.insertId;
-		logger.log('ok');
+		
+		var sql = `UPDATE Photo SET temporary_user_id = NULL, flat_id = ${flatId} WHERE temporary_user_id = ${currentUserId};`;
+		return db.queryAsync(sql);
+	}).then(function(result) {
+		
+		console.log(result);
 		// todo: store messages in config file in filesystem (priority:low)
 		res.json({
 			status: 'ok',
@@ -581,6 +588,12 @@ router.post('/', function(req, res, next) {
 		});
 	}).catch(function(err) {
 		logger.error(err.message, err.stack);
+		
+		logger.log('Rollback table Photo (temporary photos)');
+		var sql = `DELETE FROM Photo WHERE temporary_user_id = ${currentUserId};`;
+		console.log(sql);
+		db.queryAsync(sql);
+
 		if (flatId) {
 			logger.log('Rollback table Flat');
 			var sql = `DELETE FROM Flat WHERE id = ${flatId};`;

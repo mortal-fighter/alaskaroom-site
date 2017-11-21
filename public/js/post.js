@@ -60,6 +60,8 @@ function handlersPostCreate() {
 				form.util_internet = $('#util_internet').prop('checked');
 			}
 
+			disableAllControls();
+
 			$.ajax({
 				method: 'POST',
 				url: '/post',
@@ -239,6 +241,17 @@ function processInputSelect(id) {
 		}
 	});
 	return result;
+}
+
+// can't enable controls after insertion, because photos on client were not updated... ehhhh
+function enableAllControls() {
+	$('.room-pic:last').fadeIn(200); // show add photo
+	$('#btn-add-post').prop('disabled', false);
+}
+
+function disableAllControls() {
+	$('.room-pic:last').fadeOut(200); // hide add photo
+	$('#btn-add-post').prop('disabled', true);
 }
 
 $(document).ready(function() {
