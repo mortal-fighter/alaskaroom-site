@@ -245,11 +245,15 @@ function processInputSelect(id) {
 
 // can't enable controls after insertion, because photos on client were not updated... ehhhh
 function enableAllControls() {
+	$('#btn-find-roommate').fadeIn(200);
+	$('#btn-find-flat').fadeIn(200);
 	$('.room-pic:last').fadeIn(200); // show add photo
 	$('#btn-add-post').prop('disabled', false);
 }
 
 function disableAllControls() {
+	$('#btn-find-roommate').fadeOut(200);
+	$('#btn-find-flat').fadeOut(200);
 	$('.room-pic:last').fadeOut(200); // hide add photo
 	$('#btn-add-post').prop('disabled', true);
 }
