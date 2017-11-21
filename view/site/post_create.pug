@@ -147,13 +147,11 @@ html(lang=ru)
 							span Интернет
 					div.room-photos
 						h2 ЗАГРУЗИТЕ ФОТО КВАРТИРЫ
-						img.room-pic(src="/images/room.jpg", alt="Room photo")
-						img.room-pic(src="/images/room.jpg", alt="Room photo")
-						img.room-pic(src="/images/room.jpg", alt="Room photo")
-						img.room-pic(src="/images/room.jpg", alt="Room photo")
-						img.room-pic(src="/images/room.jpg", alt="Room photo")
-						img.room-pic(src="/images/room.jpg", alt="Room photo")
+						div.room-pic
+							img(id="btn-photo-add", style="cursor: pointer;", src="/images/add_photo_200_x_133.png", alt="Добавить фото", title="Добавить фото")
+							input(type="file", id="files", accept="image/gif,image/png,image/jpeg", style="opacity:0", multiple="multiple")
 					input.add-ad(type="button", id="btn-add-post", value="Добавить объявление")
 					input(type="hidden", id="type", value='find-'+locals.type)
+					
 		include includes/footer.pug
 		include includes/message_popup.pug

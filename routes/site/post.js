@@ -11,6 +11,8 @@ const fs = Promise.promisifyAll(require('fs'));
 const path = require('path');
 const logger = require('log4js').getLogger();
 
+var currentUserId = 1;
+
 const multer  = require('multer');
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
@@ -19,13 +21,13 @@ const storage = multer.diskStorage({
 	filename: function (req, file, cb) {
 		const i = file.originalname.lastIndexOf('.');
 		const ext = file.originalname.substr(i);
-		cb(null, Date.now() + ext);
+		cb(null, 'user-' + currentUserId + '_time-' + Date.now() + ext);
 	}
 })
 const uploader = multer({ 
 	storage: storage,
 	fileFilter: function (req, file, cb) {
-		if (file.mimetype !== 'image/jpeg') {
+		if (file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/png' && file.mimetype !== 'image/gif') {
 			cb(null, false);
 			return;	
 		}
@@ -33,7 +35,7 @@ const uploader = multer({
 	}
 });
 
-var currentUserId = 1;
+
 
 
 var menuGenerated;
@@ -660,6 +662,75 @@ router.delete('/:id(\\d+)', function(req, res, next) {
 	})
 });
 
+router.post('/upload_photo', uploader.single('upload'), function(req, res, next) {
+	function convertResourceLocator(path) {
+		var uri = path.replace(/\\/g, '/');
+		var ind = uri.indexOf('/');
+		var res = uri.substr(ind);
+		return res;
+	}
+
+	var db = null;
+	var photoHref = null;
+	var photoId = null;
+
+	connectionPromise().then(function(connection) {
+		db = connection;
+		
+		photoHref = convertResourceLocator(req.file.path);
+		return sizeOfAsync(req.file.path);
+	}).then(function(dimensions) {
+	
+		var sql = `
+			INSERT INTO Photo (
+				src_small, 
+				src_orig, 
+				width_small, 
+				height_small, 
+				width_orig, 
+				height_orig,
+				date_created,
+				date_updated,
+				temporary_user_id)
+			VALUES (
+				'${photoHref}', 
+				'${photoHref}', 
+				${dimensions.width}, 
+				${dimensions.height}, 
+				${dimensions.width}, 
+				${dimensions.height}, 
+				NOW(),
+				NOW(),
+				${currentUserId}
+			);
+		`;
+
+		console.log(sql);
+		return db.queryAsync(sql);
+	}).then(function(result) {
+		console.log(result);
+
+		photoId = result.insertId;
+		res.json({
+			status: 'ok',
+			photoHref: photoHref
+		});
+	}).catch(function(err) {
+		logger.error(err.message, err.stack);
+		var sql = null;
+		if (photoId) {
+			console.log('ROLLBACK Photo...');
+			sql = `DELETE FROM Photo WHERE id = ${photoId};`;
+			console.log(sql);
+			db.queryAsync(sql);
+		}
+		
+		res.json({
+			status: 'not ok'
+		});
+	});
+});
+
 router.post('/upload_photos', uploader.array('uploads'), function(req, res, next) {
 	
 	function convertResourceLocator(path) {
@@ -671,7 +742,7 @@ router.post('/upload_photos', uploader.array('uploads'), function(req, res, next
 
 	//todo: handle errors when file uploading
 	var db = null;
-	var newPhotoHref = [];
+	var newPhotos = [];
 	
 	connectionPromise().then(function(connection) {
 		
@@ -693,36 +764,37 @@ router.post('/upload_photos', uploader.array('uploads'), function(req, res, next
 										height_orig,
 										date_created,
 										date_updated,
-										flat_id)
+										temporary_user_id)
 					VALUES 
 			`;
 		//todo: abstract photo upload
 		//todo: compress photo
 		for (var i = 0; i < req.files.length; i++) {
 			
-			var hrefSmallImg = convertResourceLocator(req.files[i].path);
-			newPhotoHref.push(hrefSmallImg);
+			var photoHref = convertResourceLocator(req.files[i].path);
+			newPhotos.push(photoHref);
 
-			sql += `('	${hrefSmallImg}', 
-						'${hrefSmallImg}', 
+			sql += `(	'${photoHref}', 
+						'${photoHref}', 
 						${dimensionsArray[i].width}, 
 						${dimensionsArray[i].height}, 
 						${dimensionsArray[i].width}, 
 						${dimensionsArray[i].height}, 
 						NOW(),
 						NOW(),
-						${req.body.flat_id})`;
+						${currentUserId})`;
 			if (i !== (req.files.length - 1)) {
 				sql += ', ';
 			}
 		}	
 
+		console.log(sql);
 		return db.queryAsync(sql);
 	}).then(function(result) {
-		
+		console.log(result);
 		res.json({
 			status: 'ok',
-			newPhotos: newPhotoHref
+			newPhotos: newPhotos
 		});
 
 	}).catch(function(err) {

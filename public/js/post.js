@@ -78,6 +78,66 @@ function handlersPostCreate() {
 			});
 		}
 	});
+
+	$('#btn-photo-add').on('click', function() {
+		$('#files').click();
+	});
+
+	$('#files').on('change', function() {
+		var files = $('#files').get(0).files;
+
+		if (files.length === 0) {
+			return;
+		}
+		if (files.length > 5) {
+			alert('Можно загружать не более 5 фото за раз');
+			return;
+		}
+
+		var filesFiltered = [];
+		var filesRejected = [];
+
+		for (var i = 0; i < files.length; i++) {
+			if (files[i].size <= 10485760 / 2 ) { // 10 / 2 = 5 mb
+				filesFiltered.push(files[i]);
+			} else {
+				alert('Фото \'' + files[i].name + '\' превышает допустимый размер в 5 мб');
+				filesRejected.push(files[i]);
+			}
+		}
+		var formData = new FormData();
+		for (var i = 0; i < filesFiltered.length; i++) {
+			formData.append('uploads', filesFiltered[i], filesFiltered[i].name);
+		}
+
+		$.ajax({
+			url: '/post/upload_photos',
+			type: 'POST',
+			data: formData,
+			processData: false,
+			contentType: false,
+			success: function(result) {
+				switch (result.status) {
+					case 'ok': 
+						//result.newPhotos
+						var elems = [];
+						for (var i=0; i<result.newPhotos.length; i++) {
+							elems.push($('<img class="room-pic" src="' + result.newPhotos[i] + '" alt="' + result.newPhotos[i] + '" />'));
+						}
+						
+						$('div.room-pic').before(elems);
+
+						break;
+					case 'not ok':
+						alert('Ошибка при загрузке фото');
+						break; 
+				}
+			},
+			error: function() {
+				console.log('Ошибка интернет-соединения');
+			}
+		});
+	});
 }
 
 /* VALIDATION */
