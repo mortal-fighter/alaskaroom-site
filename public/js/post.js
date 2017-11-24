@@ -2,6 +2,70 @@
 
 /* HANDLERS UI CONTROLS */
 function handlersPostStartup() {
+	$('#btn-find-post').on('click', function(e) {
+		e.preventDefault();
+		
+		var form = {};
+		form.type = processInputSelect('type');
+		form.user_sex = processInputSelect('user_sex');
+		form.user_age_range = processInputSelect('user_age_range');
+		form.user_activity = processInputSelect('user_activity');
+		form.user_badhabbits = processInputSelect('user_badhabbits');
+		form.user_pets = processInputSelect('user_pets');
+		form.user_car = processInputSelect('user_car');
+		form.user_university = processInputSelect('user_university');
+		form.user_success = processInputSelect('user_success');
+
+		$.ajax({
+			method: 'POST',
+			url: '/post/ajax',
+			dataType: 'json',
+			data: form,
+			success: function(result) {
+				if (result.status === 'ok') {
+					console.log(result.records);
+					
+					var listing = $('#listing-content');
+					listing.html('');
+					for (var i = 0; i < result.records.length; i++) {
+						var record = result.records[i];
+						var newItem = null;
+						if (record.type === 'find-roommate') {
+							newItem = $('<div class="room-list"></div>');
+							newItem.append($('<img src="images/room.jpg" alt="Room"/>'));
+							newItem
+								.append($('<h5>' + record.rent_pay + '</h5>')
+									.append($('<span> рублей</span>')));
+							newItem
+								.append($('<h4></h4>')
+									.append($('<span>' + record.city + '</span>'))
+									.append($('<span>, ' + record.address + '</span>')));
+							newItem
+								.append($('<p>Сосед: </p>')
+									.append($('<span>' + record.sex + ', </span>'))
+									.append($('<span>' + record.age + ', </span>'))
+									.append($('<span>' + record.university + '</span>')));
+						} else {
+							newItem = $('<div class="user-list"></div>');
+							newItem.append($('<img src="images/room.jpg" alt="Room"/>'));
+							newItem.append($('<h4>' + record.user_name + '</h4>'));
+							newItem
+								.append($('<p>Ваш сосед: </p>')
+									.append($('<span>' + record.sex + ', </span>'))
+									.append($('<span>' + record.age + ', </span>'))
+									.append($('<span>' + record.university + '</span>')));
+						}
+						newItem.appendTo(listing);
+					}
+				} else {
+					console.log('При загрузке данных произошла ошибка');
+				}
+			},
+			error: function() {
+				console.log('Проверьте соединение с Интернетом');
+			}
+		});
+	});
 }
 function handlersPostCreate() {
 	$('#enter_date').datepicker({
@@ -228,7 +292,6 @@ function validatePostCreate() {
 	return true;
 }
 
-
 /* OTHER */
 function processInputSelect(id) {
 	var elems = $('#'+id+'>option')
@@ -259,7 +322,10 @@ function disableAllControls() {
 }
 
 $(document).ready(function() {
-	handlersPostStartup();
-	handlersPostCreate();
+	if (window.location.href.lastIndexOf('/post/create') !== -1) {
+		handlersPostCreate();	
+	} else {
+		handlersPostStartup();
+	}
 });
 

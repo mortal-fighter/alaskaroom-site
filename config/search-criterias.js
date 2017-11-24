@@ -1,4 +1,19 @@
 var searchCriterias = {
+	post: {
+		type: [{
+			name: 'Квартиру или румейта',
+			value: 'all',
+			selected: true
+		}, {
+			name: 'Квартиру',
+			value: 'find-flat',
+			selected: false
+		}, {
+			name: 'Румейта',
+			value: 'find-roommate',
+			selected: false
+		}]
+	},
 	user: {
 		sex: [{
 			name: 'Не важно с кем',

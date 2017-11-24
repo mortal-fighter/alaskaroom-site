@@ -24,6 +24,6 @@
     "compression": "1.6.2",
     "multer": "1.2.0",
     "image-size": "0.5.1",
-    "log4js": "*" //1.0.1
+    "log4js": "1.0.1"
   }
 }

@@ -4,6 +4,7 @@ const router = require('express').Router();
 const Promise = require('bluebird');
 const menuConfig = require('../../config/menu.js');
 const userCriterias = require('../../config/search-criterias.js').user;
+const postCriterias = require('../../config/search-criterias.js').post;
 const connectionPromise = require('../../components/connectionPromise.js');
 const myUtil = require('../../components/myUtil.js');
 const sizeOfAsync = Promise.promisify(require('image-size'));
@@ -127,139 +128,142 @@ router.all('*', function(req, res, next) {
 
 router.get('/', function(req, res, next) {
 	var db = null;
-	var news = null;
+	var records = null;
+
 	connectionPromise().then(function(connection) {
 		db = connection;
-		//DATE_FORMAT(CAST(date_created AS CHAR), '%d.%m.%Y') date_created
-		var userSex = [{
-			name: 'Не важно с кем',
-			value: 'не важно',
-			selected: true
-		}, {
-			name:  'Только с девушками',
-			value: 'женский',
-			selected: false
-		}, {
-			name:  'Только с парнями',
-			value: 'мужской',
-			selected: false
-		}];
-		var userAge = [{
-			name: 'Не важен',
-			value: 'не важно',
-			selected: true
-		}, {
-			name:  '18-25',
-			value: '18-25',
-			selected: false
-		}, {
-			name:  '18-30',
-			value: '18-30',
-			selected: false
-		}];
-		var userSocialActivity = [{
-			name: 'Не важна',
-			value: 'не важно',
-			selected: true
-		}, {
-			name:  'Интроверт',
-			value: 'интроверт',
-			selected: false
-		}, {
-			name:  'Экстраверт',
-			value: 'экстраверт',
-			selected: false
-		}];
-		var userHabbits = [{
-			name: 'Не важно',
-			value: 'не важно',
-			selected: true
-		}, {
-			name:  'Курит',
-			value: 'курение',
-			selected: false
-		}, {
-			name:  'Пьет',
-			value: 'алкоголь',
-			selected: false
-		}, {
-			name:  'Курит и пьет',
-			value: 'алкоголь и курение',
-			selected: false
-		}, {
-			name:  'Не курит и не пьет',
-			value: 'нет',
-			selected: false
-		}];
-		var userPets = [{
-			name: 'Не важно',
-			value: 'не важно',
-			selected: true
-		}, {
-			name:  'Небольшие только',
-			value: '',
-			selected: false
-		}, {
-			name:  'Обожаю живность',
-			value: '',
-			selected: false
-		}];
-		var userCar = [{
-			name: 'Не важно',
-			value: 'не важно',
-			selected: true
-		}, {
-			name:  'Есть',
-			value: 1,
-			selected: false
-		}, {
-			name:  'Нет',
-			value: 0,
-			selected: false
-		}];
-		var userUniver = [{
-			name: 'Не важно',
-			value: 'не важно',
-			selected: true
-		}, {
-			name:  'РИНХ',
-			value: 'РИНХ',
-			selected: false
-		}, {
-			name:  'ЮФУ',
-			value: 'ЮФУ',
-			selected: false
-		}];
-		var userSuccess = [{
-			name: 'Не важно',
-			value: 'не важно',
-			selected: true
-		}, {
-			name:  'Хорошист',
-			value: 'хорошист',
-			selected: false
-		}, {
-			name:  'Отличник',
-			value: 'отличник',
-			selected: false
-		}];
+
+		console.log('req.body', req.body, 'req.params', req.params);
+
+		var sql = `
+			SELECT 	Post.id post_id, 
+					Post.type, 
+					rent_pay, 
+					CONCAT(\`User\`.first_name, ' ', \`User\`.last_name) user_name,
+					UPPER(SUBSTRING(\`User\`.sex, 1, 1)) sex, 
+					\`User\`.avatar,
+					\`User\`.last_name, 
+					\`User\`.age, 
+					\`User\`.city, 
+					\`User\`.university,
+					Flat.id flat_id,
+					(SELECT src_small FROM Photo WHERE Photo.flat_id = flat_id ORDER BY id LIMIT 1) src_small  
+			FROM Post
+			JOIN \`User\` ON Post.user_id = \`User\`.id
+			LEFT JOIN Flat ON Post.flat_id = Flat.id
+			ORDER BY date_created DESC
+			LIMIT 9;`;
+
+		console.log(sql);
+		return db.queryAsync(sql);
+	}).then(function(result) {	
+		
+		console.log('query ok, count=' + result.length);
+		//todo: check correctness sql query
+		records = result;
 
 		res.render('site/post_startup.pug', {
 			message: '',
 			messageType: '', 
 			menu: menuGenerated,
-			userSuccess: userSuccess,
-			userUniver: userUniver,
-			userCar: userCar,
-			userPets: userPets,
-			userHabbits: userHabbits,
-			userAge: userAge,
-			userSex: userSex,
-			userSocialActivity: userSocialActivity
+			records: records,
+			postType: postCriterias.type,
+			userSuccess: userCriterias.success,
+			userUniver: userCriterias.university,
+			userCar: userCriterias.car,
+			userPets: userCriterias.pets,
+			userHabbits: userCriterias.badHabbits,
+			userAge: userCriterias.age,
+			userSex: userCriterias.sex,
+			userSocialActivity: userCriterias.socialActivity,
+			type: req.params.type
 		});
 	}).catch(function(err) {
 		logger.error(err.message, err.stack);
 		res.render('errors/500.pug');
+	});
+});
+
+router.post('/ajax', function(req, res, next) {
+	var db = null;
+	var records = null;
+
+	connectionPromise().then(function(connection) {
+		db = connection;
+
+		var sql = `
+			SELECT 	Post.id post_id, 
+					Post.type, 
+					rent_pay, 
+					CONCAT(\`User\`.first_name, ' ', \`User\`.last_name) user_name,
+					UPPER(SUBSTRING(\`User\`.sex, 1, 1)) sex,  
+					\`User\`.avatar,
+					\`User\`.age, 
+					\`User\`.city, 
+					\`User\`.university,
+					Flat.address,
+					Flat.id flat_id,
+					(SELECT src_small FROM Photo WHERE Photo.flat_id = flat_id ORDER BY id LIMIT 1) src_small  
+			FROM Post
+			JOIN \`User\` ON Post.user_id = \`User\`.id
+			LEFT JOIN Flat ON Post.flat_id = Flat.id
+			WHERE 	1 = 1`;
+
+		formatRequestBodyForSQL(req.body);
+
+		// Когда человек ищет оъявление о поиске квартиры, то надо понимать что вбазе оно хрантися 
+		// как find-roomate. Почему?
+		// Когда объявление создается, то все просто: "ищу румейта" - тип find-roommate, "ищу квартиру" - тип find-flat.
+		// Но когда другой человек ищет объявление, то процесс обратный. 
+		// "Я ищу квартиру" - значит я ищу того, кто ищет румейта - тип "find-roommate"
+		// "Я ищу румейта" - значит у меня есть квартира, в которую я пущу человека - тип "find-flat"
+		if (req.body.type !== '\'all\'') {
+			if (req.body.type === '\'find-roommate\'') {
+				sql += `\n AND type = 'find-flat'`;
+			} else {
+				sql += `\n AND type = 'find-roommate'`;
+			}
+		}
+		if (req.body.user_sex !== '\'не важно\'') {
+			sql += `\n AND user_sex = ${req.body.user_sex}`;
+		}
+		if (req.body.user_age_range !== '\'не важно\'') {
+			sql += `\n AND user_age_range = ${req.body.user_age_range}`;
+		}
+		if (req.body.user_activity !== '\'не важно\'') {
+			sql += `\n AND user_activity = ${req.body.user_activity}`;
+		}
+		if (req.body.user_pets !== '\'не важно\'') {
+			sql += `\n AND user_pets = ${req.body.user_pets}`;
+		}
+		if (req.body.user_car !== '\'не важно\'') {
+			sql += `\n AND user_car = ${req.body.user_car}`;
+		}
+		if (req.body.user_university !== '\'не важно\'') {
+			sql += `\n AND user_university = ${req.body.user_university}`;
+		}
+		if (req.body.user_success !== '\'не важно\'') {
+			sql += `\n AND user_success = ${req.body.user_success}`;
+		}
+
+		sql += '\nORDER BY date_created DESC\nLIMIT 9;'
+
+		console.log(sql);
+		return db.queryAsync(sql);
+	}).then(function(result) {	
+		console.log('query ok, count=' + result.length);
+		records = result;
+
+		res.json({
+			status: 'ok',
+			records: records
+		});
+	
+	}).catch(function(err) {
+		logger.error(err.message, err.stack);
+		res.json({
+			status: 'not ok'
+		});
 	});
 });
 
