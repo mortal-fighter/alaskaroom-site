@@ -36,9 +36,6 @@ const uploader = multer({
 	}
 });
 
-
-
-
 var menuGenerated;
 
 function validateFlat(flat) {
