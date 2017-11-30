@@ -1,4 +1,4 @@
-﻿* html, body, div, span, applet, object, iframe,
+* html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
 del, dfn, em, img, ins, kbd, q, s, samp,
@@ -21,72 +21,66 @@ time, mark, audio, video {
 
 body {
 	margin: 0 auto;
-	background-color: white;
 	line-height: 1;
 	font-family: 'Roboto', sans-serif;
-	background-color: #fff;
+	background-color: #f8f8f8;
 }
 
 ol, ul {
   list-style: none;
 }
 
-.top {
-	display: block;
+/* Первая страница */
+
+.auth-popup {
+	display: none;
+    width: 235px;
+    height: 120px;
     position: fixed;
-    width: 100%;
-    top: 0;
-    left: 0;
-    height: 50px;
+    top: 50px;
+    right: 3px;
+    border: 1px solid #eaeaea;
+    box-shadow: 2px 2px 8px 1px #eaeaea;
     background-color: white;
-    border-bottom: 1px solid #e4e4e4;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-	z-index: 999;
+    overflow: hidden;
+    border-radius: 3px;
 }
 
-.top a {
-	display: inline-block;
-	margin: 18px 20px;
+.auth-popup .close-auth {
+	float: right;
+	margin: 10px;
 	text-decoration: none;
-	color: #484848;
+	outline: none;
 	font-family: 'Roboto', sans-serif;
     font-weight: 400;
-    font-size: 15px;
+    font-size: 13px;
+    color: #787878;
+    border: none;
 }
 
-.top-logo {
-	color: #5cb0da !important;
-	font-size: 22px !important;
-	margin: 15px !important;
-	font-weight: 500 !important;
+.auth-popup h3 {
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+	text-align: center;
+	margin: 13px 10px;
+	clear: both;
+	color: #787878;
 }
 
-.top-menu {
-	float: right;
-}
-
-.menu-prime {
-	display: block !important;
-    color: #5cb0da !important;
-    padding: 9px 25px;
-    border: 1px solid #5cb0da;
-    border-color: #5cb0da;
-    margin: 9px !important;
-    font-weight: 400 !important;
-    letter-spacing: 0.4px;
-}
-
-.menu-prime:hover {
-	background-color: #3e8cb3;
-	border-color: #3e8cb3;
-	color: white !important;
-}
-
-.wrp {
+.auth-popup .enter-site {
 	display: block;
-	width: 1000px;
-	height: auto;
-	margin: 0 auto;
+	width: 50%;
+	text-decoration: none;
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+	text-align: center;
+	margin: 10px auto;
+	padding: 10px;
+	color: white;
+	background-color: #2a5885;
+	border: none;
 }
 
 .cover {
@@ -393,15 +387,1012 @@ ol, ul {
 	float: left;
 }
 
-.footer {
+
+/* Хедер */
+
+.top {
 	display: block;
 	width: 100%;
 	height: 50px;
-	background-color: #333;
-	border-top: 1px solid #e4e4e4;
-    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
-	margin-top: 20px;
+	background-color: #5b9fc2;
 	overflow: hidden;
+}
+
+.top a {
+	display: inline-block;
+	color: white;
+	text-decoration: none;
+	padding-bottom: 2px;
+	border-bottom: 2px solid #5b9fc2;
+	font-family: 'Roboto', sans-serif;
+}
+
+.logo {
+	float: left;
+    font-size: 21px;
+    margin: 13px 25px;
+}
+
+.top-nav {
+	float: right;
+}
+
+.top-nav a {
+	float: left;
+	margin: 16px 15px;
+}
+
+.top-nav a.nav-button,
+.top-nav a.nav-button:link,
+.top-nav a.nav-button:active,
+.top-nav a.nav-button:visited {
+	color: #fff;
+    padding: 8px 25px;
+    border: 1px solid #fff;
+    margin: 7px;
+    font-weight: 400;
+    letter-spacing: 0.4px;
+}
+
+.top-nav a.nav-button:hover {
+	background-color: #fff;
+    color: #3e8cb3;
+}
+
+.mbl-view {
+	display: none !important;
+}
+
+.mbl-profile {
+	display: none !important;
+}
+
+.user-profile {
+	float: right;
+	margin: 16px 20px;
+}
+
+.user-profile:hover {
+	border-bottom: 2px solid #fff;
+}
+
+.top-nav a:hover {
+	border-bottom: 2px solid #fff;
+}
+
+.wrp {
+	display: block;
+	width: 100%;
+	max-width: 1000px;
+	min-height: calc(100vh - 50px);
+	overflow: hidden;
+	margin: 0px auto;
+}
+
+/*Стили для главной страницы с фильтрами*/
+
+.main-page {
+	display: block;
+	width: 100%;
+	overflow: hidden;
+	margin: 20px auto;
+}
+
+.main-filter {
+	display: block;
+	width: 27%;
+	height: auto;
+	margin: 10px;
+	float: left;
+	overflow: hidden;
+}
+
+.main-filter p {
+    color: #484848;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    margin: 10px 5px;
+	margin-bottom: 5px;
+    overflow: hidden;
+    text-align: left;
+}
+
+.prime-filter {
+	display: block;
+    width: 98%;
+    height: 40px;
+    margin: 10px auto;
+    font-family: 'Roboto', sans-serif;
+    border: 2px solid #5eb0e0;
+    border-radius: 3px;
+    font-weight: 400;
+    font-size: 15px;
+    color: #787878;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.lower-filter {
+	display: block;
+    width: 98%;
+    height: 40px;
+    margin: 10px auto;
+    font-family: 'Roboto', sans-serif;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    font-weight: 400;
+    font-size: 15px;
+    color: #787878;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.find-filter {
+	display: block;
+	width: 50%;
+	text-decoration: none;
+    background-color: #3e9fd7;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    border: none;
+	text-align: center;
+    margin: 20px auto;
+	padding: 10px;
+    color: white;
+}
+
+.listing {
+	display: block;
+	width: 68%;
+	height: auto;
+	margin: 10px;
+	float: left;
+	overflow: hidden;
+}
+
+.user-list {
+	display: block;
+	width: 30%;
+	height: auto;
+	overflow: hidden;
+	margin: 10px;
+	float: left;
+	cursor: pointer;
+    background-color: #fff;
+    box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+}
+
+.user-list img {
+	display: block;
+	width: 100%;
+}
+
+.user-list h4 {
+    width: 98%;
+    height: 15px;
+    color: #484848;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    margin: 10px 5px;
+	margin-bottom: 5px;
+    overflow: hidden;
+    text-align: left;
+}
+
+.user-list p {
+	color: #787878;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 13px;
+    margin: 5px;
+	text-align: left;
+}
+
+.room-list {
+	display: block;
+    width: 30%;
+    height: 175px;
+    float: left;
+    margin: 14px 10px;
+	cursor: pointer;
+}
+
+.room-list img {
+	display: block;
+	height: 80%;
+}
+
+.room-list h5 {
+    display: block;
+    position: relative;
+    bottom: 60px;
+    left: -7px;
+    background-color: rgba(0, 0, 0, 0.61);
+    color: #eaeaea;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    padding: 8px 30px;
+	margin-bottom: -30px;
+    font-size: 23px;
+    overflow: hidden;
+    float: left;
+}
+
+.room-list h4 {
+    width: 98%;
+    height: 15px;
+    color: #484848;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    margin: 10px 5px;
+	margin-bottom: 5px;
+    overflow: hidden;
+    text-align: left;
+}
+
+.room-list p {
+    color: #787878;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 13px;
+    margin: 5px;
+	text-align: left;
+}
+
+.load-more {
+	display: block;
+    text-decoration: none;
+    text-align: center;
+    margin: 30px auto;
+    clear: both;
+    float: right;
+    text-transform: uppercase;
+    color: #3c86ab;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+	cursor: pointer;
+}
+
+/*Страница Профиля пользователя*/
+
+.roommate-header {
+	display: block;
+	margin: 10px;
+	margin-bottom: 0;
+	width: 96%;
+	height: auto;
+	clear: both;
+	overflow: hidden;
+	border-radius: 3px;
+	padding: 7px 11px;
+	background-color: #fff;
+	box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+}
+
+.roommate-header h6 {
+	margin: 10px;
+    color: #3e9fd7;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+}
+
+.profile-user {
+	display: block;
+	width: 30%;
+	height: auto;
+	overflow: hidden;
+	float: left;
+}
+
+.profile-user img {
+	display: block;
+	width: 200px;
+	height: 200px;
+	border-radius: 3px;
+	margin: 30px auto;
+	overflow: hidden;
+}
+
+.profile-user h3 {
+	font-size: 20px;
+	font-weight: 600;
+	color: #555;
+	margin: 20px;
+	text-align: center;
+}
+
+.profile-user p {
+	font-size: 14px;
+	font-weight: 400;
+	color: #777;
+	margin: 20px;
+	line-height: 20px;
+	text-align: center;
+}
+
+.profile-user h4 {
+	font-size: 11px;
+	font-weight: 400;
+	color: #999;
+	margin: 20px;
+	line-height: 20px;
+	text-align: center;
+}
+
+.request-info {
+	display: block;
+	width: 80%;
+	height: 40px;
+	border: 2px solid #5b9fc2;
+	color: #5b9fc2;
+	background-color: transparent;
+	font-size: 16px;
+	margin: 10px auto;
+	outline: none;
+	cursor: pointer;
+}
+
+.request-info:hover {
+	background-color: #5b9fc2;
+	color: white;
+}
+
+.complain {
+	display: block;
+	clear: both;
+	width: 80%;
+	height: 40px;
+	border: none;
+	color: #f77474;
+	background-color: transparent;
+	font-size: 14px;
+	margin: 5px auto;
+	outline: none;
+	cursor: pointer;
+}
+
+.complain:hover {
+	background-color: #f77474;
+	color: white;
+}
+
+.profile-param {
+	display: block;
+	width: 70%;
+	height: auto;
+	overflow: hidden;
+	margin: 10px auto;
+	float: right;
+}
+
+.user-desc {
+	display: block;
+	width: 98%;
+	height: auto;
+	margin: 10px auto;
+	overflow: hidden;
+	padding: 7px 0;
+	border-radius: 3px;
+	background-color: #fff;
+	box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+}
+
+.user-desc h3 {
+	font-size: 20px;
+    color: #555;
+    margin: 10px;
+    font-weight: 400;
+    padding-bottom: 7px;
+    padding-left: 10px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.user-desc p {
+	font-size: 14px;
+    color: #888;
+    margin: 10px;
+    line-height: 20px;
+    font-weight: 300;
+}
+
+.user-caracter {
+	display: block;
+	width: 98%;
+	height: auto;
+	margin: 10px auto;
+	overflow: hidden;
+	border-radius: 3px;
+	padding: 7px 0;
+	background-color: #fff;
+	box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+}
+
+.caracter {
+	display: block;
+	width: 30%;
+	height: 50px;
+	overflow: hidden;
+	margin: 10px 5px;
+	padding-left: 5px;
+	float: left;
+}
+
+.caracter h4 {
+	font-size: 13px;
+    color: #555;
+    margin: 5px;
+    font-weight: 600;
+}
+
+.caracter p {
+	font-size: 13px;
+    color: #888;
+    margin: 5px;
+    font-weight: 300;
+}
+
+.edit-user {
+	font-size: 13px;
+	color: #555;
+	margin: 10px 10px;
+}
+
+.edit-user a {
+	text-decoration: none;
+	color: #5b9fc2;
+}
+
+.edit-user a:hover {
+	text-decoration: underline;
+}
+
+.add-room {
+	font-size: 13px;
+	color: #555;
+	margin: 10px 10px;
+}
+
+.add-room a {
+	text-decoration: none;
+	color: #5b9fc2;
+}
+
+.add-room a:hover {
+	text-decoration: underline;
+}
+
+.room-header {
+	display: block;
+	margin: 10px;
+	margin-top: 0;
+	width: 95%;
+	height: auto;
+	clear: both;
+	overflow: hidden;
+	border-radius: 3px;
+	padding: 7px 11px;
+	background-color: #fff;
+	box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+}
+
+.room-header h6 {
+	margin: 10px;
+    color: #3e9fd7;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+}
+
+.room-post {
+	display: block;
+	margin: 10px;
+	margin-top: 0;
+	width: 70%;
+	height: auto;
+	float: left;
+	overflow: hidden;
+	border-radius: 3px;
+	padding: 7px 11px;
+	background-color: #fff;
+	box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+}
+
+.room-main h3 {
+	font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 22px;
+	color: #727272;
+	margin: 10px;
+	text-transform: uppercase;
+}
+
+.room-main h4 {
+	font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+	color: #727272;
+	margin: 10px;
+	text-transform: uppercase;
+} 
+
+.big-pic {
+	display: block;
+	width: 98%;
+	overflow: hidden;
+	margin: 10px auto;
+	margin-top: 20px;
+}
+
+.small-pic {
+	display: block;
+	width: 32%;
+	overflow: hidden;
+	margin: 10px 4px;
+	float: left;
+}
+
+.room-desc {
+	display: block;
+	margin: 10px;
+	margin-top: 20px;
+	width: 100%;
+	height: auto;
+	float: left;
+	overflow: hidden;
+}
+
+.room-desc h3 {
+	display: block;
+    margin: 20px 0px;
+	margin-top: 10px;
+    color: #3e9fd7;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 24px;
+}
+
+.room-desc p {
+	display: block;
+    margin: 20px 0px;
+    color: #999;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+	line-height: 25px;
+}
+
+.room-param {
+	display: block;
+	width: 22%;
+	height: auto;
+	float: left;
+	overflow: hidden;
+	border-radius: 3px;
+	padding: 7px 11px;
+	margin-bottom: 10px;
+	background-color: #fff;
+	box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+}
+
+.room-param h3 {
+    margin: 15px 0px;
+    color: #3e9fd7;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 30px;
+	text-align: center;
+}
+
+.room-param h4 {
+    margin: 15px 0px;
+    color: #3e9fd7;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+	text-align: center;
+}
+
+.room-param p {
+    margin: 10px;
+    color: #999;
+    font-weight: 400;
+    font-size: 13px;
+}
+
+/*Страница Факультет*/
+
+.fl-left {
+	float: left;
+	margin-top: 20px !important;
+}
+
+.user-small {
+	display: block;
+	width: 15%;
+	height: auto;
+	overflow: hidden;
+	margin: 10px 8px;
+	float: left;
+	cursor: pointer;
+    background-color: #fff;
+    box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+}
+
+.user-small img {
+	display: block;
+	width: 100%;
+}
+
+.user-small h4 {
+    width: 98%;
+    height: 15px;
+    color: #484848;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    margin: 10px 5px;
+	margin-bottom: 5px;
+    overflow: hidden;
+    text-align: left;
+}
+
+.user-small p {
+	color: #787878;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 12px;
+    margin: 5px;
+	text-align: left;
+}
+
+.last-five {
+    display: block;
+    width: 100%;
+    height: auto;
+	margin: 10px auto;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.last-five h3 {
+	font-size: 13px;
+	text-align: center;
+	margin: 20px;
+	color: #999;
+	line-height: 16px;
+}
+
+.option-input {
+	display: block;
+	width: 250px;
+	height: 40px;
+	margin: 10px 5px;
+	font-family: 'Roboto', sans-serif;
+	border: 2px solid #5eb0e0;
+	border-radius: 3px;
+	float: right;
+    font-weight: 400;
+    font-size: 15px;
+	color: #787878;
+	padding: 5px;
+	cursor: pointer;
+}
+
+/*Стили для создания объявления*/
+
+.user-desc textarea {
+	display: block;
+	width: 97%;
+	height: 100px;
+	border: none;
+	border-radius: 3px;
+	font-size: 14px;
+	color: #333;
+	font-family: 'Roboto', sans-serif;
+	padding-left: 10px;
+	margin: 10px auto;
+}
+
+.user-setting {
+	display: block;
+    width: 98%;
+    height: auto;
+    margin: 10px auto;
+    overflow: hidden;
+    padding: 7px 0;
+    border-radius: 3px;
+    background-color: #fff;
+    box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+}
+
+.user-setting div {
+	display: block;
+	width: 32%;
+	height: auto;
+	margin: 10px 3px;
+	margin-bottom: 0;
+	overflow: hidden;
+	float: left;
+}
+
+.user-setting p {
+	font-size: 13px;
+	color: #555;
+	margin: 10px;
+	line-height: 15px;
+}
+
+.option-set {
+	display: block;
+    width: 96%;
+    height: 40px;
+    margin: 10px 5px;
+    font-family: 'Roboto', sans-serif;
+    border: 1px solid #aeaeae;
+    border-radius: 3px;
+    font-weight: 400;
+    font-size: 15px;
+    color: #787878;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.option-set-small {
+	display: block;
+    width: 89%;
+    height: 25px;
+    margin: 10px 5px;
+    font-family: 'Roboto', sans-serif;
+    border: 1px solid #aeaeae;
+    border-radius: 3px;
+    font-weight: 400;
+    font-size: 15px;
+    color: #787878;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.option-set-big {
+	display: block;
+    width: 95%;
+    height: 25px;
+    margin: 10px 5px;
+    font-family: 'Roboto', sans-serif;
+    border: 1px solid #aeaeae;
+    border-radius: 3px;
+    font-weight: 400;
+    font-size: 15px;
+    color: #787878;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.save-btn {
+	display: block;
+	width: 90%;
+	height: 35px;
+	border: none;
+	background-color: #5b9fc2;
+	font-size: 15px;
+	font-weight: 600;
+	color: white;
+	margin: 50px auto;
+	margin-bottom: 10px;
+	cursor: pointer;
+	outline: none;
+}
+
+.save-btn:hover {
+	background-color: #2f7294;
+}
+
+.user-setting label {
+	display: block;
+    width: 25%;
+    float: left;
+    font-family: 'Roboto', sans-serif;
+    font-size: 15px;
+    color: #727272;
+    margin: 10px;
+}
+
+.room-photos {
+	display: block;
+    width: 30%;
+    height: auto;
+    overflow: hidden;
+    float: left;
+}
+
+.room-photos div {
+	width: 44%;
+    overflow: hidden;
+    margin: 10px 3px;
+    margin-left: 12px;
+	margin-bottom: 5px;
+	float: left;
+}
+
+.room-photos a {
+	text-decoration: none;
+	color: #3e9fd7;
+	font-size: 11px;
+	float: right;
+	margin: 5px;
+}
+
+.room-photos a:hover {
+	text-decoration: underline;
+}
+
+.room-photos img {
+	display: block;
+    width: 98%;
+	overflow: hidden;
+}
+
+.final-ad {
+	display: block;
+    width: 230px;
+    height: 40px;
+    border: none;
+    background-color: #5b9fc2;
+    font-size: 15px;
+    color: white;
+    margin: 20px;
+    margin-bottom: 10px;
+	float: right;
+    cursor: pointer;
+    outline: none;
+}
+
+/*Страница Откликов*/
+
+.respond-line {
+	display: block;
+	width: 100%;
+	height: 40px;
+	background-color: #f4f4f4;
+	overflow: hidden;
+}
+
+.respond-line a {
+	text-decoration: none;
+    color: #888888;
+    background-color: #f4f4f4;
+    padding: 13px;
+    overflow: hidden;
+    font-size: 14px;
+    float: left;
+}
+
+.respond-line a span {
+	color: #5b9fc2;
+	font-weight: 600;
+}
+
+.respond-line a:hover {
+	background-color: #dedede;
+}
+
+.user-requests {
+	display: block;
+	width: 100%;
+	height: auto;
+	overflow: hidden;
+	margin: 10px auto;
+}
+
+.user-requests div {
+	display: block;
+	width: 23%;
+	height: 450px;
+	overflow: hidden;
+	margin: 10px 8px;
+	float: left;
+}
+
+.user-requests img {
+	display: block;
+	width: 100%;
+	overflow: hidden;
+	border-radius: 3px;
+}
+
+.user-requests h3 {
+	font-size: 17px;
+	color: #777;
+	font-weight: 600;
+	margin: 20px 10px;
+	text-align: center;
+}
+
+.user-requests p {
+	font-size: 13px;
+	color: #999;
+	margin: 20px;
+	text-align: center;
+	line-height: 15px;
+}
+
+.got-number {
+	color: #333 !important;
+	font-weight: 600 !important;
+}
+
+.in-wait {
+	display: block;
+	width: 83%;
+	margin: 10px auto;
+	text-align: center;
+	text-decoration: none;
+	color: #5b9fc2;
+	font-size: 15px;
+	padding: 15px;
+	border: 2px dashed #5b9fc2;
+	border-radius: 30px;
+}
+
+.in-pos {
+	display: block;
+	width: 83%;
+	margin: 10px auto;
+	text-align: center;
+	text-decoration: none;
+	color: #1cbd4d;
+	font-size: 15px;
+	padding: 15px;
+	border: 2px solid #1cbd4d;
+	border-radius: 30px;
+}
+
+.in-neg {
+	display: block;
+	width: 83%;
+	margin: 10px auto;
+	text-align: center;
+	text-decoration: none;
+	color: #f34040;
+	font-size: 15px;
+	padding: 15px;
+	border: 2px solid #f34040;
+	border-radius: 30px;
+}
+
+.in-com {
+	display: block;
+	width: 83%;
+	margin: 10px auto;
+	margin-top: 15px;
+	text-align: center;
+	text-decoration: none;
+	color: #f34040;
+	font-size: 13px;
+	border-radius: 30px;
+}
+
+.got-prop {
+	height: auto !important;
+}
+
+
+/*Стили для футера*/
+
+.footer {
+	display: block;
+    width: 100%;
+    height: 50px;
+    background-color: #333;
+    border-top: 1px solid #e4e4e4;
+    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    overflow: hidden;
 }
 
 .footer p {
@@ -409,532 +1400,141 @@ ol, ul {
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
     font-size: 14px;
-	margin: 18px;
-	text-align: center;
+    margin: 18px;
+    text-align: center;
 }
 
-/*Всплывающее окно*/
+/*Стили для мобильной версии*/
 
-.popup {
-	display: block;
-    width: 40%;
-    height: 30%;
-    border: 2px solid #5cb0da;
-    position: absolute;
-    top: 140px;
-    left: 33%;
-    overflow: hidden;
-    z-index: 999;
-    background-color: white;
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+.top {
+	height: 79px;
 }
 
-.popup button {
-	display:block;
-	float: right;
-	width: 20px;
-	height: 20px;
-	border: none;
-	margin: 10px;
-	background-color: transparent;
-	outline: none;
-	cursor: pointer;
-}
- 
-.popup h2 {
-	color: #787878;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 300;
-    font-size: 33px;
-    line-height: 30px;
-	text-align: center;
-	margin: 15px 0;  
+.logo {
+	font-size: 19px;
+	margin-left: 15px;
 }
 
-.popup h3 {
-	color: #787878;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 300;
-    font-size: 14px;
-	float: right;
-    line-height: 30px;
-	text-align: center;
-	margin: 15px 10px;  
-}
-
-.popup h3 span {
-	color: #5cb0da;
-	font-weight: 400;
-}
-
-.popup-shadow {
-	display: block;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 998;
-	background-color: rgba(0,0,0,0.8);
-}
-
-/*Окно авторизации*/
-
-.auth-popup {
-	display: none;
-    width: 235px;
-    height: 120px;
-    position: fixed;
-    top: 50px;
-    right: 3px;
-    border: 1px solid #eaeaea;
-    box-shadow: 1px 1px 10px 6px #eaeaea;
-    background-color: white;
-    overflow: hidden;
-    border-radius: 3px;
-}
-
-.auth-popup .close-auth {
-	float: right;
-	margin: 10px;
-	text-decoration: none;
-	outline: none;
-	font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 13px;
-}
-
-.auth-popup h3 {
-	font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 13px;
-	text-align: center;
-	margin: 13px 10px;
+.top-nav {
 	clear: both;
-	color: #787878;
+	width: 99%;
+	height: 41px;
+	color: f3f3f3;
 }
 
-.auth-popup .enter-site {
-	display: block;
-	width: 50%;
-	text-decoration: none;
-	font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 13px;
+.top-nav a {
+	width: 32%;
 	text-align: center;
-	margin: 10px auto;
-	padding: 10px;
-	color: white;
-	background-color: #2a5885;
-}
-
-/* Страница регистрации 1*/
-
-.personal-info {
-	display: block;
-	width: 100%;
-	margin: 0 auto;
-	overflow: hidden;
-}
-
-.personal-info h2 {
-	display: block;
-    text-align: left;
-    margin: 100px 0px;
-    margin-bottom: 50px;
-    color: #787878;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 300;
-    font-size: 37px;
-}
-
-.user-setup {
-	display: block;
-	width: 270px;
 	margin: 0;
-	overflow: hidden;
-	float: left;
+	padding: 10px 0px;
+	font-size: 12px;
+	padding-bottom: 5px;
+	text-transform: uppercase;
+	font-weight: 500;
 }
 
-.user-setup img {
-	display: block;
-	width: 40%;
-	border-radius: 50%;
-	margin: 10px auto;
+.top-nav a:hover {
+	border-bottom: 2px solid #f3f3f3;
 }
 
-.user-setup h3 {
-	color: #7D7D7D;
-	font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 19px;
-	text-align: center;
-	margin: 21px auto;
+.mbl-view {
+	display: block !important;
 }
 
-.user-setup input {
-	display: block;
-	width: 90%;
-	height: 35px;
-	font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 15px;
-	color: #222;
-	padding-left: 10px;
-	margin: 10px auto;
-	border: 1px solid #bcbcbc;
-	border-radius: 3px;
-}
-
-.user-setup textarea {
-	display: block;
-	width: 90%;
-	height: 135px;
-	font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 15px;
-	color: #222;
-	padding-left: 10px;
-	padding-top: 10px;
-	margin: 10px auto;
-	border: 1px solid #bcbcbc;
-	border-radius: 3px;
-}
-
-.user-setup button {
-	display: block;
-	width: 90%;
-	height: 35px;
-	font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 15px;
-	color: #5cb0da;
-	background-color: transparent;
-	border: 2px solid #5cb0da;
-	margin: 30px auto;
-	cursor: pointer;
-	outline: none;
-}
-
-.user-setup button:hover {
-	background-color: #5cb0da;
-	color: white;
-}
-
-.user-setup p {
-	text-align: center;
-	font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 12px;
-	color: #787878;
-}
-
-.room-setup {
-	display: block;
-	width: 660px;
-	margin: 0 50px;
-	margin-right: 10px;
-	overflow: hidden;
-	float: left;
-}
-
-.room-setup h3 {
-	display: block;
-    margin: 15px 0px;
-    color: #787878;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 300;
-    font-size: 20px;
-	float: left;
-}
-
-.room-setup p {
-	display: block;
-    margin: 15px 5px;
-    color: #787878;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 300;
-    font-size: 20px;
-	float: left;
-}
-
-.room-setup button {
-	float: left;
-	margin: 10px 20px;
-	width: 200px;
-	height: 35px;
-	font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 15px;
-	color: #5cb0da;
-	background-color: transparent;
-	border: 1px solid #5cb0da;
-	cursor: pointer;
-	outline: none;
-}
-
-.room-setup button:hover {
-	background-color: #5cb0da;
-	color: white;
-}
-
-.room-setup h4 {
-	text-align: center;
-	font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 12px;
-	color: #787878;
-}
-
-.room-info {
-	display: block;
-	width: 660px;
-	margin: 20px 50px;
-	margin-right: 10px;
-	overflow: hidden;
-	float: left;
-}
-
-.room-info h3 {
-	display: block;
-    margin: 25px 0px;
-    color: #5cb0da;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 300;
-    font-size: 25px;
-}
-
-.room-info h4 {
-	display: block;
-    margin: 25px 0px;
-    color: #787878;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 300;
-    font-size: 25px;
-	clear: both;
-}
-
-.room-info textarea {
+.clear-view {
 	display: block;
 	width: 96%;
-	height: 135px;
-	font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 15px;
-	color: #222;
-	padding-left: 10px;
-	padding-top: 10px;
-	margin: 10px auto;
-	border: 1px solid #bcbcbc;
-	border-radius: 3px;
-}
-
-.room-parm {
-	display: block;
-	width: 120px;
-	height: 35px;
-	font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 15px;
-	color: #222;
-	padding-left: 10px;
-	margin: 10px 5px;
-	border: 1px solid #bcbcbc;
-	border-radius: 3px;
-	float: left;
-}
-
-.room-ad {
-	width: 350px !important;
-}
-
-.room-trafik {
-	width: 96% !important;
-	margin-bottom: 40px !important;
-}
-
-.room-pay {
-	display: block;
-	width: 237px;
-	height: 35px;
-	font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 15px;
-	color: #222;
-	padding-left: 10px;
-	margin: 10px 5px;
-	border: 1px solid #bcbcbc;
-	border-radius: 3px;
-	float: right;
-}
-
-.room-date {
-	width: 120px !important;
-}
-
-.room-con {
-	display: block;
-	width: 237px;
-	height: 35px;
-	font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 15px;
-	color: #222;
-	padding-left: 10px;
-	margin: 5px;
-	border: 1px solid #bcbcbc;
-	border-radius: 3px;
-	float: right;
-}
-
-.room-info p {
-	display: block;
-    margin: 20px 0px;
-	margin-right: 20px;
-    color: #5cb0da;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-	float: right;
-}
-
-.room-info h5 {
-	display: block;
-    margin: 10px 0px;
-	margin-right: 20px;
-    color: #787878;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-	float: left;
-}
-
-.room-info h5  input {
-	width: 15px;
-	height: 15px;
+	height: auto;
 	overflow: hidden;
-}
-
-.room-info img {
-	display: block;
-	width: 200px;
-	float: left;
-	margin: 10px;
-}
-
-.add-ad {
-	display: block;
-    width: 200px;
-    height: 35px;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 15px;
-    color: white;
-    background-color: #5cb0da;
-    border: none;
-    margin: 30px auto;
-    cursor: pointer;
-    outline: none;
-	float: right;
+	margin: 10px auto;
 	clear: both;
 }
 
-.add-ad:hover {
-	background-color: #1e7cab;
+.mbl-filter {
+	display: block;
+	width: 96%;
+	height: 40px;
+	overflow: hidden;
+	margin: 5px;
+    margin-right: 5px;
+	margin-right: 0;
+	border: 2px solid #aeaeae;
+	color: #aeaeae;
+	outline: none;
+	background-color: transparent;
+	float: left;
+	cursor: pointer;
+	font-weight: 600;
+	text-transform: uppercase;
+	font-size: 12px;
 }
 
-/* MESSAGE POPUP */
-#popup-window {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
-    background: rgba(255,255,255,0.95);
+.user-profile {
+	display: none !important;
 }
 
-.popup-layout {
-    position: fixed;
-    width: 100%;
+.mbl-profile {
+	display: block !important;
+	float: right;
 }
 
-.popup-container {
-    margin: 100px auto 50px auto;
+.mbl-profile img{
+	display: block;
+	width: 25px;
+	height: 25px;
+	float: right;
+	padding: 10px 15px;
 }
 
-.popup-header {
-    height: 30px;
-    background: #11719e;
-    border-radius: 5px 5px 0 0;
+/*Стили для главной с фильтрами - мобильная*/
+
+.main-page {
+	margin: 0 auto;
 }
 
-.popup-content {
-    background: lightgray;
-    padding: 20px;
-    text-align: center;
-    overflow: auto;
+.main-filter {
+	display: none;
+	width: 94%;
 }
 
-.popup-close {
-    height: 20px;
-    color: #fff;
-    background: transparent;
-    font-size: 14px;
-    padding: 5px 15px;
-    float: right;
-    border-radius: 0 5px 0 0;
+.listing {
+	width: 100%;
+	margin: 10px auto;
+	float: none;
 }
 
-.popup-close:hover {
-    cursor: pointer;
+.user-list {
+	width: 47%;
+	margin: 10px 4px;
+	background-color: white;
+	border-radius: 2px;
+	padding-bottom: 2px;
 }
 
-.popup-container-small {
-  width: 300px;  
+.user-list img {
+	width:100%;
 }
 
-.popup-container-medium {
-  width: 500px;  
+.room-list {
+	width: 90%;
+	margin: 15px auto;
+	float: none;
+	height: auto;
+	background-color: white;
+	border-radius: 2px;
+	padding-bottom: 2px;
+	clear: both;
 }
 
-.popup-container-large {
-  width: 800px;  
+.load-more {
+	float: none;
+	margin-bottom: 10px;
 }
 
-.popup-container-small .popup-content {
-    min-height: 50px;
+.room-list img {
+	width: 100%;
 }
 
-.popup-container-medium .popup-content {
-    min-height: 100px;
-}
-
-.popup-container-large .popup-content {
-    min-height: 300px;
-}
-
-.p-scroll {
-  overflow: scroll;
-}
-
-.popup-content h3 {
-    color: #11719e;
-    text-align: left;
-}
-
-.popup-content p {
-    color: #111;
-    font-size: 14px;
-    font-style: italic;
-    font-weight: bold;
-}
-
-.popup-content .text-full {
-    font-size: 14px;
-    color: #555;
-}
-.stop-scrolling {
-  height: 100%;
-  overflow: hidden;
 }

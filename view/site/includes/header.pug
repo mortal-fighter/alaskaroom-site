@@ -1,8 +1,20 @@
 div.top
-	a.top-logo(href="#") ALASKA ROOM
-	a#btn-header-login.top-menu(href="#") ВХОД
-	a#btn-header-find-roomate.top-menu.menu-prime(href="#") Ищу румейта
-	div.auth-popup
-		a#btn-close-auth.close-auth(href="") Х
-		h3 Мы сделаем вход через ВК, чтобы доступ имели только студенты
-		a#btn-enter-site.enter-site(href="") Войти через ВК
+	a.logo(href="#") AlaskaRoom
+	-
+		var isLoggedIn = false;
+	if isLoggedIn 
+		a.user-profile(href="#") Профиль
+		a.mbl-viev.mbl-profile(href="#")
+			img(src="/images/usericon.png", alt="profile")
+		div.top-nav
+			a(href="#") Поиск
+			a(href="#") Отклики
+			a(href="#") Факультет
+	else
+		div.top-nav
+			a#btn-header-find-roomate(href="#") Ищу румейта
+			a#btn-header-login.nav-button(href="#") ВХОД
+		div.auth-popup
+			a#btn-close-auth.close-auth(href="") Х
+			h3 Мы сделаем вход через ВК, чтобы доступ имели только студенты
+			a#btn-enter-site.enter-site(href="") Войти через ВК

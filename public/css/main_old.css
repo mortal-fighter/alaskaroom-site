@@ -41,6 +41,7 @@ ol, ul {
     background-color: white;
     border-bottom: 1px solid #e4e4e4;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+	z-index: 999;
 }
 
 .top a {
@@ -49,13 +50,13 @@ ol, ul {
 	text-decoration: none;
 	color: #484848;
 	font-family: 'Roboto', sans-serif;
-    font-weight: 300;
+    font-weight: 400;
     font-size: 15px;
 }
 
 .top-logo {
 	color: #5cb0da !important;
-	font-size: 20px !important;
+	font-size: 22px !important;
 	margin: 15px !important;
 	font-weight: 500 !important;
 }
@@ -65,7 +66,7 @@ ol, ul {
 }
 
 .menu-prime {
-	display: none !important;
+	display: block !important;
     color: #5cb0da !important;
     padding: 9px 25px;
     border: 1px solid #5cb0da;
@@ -412,6 +413,120 @@ ol, ul {
 	text-align: center;
 }
 
+/*Всплывающее окно*/
+
+.popup {
+	display: block;
+    width: 40%;
+    height: 30%;
+    border: 2px solid #5cb0da;
+    position: absolute;
+    top: 140px;
+    left: 33%;
+    overflow: hidden;
+    z-index: 999;
+    background-color: white;
+}
+
+.popup button {
+	display:block;
+	float: right;
+	width: 20px;
+	height: 20px;
+	border: none;
+	margin: 10px;
+	background-color: transparent;
+	outline: none;
+	cursor: pointer;
+}
+ 
+.popup h2 {
+	color: #787878;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 33px;
+    line-height: 30px;
+	text-align: center;
+	margin: 15px 0;  
+}
+
+.popup h3 {
+	color: #787878;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+	float: right;
+    line-height: 30px;
+	text-align: center;
+	margin: 15px 10px;  
+}
+
+.popup h3 span {
+	color: #5cb0da;
+	font-weight: 400;
+}
+
+.popup-shadow {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 998;
+	background-color: rgba(0,0,0,0.8);
+}
+
+/*Окно авторизации*/
+
+.auth-popup {
+	display: none;
+    width: 235px;
+    height: 120px;
+    position: fixed;
+    top: 50px;
+    right: 3px;
+    border: 1px solid #eaeaea;
+    box-shadow: 1px 1px 10px 6px #eaeaea;
+    background-color: white;
+    overflow: hidden;
+    border-radius: 3px;
+}
+
+.auth-popup .close-auth {
+	float: right;
+	margin: 10px;
+	text-decoration: none;
+	outline: none;
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+}
+
+.auth-popup h3 {
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+	text-align: center;
+	margin: 13px 10px;
+	clear: both;
+	color: #787878;
+}
+
+.auth-popup .enter-site {
+	display: block;
+	width: 50%;
+	text-decoration: none;
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+	text-align: center;
+	margin: 10px auto;
+	padding: 10px;
+	color: white;
+	background-color: #2a5885;
+}
+
 /* Страница регистрации 1*/
 
 .personal-info {
@@ -725,4 +840,101 @@ ol, ul {
 
 .add-ad:hover {
 	background-color: #1e7cab;
+}
+
+/* MESSAGE POPUP */
+#popup-window {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background: rgba(255,255,255,0.95);
+}
+
+.popup-layout {
+    position: fixed;
+    width: 100%;
+}
+
+.popup-container {
+    margin: 100px auto 50px auto;
+}
+
+.popup-header {
+    height: 30px;
+    background: #11719e;
+    border-radius: 5px 5px 0 0;
+}
+
+.popup-content {
+    background: lightgray;
+    padding: 20px;
+    text-align: center;
+    overflow: auto;
+}
+
+.popup-close {
+    height: 20px;
+    color: #fff;
+    background: transparent;
+    font-size: 14px;
+    padding: 5px 15px;
+    float: right;
+    border-radius: 0 5px 0 0;
+}
+
+.popup-close:hover {
+    cursor: pointer;
+}
+
+.popup-container-small {
+  width: 300px;  
+}
+
+.popup-container-medium {
+  width: 500px;  
+}
+
+.popup-container-large {
+  width: 800px;  
+}
+
+.popup-container-small .popup-content {
+    min-height: 50px;
+}
+
+.popup-container-medium .popup-content {
+    min-height: 100px;
+}
+
+.popup-container-large .popup-content {
+    min-height: 300px;
+}
+
+.p-scroll {
+  overflow: scroll;
+}
+
+.popup-content h3 {
+    color: #11719e;
+    text-align: left;
+}
+
+.popup-content p {
+    color: #111;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.popup-content .text-full {
+    font-size: 14px;
+    color: #555;
+}
+.stop-scrolling {
+  height: 100%;
+  overflow: hidden;
 }
