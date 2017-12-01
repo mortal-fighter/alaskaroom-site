@@ -15,6 +15,13 @@ module.exports = {
 	logger: {
 		level: 'DEBUG'
 	},
+	vkApp: {
+		id: 5763848,
+		name: 'localhost',
+		clientSecret: '9W8DQ2D3r97l3hWNoAfY',
+		redirectUrl: 'http://localhost/auth/login_vk_callback',
+		version: 5.69
+	},
 	mailer: { 
 		smtpConfig: {
 			service: "gmail",

@@ -1,0 +1,78 @@
+doctype
+html(lang=ru)
+	head
+		include includes/head_common.pug
+		script(src="/js/profile.js", type="text/javascript")
+	body
+		include includes/header.pug
+		div.wrp
+			div.roommate-header
+				h6 О румейте
+			div.profile-user
+				img(src=locals.data.user_avatar, alt="User")
+				h3= locals.data.user_name
+				p= locals.data.user_age + ' год, ' + locals.data.user_university + ', ' + locals.data.user_faculty
+				input.request-info(type="button", value="Предложить соседство")
+				input.complain(type="button", value="Жалоба на румейта")
+			div.profile-param
+				div.user-desc
+					h3 Обо мне
+					p= locals.data.user_about
+				if locals.priorities.length > 0
+					div.user-caracter
+						for priority in locals.priorities 
+							div.caracter
+								h4= priority.priority_name
+								p= priority.option_name
+						div.caracter
+							h4 Сколько плачу \ готов платить?
+							p 8 000 руб
+				p.edit-user Хотите отредактировать информацию о себе?
+					a(href="#") Нажмите тут
+				p.add-room У вас есть квартира и вы ищите соседа?
+					a(href="#") Рассказать про квартиру и условия
+			if locals.data.flat_id
+				div.room-header
+					h6 О квартире \ комнате
+				div.room-post
+					div.room-main
+						h3= locals.data.flat_address + ', ' + locals.data.flat_room_num + '-к квартира, ' + locals.data.flat_square
+						- 
+							var counter = 0;
+						if locals.photos
+							for photo in locals.photos
+								if (counter == 0)
+									img.big-pic(src=photo.src_orig, alt="Room pic")
+								else
+									img.small-pic(src=photo.src_small, alt="Room pic")
+								-
+									counter++;
+					div.room-desc
+						if locals.data.flat_description
+							h3 Описание квартиры
+							p= locals.data.flat_description
+						if locals.data.flat_traffic
+							h3 Ближайший транспорт
+							p= locals.data.flat_traffic
+				div.room-param
+					p Общая стоимость аренды
+					h3= locals.data.flat_total_pay + ' руб'
+				div.room-param
+					p Сколько платит румейт?
+					h3= locals.data.flat_rent_pay + ' руб'
+				div.room-param
+					p Когда можно заежать?
+					h3= locals.data.flat_enter_date
+				div.room-param
+					p Площадь жилья?
+					h3= locals.data.flat_square
+				div.room-param
+					p Сколько комнат?
+					h3= locals.data.flat_room_num
+				if locals.data.flat_utils
+					div.room-param
+						p Удобства
+						foreach util in locals.data.flat_utils
+							h4= util.name
+		include includes/footer.pug
+		include includes/message_popup.pug

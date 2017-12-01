@@ -26,6 +26,7 @@
     "image-size": "0.5.1",
     "log4js": "1.0.1",
     "request": "*",
-    "request-promise": "*"
+    "request-promise": "*",
+    "moment": "*"
   }
 }
