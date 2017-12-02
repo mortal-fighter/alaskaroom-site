@@ -38,5 +38,5 @@ app.listen(config.app.port, (err) => {
         logger.error(`Couldn't start server: ${err.message} ${err.stack}`);
         return;
     }
-    logger.debug(`Server is listening on port ${config.app.port}`);
+    logger.info(`Server is listening on port ${config.app.port}`);
 });

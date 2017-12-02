@@ -62,6 +62,10 @@ function handlersHomepage() {
 
 	});
 
+	$('#btn-enter-site').on('click', function() {
+		window.location.href='/auth/login_soc';
+	});
+
 }
 
 $(document).ready(function() {

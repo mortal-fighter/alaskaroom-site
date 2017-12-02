@@ -9,44 +9,7 @@ const request = require('request');
 const moment = require('moment');
 const fs = require('fs');
 const path = require('path');
-
-function getUserInfo() {
-	/*var options = {
-		uri: 'https://oauth.vk.com/access_token',
-		qs: {
-			client_id: '5763848',
-			code: '962d5238bb566af565',
-			client_secret: '9W8DQ2D3r97l3hWNoAfY',
-			redirect_uri: 'http://localhost/auth/login_vk_callback'
-		},
-		json: true
-	};*/
-
-	var options = {
-		uri: 'https://api.vk.com/method/users.get',
-		qs: {
-			access_token: '2ca5f3b149a82cb91eb246b9d671ab99867af34790f17b05125c0abd2b62c61509650b076d4f5d48db257',
-			user_ids: '16718732',
-			fields: 'bdate,city,universities',
-			client_secret: '9W8DQ2D3r97l3hWNoAfY',
-			redirect_uri: 'http://localhost/auth/login_vk_callback'
-		},
-		json: true
-	};
-
-	rp(options).then(function (result) {
-		console.log(result);
-		/*
-		{ access_token: '2ca5f3b149a82cb91eb246b9d671ab99867af34790f17b05125c0abd2b62c61509650b076d4f5d48db257',
-		  expires_in: 86374,
-		  user_id: 16718732 }
-		*/
-	}).catch(function(err) {
-		console.error(err);
-	});
-}
-
-//getUserInfo();
+const logger = require('log4js').getLogger();
 
 router.get('/login_soc', function(req, res, next) {
 	res.redirect(`https://oauth.vk.com/authorize?client_id=${config.vkApp.id}&display=page&redirect_uri=${config.vkApp.redirectUrl}&response_type=code&v=${config.vkApp.version}`);
@@ -61,19 +24,11 @@ router.get('/login_vk_callback', function(req, res, next) {
 	var avatar = null;
 	var isAvatarFileCreated = false;
 	var userHasPhoto = false;
+	var userId = null;
 
-	/*var options = {
-		uri: 'https://oauth.vk.com/access_token',
-		qs: {
-			client_id: '5763848',
-			code: '962d5238bb566af565',
-			client_secret: '9W8DQ2D3r97l3hWNoAfY',
-			redirect_uri: 'http://localhost/auth/login_vk_callback'
-		},
-		json: true
-	};*/
 	Promise.resolve().then(function() {
-		console.log(req.query.code);
+		
+		logger.debug(req.query.code);
 		var options = {
 			uri: 'https://oauth.vk.com/access_token',
 			qs: {
@@ -86,11 +41,15 @@ router.get('/login_vk_callback', function(req, res, next) {
 		};
 
 		return rp(options);
+
 	}).then(function(result) {
-		console.log(result);
+		
+		logger.debug(result);
 		access = result;
 		return connectionPromise();
+	
 	}).then(function(connection) {
+		
 		db = connection;
 		var sql = `	INSERT INTO access_token(access_token, expires_in, vk_id, date_created)
 					VALUES (
@@ -98,145 +57,197 @@ router.get('/login_vk_callback', function(req, res, next) {
 						${access.expires_in},
 						${access.user_id},
 						NOW())`;
-		console.log(sql);
+		logger.debug(sql);
 		return db.queryAsync(sql);
+	
 	}).then(function(result) {
-		console.log(result);
+	
+		logger.debug(result);
 		var options = {
 			uri: 'https://api.vk.com/method/users.get',
 			qs: {
 				access_token: access.access_token,
 				user_ids: access.user_id,
-				fields: 'bdate,sex,city,universities,photo_200,photo_max'
+				fields: 'about,contacts,personal,bdate,sex,universities,photo_200,photo_max'
 			},
 			json: true
 		};
-
+		logger.debug(options);
 		return rp(options);
+	
 	}).then(function(result) {
-		console.log(result);
+
+		logger.debug(result);
 		user = result.response[0];
 		
-		var options = {
-			uri: 'https://api.vk.com/method/database.getCitiesById',
-			qs: {
-				access_token: access.access_token,
-				city_ids: user.universities[0].city
-			},
-			json: true
-		};
+		var sql = `SELECT id FROM \`User\` WHERE vk_id = ${user.uid};`;
 
-		return rp(options);
-	}).then(function(result) {
-		user.universities[0].cityName = result.response[0].title;
-
-		var sex;
-		switch (user.sex) {
-			case 1:
-				sex = 'женский';
-				break;
-			case 2:
-				sex = 'мужской';
-				break;
-			default:
-				sex = 'не важно';
-		}
-
-		var hasBirthYear = false;
-		var dateFormat = '%e.%c';
-
-		if (user.bdate.match(/^\d+\.\d+\.\d+$/)) {
-			hasBirthYear = true;
-			dateFormat = '%e.%c.%Y';			
-		}		
-
-		var age = 0;
-		if (hasBirthYear) {
-			var now = moment();
-			var bdate = moment(user.bdate, 'D.M.YYYY');
-			age = now.diff(bdate, 'years');
-		}
-
-		var sql = `	INSERT INTO \`User\`(	first_name, last_name, sex, age, birth_date, city, 
-											university, faculty, avatar,
-											login, password, 
-											vk_id)
-					VALUES (	'${user.first_name}',
-								'${user.last_name}',
-								'${sex}',
-								'${age}',
-								STR_TO_DATE('${user.bdate}', '${dateFormat}'),
-								'${user.universities[0].cityName}',
-								'${user.universities[0].name}',
-								'${user.universities[0].faculty_name}',
-								'/images/photo.jpg',
-								NULL,
-								NULL,
-								${user.uid})`;
-		console.log(sql);
+		logger.debug(sql);
 		return db.queryAsync(sql);
+	
 	}).then(function(result) {
-		console.log(result);
-		newUserId = result.insertId;
-		avatar = path.normalize(__dirname + '/../../public/images/avatar-user-'+newUserId+'.jpg');
-		userHasPhoto = (user.photo_200 !== 'https://vk.com/images/camera_200.png') ? true : false;		
-		
-		/*if (userHasPhoto) {
-			// download photo
-			const options = {
-				url: user.photo_200,
-				encoding: 'binary'
-			};	
-			return request.get(options);
-		} else {
-			return Promise.resolve();
-		}*/
-		return Promise.resolve();
-	}).then(function(res) {
-		
-		/*if (userHasPhoto) {
-			// save photo to disk
-			isAvatarFileCreated = true;
+	
+		logger.debug(result);
 
-			const buffer = Buffer.from(res, 'utf8');
-			fs.writeFileSync(avatar, buffer);
+		if (result.length) {
+			userId = result[0].id;
+		}
+
+		if (userId) {
+			// existing user 
+			res.redirect(res.redirect('/profile/' + userId));
+		} else {
+			//new user
+			var options = {
+				uri: 'https://api.vk.com/method/database.getCitiesById',
+				qs: {
+					access_token: access.access_token,
+					city_ids: user.universities[0].city
+				},
+				json: true
+			};
+			logger.debug(options);
 			
-			//update db
-			var sql = `UPDATE \`User\` SET avatar = '/images/avatar-user-`+newUserId+`.jpg' WHERE id = ${newUserId};`;
-			console.log(sql);
-			return db.queryAsync(sql);
-		} else {
-			return Promise.resolve();
-		}*/
-		return Promise.resolve();
-	}).then(function(result) {
-		/*if (userHasPhoto) {
-			console.log(result);
-		}*/	
-		res.redirect('/profile/'+newUserId);
+			rp(options).then(function(result) {
+				logger.debug(result);
+				user.universities[0].cityName = result.response[0].name;
+
+				var sex;
+				switch (user.sex) {
+					case 1:
+						sex = 'женский';
+						break;
+					case 2:
+						sex = 'мужской';
+						break;
+					default:
+						sex = 'не важно';
+				}
+
+				var hasBirthYear = false;
+				var dateFormat = '%e.%c';
+
+				if (user.bdate.match(/^\d+\.\d+\.\d+$/)) {
+					hasBirthYear = true;
+					dateFormat = '%e.%c.%Y';			
+				}		
+
+				var age = 0;
+				if (hasBirthYear) {
+					var now = moment();
+					var bdate = moment(user.bdate, 'D.M.YYYY');
+					age = now.diff(bdate, 'years');
+				}
+
+				var about = (user.about) ? user.about : '';
+
+				var sql = `	INSERT INTO \`User\`(	first_name, last_name, sex, age, birth_date, city, about,
+													university, faculty, avatar,
+													login, password, 
+													vk_id, register_from_vk, date_register)
+							VALUES (	'${user.first_name}',
+										'${user.last_name}',
+										'${sex}',
+										'${age}',
+										STR_TO_DATE('${user.bdate}', '${dateFormat}'),
+										'${user.universities[0].cityName}',
+										'${about}',
+										'${user.universities[0].name}',
+										'${user.universities[0].faculty_name}',
+										'/images/photo.jpg',
+										NULL,
+										NULL,
+										${user.uid},
+										1,
+										NOW())`;
+				logger.debug(sql);
+				return db.queryAsync(sql);
+			
+			}).then(function(result) {
+			
+				logger.debug(result);
+				newUserId = result.insertId;
+				avatar = path.normalize(__dirname + '/../../public/images/avatar-user-'+newUserId+'.jpg');
+				userHasPhoto = (user.photo_200 !== 'https://vk.com/images/camera_200.png') ? true : false;		
+				
+				/*if (userHasPhoto) {
+					// download photo
+					const options = {
+						url: user.photo_200,
+						encoding: 'binary'
+					};	
+					return request.get(options);
+				} else {
+					return Promise.resolve();
+				}*/
+				return Promise.resolve();
+			
+			}).then(function(res) {
+				
+				/*if (userHasPhoto) {
+					// save photo to disk
+					isAvatarFileCreated = true;
+
+					const buffer = Buffer.from(res, 'utf8');
+					fs.writeFileSync(avatar, buffer);
+					
+					//update db
+					var sql = `UPDATE \`User\` SET avatar = '/images/avatar-user-`+newUserId+`.jpg' WHERE id = ${newUserId};`;
+					logger.debug(sql);
+					return db.queryAsync(sql);
+				} else {
+					return Promise.resolve();
+				}*/
+				return Promise.resolve();
+			
+			}).then(function(result) {
+			
+				/*if (userHasPhoto) {
+					logger.debug(result);
+				}*/	
+				res.redirect('/profile/'+newUserId);
+			
+			}).catch(function(err) {
+			
+				logger.error(err.message, err.stack);
+				
+				if (isAvatarFileCreated) {
+					logger.debug('REMOVE AVATAR FROM DISK...');
+					fs.unlinkSync(avatar);
+				}
+
+				if (newUserId) {
+					logger.debug('ROLLBACK User...');
+					var sql = `DELETE FROM \`User\` WHERE id = ${newUserId};`;
+					logger.debug(sql);
+					db.queryAsync(sql);
+				}
+
+				if (access) {
+					logger.debug('ROLLBACK access_token...');
+					var sql = `DELETE FROM access_token WHERE access_token = '${access.access_token}';`;
+					logger.debug(sql);
+					db.queryAsync(sql);
+				}
+
+				res.render('errors/500.pug');
+			});
+
+		}
+
 	}).catch(function(err) {
-		console.error(err.message, err.stack);
+	
+		logger.error(err.message, err.stack);
 		
-		if (isAvatarFileCreated) {
-			console.log('REMOVE AVATAR FROM DISK...');
-			fs.unlinkSync(avatar);
-		}
-
-		if (newUserId) {
-			console.log('ROLLBACK User...');
-			var sql = `DELETE FROM \`User\` WHERE id = ${newUserId};`;
-			console.log(sql);
-			db.queryAsync(sql);
-		}
-
 		if (access) {
-			console.log('ROLLBACK access_token...');
+			logger.debug('ROLLBACK access_token...');
 			var sql = `DELETE FROM access_token WHERE access_token = '${access.access_token}';`;
-			console.log(sql);
+			logger.debug(sql);
 			db.queryAsync(sql);
 		}
 
 		res.render('errors/500.pug');
+	
 	});
 });
 
