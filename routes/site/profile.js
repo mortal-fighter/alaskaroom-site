@@ -10,6 +10,12 @@ router.get('/:userId(\\d+)?', function(req, res, next) {
 	var data = null;
 	var priorities = [];
 	var photos = [];
+	
+	if (!req.isAuthorized) {
+		res.redirect(`/?message='Пожалуйста, авторизуйтесь в системе`);
+		return;
+	}
+
 	connectionPromise().then(function(connection) {
 		db = connection;
 		

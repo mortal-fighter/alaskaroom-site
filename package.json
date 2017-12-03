@@ -27,6 +27,7 @@
     "log4js": "1.0.1",
     "request": "*",
     "request-promise": "*",
-    "moment": "*"
+    "moment": "*",
+    "randomstring": "*"
   }
 }

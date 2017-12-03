@@ -6,7 +6,9 @@ const Promise = require('bluebird');
 
 router.get('/', function(req, res, next) {
 	Promise.resolve().then(function() {
-		res.render('site/homepage.pug');
+		res.render('site/homepage.pug', {
+			message: req.query.message
+		});
 	}).catch(function(err) {
 		logger.error(err.message, err.stack);
 		res.render('errors/500.pug');

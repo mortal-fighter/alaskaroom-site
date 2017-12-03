@@ -1,15 +1,18 @@
 'use strict';
 
 const router = require('express').Router();
-const config = require('../../config/common.js');
+
 const Promise = require('Bluebird');
-const connectionPromise = require('../../components/connectionPromise.js');
 const rp = require('request-promise');
 const request = require('request');
 const moment = require('moment');
 const fs = require('fs');
 const path = require('path');
 const logger = require('log4js').getLogger();
+
+const config = require('../../config/common.js');
+const connectionPromise = require('../../components/connectionPromise.js');
+const auth = require('../../components/auth.js');
 
 router.get('/login_soc', function(req, res, next) {
 	res.redirect(`https://oauth.vk.com/authorize?client_id=${config.vkApp.id}&display=page&redirect_uri=${config.vkApp.redirectUrl}&response_type=code&v=${config.vkApp.version}`);
@@ -94,9 +97,19 @@ router.get('/login_vk_callback', function(req, res, next) {
 		}
 
 		if (userId) {
+			
 			// existing user 
-			res.redirect(res.redirect('/profile/' + userId));
+			auth.sessionStart(userId).then(function(token) {
+				res.cookie('AlaskaRoomAuthToken', token);
+				res.redirect('/profile/' + userId);	
+			}).catch(function(err) {
+				logger.error(err);
+				res.render('errors/500.pug');
+			});
+			
+		
 		} else {
+			
 			//new user
 			var options = {
 				uri: 'https://api.vk.com/method/database.getCitiesById',
@@ -167,6 +180,8 @@ router.get('/login_vk_callback', function(req, res, next) {
 			
 				logger.debug(result);
 				newUserId = result.insertId;
+				auth.sessionStart(newUserId);
+
 				avatar = path.normalize(__dirname + '/../../public/images/avatar-user-'+newUserId+'.jpg');
 				userHasPhoto = (user.photo_200 !== 'https://vk.com/images/camera_200.png') ? true : false;		
 				
@@ -205,7 +220,13 @@ router.get('/login_vk_callback', function(req, res, next) {
 				/*if (userHasPhoto) {
 					logger.debug(result);
 				}*/	
-				res.redirect('/profile/'+newUserId);
+				auth.sessionStart(newUserId).then(function(token) {
+					res.cookie('AlaskaRoomAuthToken', token);
+					res.redirect('/profile/' + newUserId);	
+				}).catch(function(err) {
+					logger.error(err);
+					res.render('errors/500.pug');
+				});
 			
 			}).catch(function(err) {
 			
@@ -215,6 +236,9 @@ router.get('/login_vk_callback', function(req, res, next) {
 					logger.debug('REMOVE AVATAR FROM DISK...');
 					fs.unlinkSync(avatar);
 				}
+
+				logger.debug(`END SESSION FOR USER ${newUserId}...`);
+				auth.sessionEnd(newUserId);
 
 				if (newUserId) {
 					logger.debug('ROLLBACK User...');
@@ -239,6 +263,9 @@ router.get('/login_vk_callback', function(req, res, next) {
 	
 		logger.error(err.message, err.stack);
 		
+		logger.debug(`END SESSION FOR USER ${userId}...`);
+		auth.sessionEnd(userId);
+
 		if (access) {
 			logger.debug('ROLLBACK access_token...');
 			var sql = `DELETE FROM access_token WHERE access_token = '${access.access_token}';`;
@@ -250,9 +277,5 @@ router.get('/login_vk_callback', function(req, res, next) {
 	
 	});
 });
-
-function newSession() {
-
-};
 
 module.exports = router;
