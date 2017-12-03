@@ -101,7 +101,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 			// existing user 
 			auth.sessionStart(userId).then(function(token) {
 				res.cookie('AlaskaRoomAuthToken', token);
-				res.redirect('/profile/' + userId);	
+				res.redirect(`/profile/user=${userId}&action=`);	
 			}).catch(function(err) {
 				logger.error(err);
 				res.render('errors/500.pug');
@@ -222,7 +222,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 				}*/	
 				auth.sessionStart(newUserId).then(function(token) {
 					res.cookie('AlaskaRoomAuthToken', token);
-					res.redirect('/profile/' + newUserId);	
+					res.redirect(`/profile/user=${newUserId}&action=edit`);	
 				}).catch(function(err) {
 					logger.error(err);
 					res.render('errors/500.pug');
