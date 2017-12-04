@@ -18,19 +18,18 @@ html(lang=ru)
 				div.user-desc
 					h3 Обо мне
 					p= locals.data.user_about
-				if locals.priorities.length > 0
-					div.user-caracter
-						for priority in locals.priorities 
-							div.caracter
-								h4= priority.priority_name
-								p= priority.option_name
+				div.user-caracter
+					for priority in locals.priorities 
 						div.caracter
-							h4 Сколько плачу \ готов платить?
-							p 8 000 руб
+							h4= priority.priority_name
+							p= priority.option_name
+					div.caracter
+						h4 Сколько плачу \ готов платить?
+						p= locals.data.flat_rent_pay
 				p.edit-user Хотите отредактировать информацию о себе?
-					a(href="#") Нажмите тут
+					a#btn-edit-user-info(href="#") Нажмите тут
 				p.add-room У вас есть квартира и вы ищите соседа?
-					a(href="#") Рассказать про квартиру и условия
+					a#btn-showflat(href="#") Рассказать про квартиру и условия
 			if locals.data.flat_id
 				div.room-header
 					h6 О квартире \ комнате
@@ -76,3 +75,4 @@ html(lang=ru)
 							h4= util.name
 		include includes/footer.pug
 		include includes/message_popup.pug
+		input(type="hidden", id="user_id", value=locals.user_id)
