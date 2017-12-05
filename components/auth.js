@@ -6,19 +6,19 @@ const logger = require('log4js').getLogger();
 
 var db = null;
 
-function sessionExistsByToken(token) {
+function sessionUserIdByToken(token) {
 	return new Promise(function(resolve, reject) {
 		connectionPromise().then(function(connection) {
 			db = connection;
-			var sql = `	SELECT count(*) cnt FROM Session WHERE token = '${token}';`;
+			var sql = `	SELECT user_id FROM Session WHERE token = '${token}';`;
 			logger.debug(sql);
 			return db.queryAsync(sql);
 		}).then(function(result) {
 			logger.debug(result);
-			if (result[0].cnt !== 1) {
+			if (result.length === 0) {
 				reject(new Error(`NO SESSION FOUND FOR TOKEN '${token}'`));
 			} else {
-				resolve();
+				resolve(result[0].user_id);
 			}
 		});
 	});
@@ -78,8 +78,9 @@ module.exports = {
 				req.isAuthorized = false;
 				reject(new Error(`REQUEST '${req.originalUrl}' IS NOT AUTHORIZED`));
 			} else {
-				sessionExistsByToken(req.cookies['AlaskaRoomAuthToken']).then(function() {
+				sessionUserIdByToken(req.cookies['AlaskaRoomAuthToken']).then(function(user_id) {
 					req.isAuthorized = true;
+					req.user_id = user_id;
 					resolve();
 				}).catch(function(err) {
 					logger.error(err);

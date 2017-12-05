@@ -1,0 +1,11 @@
+.comment {
+    float: left;
+    clear: both;
+    font-size: 10px;
+    color: #777;
+    width: 100% !important;
+}
+
+.profile-user > img { cursor: pointer; }
+
+#user_avatar_2 { display: none; }

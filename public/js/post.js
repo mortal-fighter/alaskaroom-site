@@ -77,6 +77,8 @@ function handlersPostCreate() {
 		dateFormat: "dd.mm.yy"
 	});
 
+	
+
 	$('#btn-find-roommate').on('click', function() {
 		$('#type').val('find-roommate');
 		$('.room-info, .utilities, .room-photos').fadeIn(200);
