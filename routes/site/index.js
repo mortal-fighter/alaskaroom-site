@@ -9,6 +9,9 @@ router.use(function(req, res, next) {
 	// urls which are allowed with no authorization
 	if (
 		// starting with '/auth'
+		req.originalUrl.match(/^\/favicon.ico$/) ||
+
+		// starting with '/auth'
 		req.originalUrl.match(/^\/auth/) ||
 		
 		// main page (possibly with parameters)

@@ -28,16 +28,16 @@ html(lang=ru)
 				div.user-desc
 					h3 Обо мне
 					textarea#user_about(placeholder="Напишите тут несколько предложений о себе ...")= locals.data.user_about
-				div.user-setting
+				div.user-setting.info
 					input(type="hidden", id="user_id", value=locals.data.user_id)
 					div
-						p Ваше имя*
+						p Ваше имя
 						input#user_first_name(type="text", placeholer="Ваше имя", value=locals.data.user_first_name)
 					div
-						p Ваша фамилия*
+						p Ваша фамилия
 						input#user_last_name(type="text", placeholer="Ваша фамилия", value=locals.data.user_last_name)
 					div
-						p Ваш пол*
+						p Ваш пол
 						select#user_sex
 							if locals.data.user_sex === 'мужской'
 								option(id='женский') женский
@@ -46,30 +46,29 @@ html(lang=ru)
 								option(id='женский', selected) женский
 								option(id='мужской') мужской
 					div
-						p Дата Вашего рождения*
+						p Дата Вашего рождения
 						input#user_birth_date(type="text", placeholer="Дата Вашего рождения", value=locals.data.user_birth_date)
 					div
-						p Номер Вашего мобильного*
+						p Номер Вашего мобильного
 						input#user_phone(type="text", placeholer="Номер Вашего мобильного", value=locals.data.user_phone)
 					div
 						p Ваш email
 						input#user_email(type="text", placeholer="Ваш email", value=locals.data.user_email)
 					div
-						p Страна вашего ВУЗа*
+						p Страна вашего ВУЗа
 						input#user_city(type="text", placeholer="Страна вашего ВУЗа", value=locals.data.user_city)
 					div
-						p Название вашего ВУЗа*
+						p Название вашего ВУЗа
 						input#user_university(type="text", placeholer="Название вашего ВУЗа", value=locals.data.user_university)
 					div
-						p Ваш факультет*
+						p Ваш факультет
 						input#user_faculty(type="text", placeholer="Ваш факультет", value=locals.data.user_faculty)
 					div
-						p Ваше направление/специальность*
+						p Ваше направление
 						input#user_speciality(type="text", placeholer="Ваша специальность", value=locals.data.user_speciality)
 					div
-						p Ваш курс*
+						p Ваш курс
 						input#user_study_year(type="text", placeholer="Ваш курс", value=locals.data.user_study_year)
-					div.comment Поля, омеченные символом *, обязательны для заполнения
 				div.user-setting
 					if locals.priorities
 						for priority in locals.priorities
