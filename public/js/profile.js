@@ -59,22 +59,30 @@ function handlersProfileEdit() {
 			form.user.speciality = $('#user_speciality').val();
 			form.user.study_year = $('#user_study_year').val();
 			//form.user.wish_pay = $('#user_study_year').val();
+			form.priority = [];
+			$('.option-set').each(function() {
+				form.priority.push(processInputSelect(this.id));
+			});
 
-			$.ajax({
-				method: 'POST',
-				url: '/profile/edit_user',
-				dataType: 'json',
-				data: form,
-				success: function(result) {
-					if (result.status === 'ok') {
-						alert('Информация сохранена');
-					} else {
-						alert('При загрузке данных произошла ошибка');
+			console.log(form.priority);
+
+			Promise.resolve().then(function() {
+				$.ajax({
+					method: 'POST',
+					url: '/profile/edit_user',
+					dataType: 'json',
+					data: form,
+					success: function(result) {
+						if (result.status === 'ok') {
+							alert('Информация сохранена');
+						} else {
+							alert('При загрузке данных произошла ошибка');
+						}
+					},
+					error: function() {
+						alert('Проверьте соединение с Интернетом');
 					}
-				},
-				error: function() {
-					alert('Проверьте соединение с Интернетом');
-				}
+				});
 			});
 		}
 	});
@@ -164,8 +172,8 @@ function validateUserInfo() {
 		$('#user_phone').focus();
 		return false;
 	} 
-	if (user_phone.length > 100) {
-		alert('Поле \'Номер мобильного\' не может быть длиннее 100 символов');
+	if (user_phone.length > 50) {
+		alert('Поле \'Номер мобильного\' не может быть длиннее 50 символов');
 		$('#user_phone').focus();
 		return false;
 	}	
@@ -173,12 +181,20 @@ function validateUserInfo() {
 	//todo: посмотреть актуальные размеры полей в базе и поправить если надо скрипт
 
 	var user_email = $('#user_email').val();
-	if (user_email !== '' && user_email !== ' ') {
-		if ( !user_email.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) ) {
-			alert('Поле \'Ваш email\' заполнено неправильно');
-			$('#user_email').focus();
-			return false;		
-		}
+	if ( user_email === '' || user_email === ' ') {
+		alert('Поле \'Ваш email\' не может быть пустым');
+		$('#user_email').focus();
+		return false;
+	} 
+	if (user_email.length > 100) {
+		alert('Поле \'Ваш email\' не может быть длиннее 100 символов');
+		$('#user_email').focus();
+		return false;
+	}	
+	if ( !user_email.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) ) {
+		alert('Поле \'Ваш email\' заполнено неправильно');
+		$('#user_email').focus();
+		return false;
 	}
 
 	var user_city = $('#user_city').val();

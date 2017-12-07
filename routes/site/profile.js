@@ -283,7 +283,7 @@ router.get('/edit/:userId(\\d+)', function(req, res, next) {
 	var photos = [];
 	var priorities = [];
 	var userPriorities = [];
-	var priorProcessed = [];
+	var prioritySelect = [];
 	
 	connectionPromise().then(function(connection) {
 		
@@ -332,7 +332,7 @@ router.get('/edit/:userId(\\d+)', function(req, res, next) {
 
 	}).then(function(result) {
 
-		logger.debug(result);
+		//logger.debug(result);
 		priorities = result;
 
 		var sql = `	SELECT * FROM v_user_priority WHERE user_id = ${req.params.userId};`;
@@ -341,42 +341,49 @@ router.get('/edit/:userId(\\d+)', function(req, res, next) {
 
 	}).then(function(result) {
 
-		logger.debug(result);
+		//logger.debug(result);
 		userPriorities = result;
 
 		// construct priority <select>s (begin)
 
-		var currentPriorityId = -1;
-		var itemNum = -1;
+		var curPriorityId = -1;
+		var priorSelIndex = -1;
 		var isSelected = false;
 
 		for (var i = 0; i < priorities.length; i++) {
 			var priority = priorities[i];
-
-			if (priority.priority_id !== currentPriorityId) {
-				priorProcessed.push({
+			isSelected = false;
+			
+			if (priority.priority_id !== curPriorityId) {
+				prioritySelect.push({
+					priority_id: priority.priority_id,
 					priority_name_full: priority.priority_name_full,
 					options: []
 				});
-				itemNum++;
-				isSelected = false;
-				currentPriorityId = priority.priority_id;
+				priorSelIndex++;	
+				curPriorityId = priority.priority_id;
 			}
+
+			console.log(`i=${i}, curPriorityId=${curPriorityId}, priorSelIndex=${priorSelIndex}, isSelected=${isSelected}`);
 
 			if (!isSelected && userPriorities.length) {
 				for (var j = 0; j < userPriorities.length; j++) {
-					if (userPriorities[j].priority_option_id === priority.option_id) {
+					if (userPriorities[j].option_id === priority.option_id) {
 						isSelected = true;
-						return false; // break the loop
+						break;
 					}
 				}
 			}
 
-			priorProcessed[itemNum].options.push({
+			console.log(`isSelected=${isSelected}`);
+
+			prioritySelect[priorSelIndex].options.push({
 				id: priority.option_id,
 				name: priority.option_name,
 				isSelected: isSelected
 			});
+
+			console.log(`prioritySelect=${JSON.stringify(prioritySelect)}`);
 		}	
 		
 		if (data.flat_id) {
@@ -397,11 +404,13 @@ router.get('/edit/:userId(\\d+)', function(req, res, next) {
 	
 	}).then(function() {
 		
+		console.log('prioritySelect=', JSON.stringify(prioritySelect));
+
 		res.render('site/profile_edit.pug', {
 			user_id: req.params.userId,
 			data: data,
 			photos: photos,
-			priorities: priorProcessed
+			priorities: prioritySelect
 		});
 	
 	}).catch(function(err) {
@@ -454,6 +463,33 @@ router.post('/edit_user', function(req, res, next) {
 		logger.debug(sql);
 		return db.queryAsync(sql);
 	
+	}).then(function(result) {
+
+		logger.debug(result);
+		var sql = `DELETE FROM user_priority_option WHERE user_id = ${req.body.user.id};`;
+		logger.debug(sql);
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		logger.debug(result);
+			
+		if (!req.body.priority.length) {
+			return Promise.resolve();
+		}	
+
+		console.log('req.body.priority=',req.body.priority);
+
+		var sql = `	INSERT INTO user_priority_option(user_id, priority_option_id) 
+					VALUES (${req.body.user.id}, ${req.body.priority[0]})`;
+		for (var i = 1; i < req.body.priority.length; i++) {
+					sql += ` \n ,(${req.body.user.id}, ${req.body.priority[i]})`;
+		}
+		sql += ';';
+
+		logger.debug(sql);
+		return db.queryAsync(sql);
+
 	}).then(function(result) {
 
 		logger.debug(result);

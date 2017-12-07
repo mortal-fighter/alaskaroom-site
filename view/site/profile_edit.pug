@@ -76,7 +76,7 @@ html(lang=ru)
 								p= priority.priority_name_full
 								select.option-set(id="priority-"+priority.priority_id, size="1")
 									for option in priority.options
-										if option.selected
+										if option.isSelected
 											option(value=option.id, selected)= option.name
 										else
 											option(value=option.id)= option.name
