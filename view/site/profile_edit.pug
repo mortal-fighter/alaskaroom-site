@@ -69,7 +69,7 @@ html(lang=ru)
 					div
 						p Ваш курс
 						input#user_study_year(type="text", placeholer="Ваш курс", value=locals.data.user_study_year)
-				div.user-setting
+				div.user-setting.priorities
 					if locals.priorities
 						for priority in locals.priorities
 							div

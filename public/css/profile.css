@@ -5,3 +5,7 @@
 .info div {
 	height: 60px;
 }
+
+.priorities > div > p {
+    height: 27px;
+}
