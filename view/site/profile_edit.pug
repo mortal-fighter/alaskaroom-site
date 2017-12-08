@@ -92,30 +92,40 @@ html(lang=ru)
 				if locals.photos
 					for photo in locals.photos
 						div(id=photo.id)
-							img(src=photo.src, alt="Room photo")
+							img(src=photo.href, alt="Room photo")
 							a(href="#") Удалить
+				div
+					img#btn-photo-add(src="/images/add_photo_200_x_133.png", alt="Загрузить фотографии", title="Загрузить фотографии")
+					input#files(type="file", accept=".jpg, .png, .gif", multiple="multiple")
 			div.room-info.profile-param
 				div.user-desc
-					textarea(placeholder="Напишите тут несколько предложений о квартире ...")
+					textarea#flat_description(placeholder="Напишите тут несколько предложений о квартире ...")= locals.data.flat_description
+					if locals.data.flat_id
+						input#flat_id(type="hidden", value=locals.data.flat_id)
+					else
+						input#flat_id(type="hidden", value="")
 				div.user-setting
-					input.option-set-big(type="text", placeholder="Адрес квартиры")
+					input#flat_address.option-set-big(type="text", placeholder="Адрес квартиры")
 					div
-						input.option-set-small(type="text", placeholder="Площадь квартиры")
+						input#flat_square.option-set-small(type="text", placeholder="Площадь квартиры")
 					div
-						input.option-set-small(type="text", placeholder="Количество комнат")
+						input#flat_room_num.option-set-small(type="text", placeholder="Количество комнат")
 					div
-						input.option-set-small(type="text", placeholder="Ближайший транспорт")
+						input#flat_traffic.option-set-small(type="text", placeholder="Ближайший транспорт")
 					div
-						input.option-set-small(type="text", placeholder="Общая аренда, руб")
+						input#flat_total_pay.option-set-small(type="text", placeholder="Общая аренда, руб")
 					div
-						input.option-set-small(type="text", placeholder="Плата для соседа, руб")
+						input#flat_rent_pay.option-set-small(type="text", placeholder="Плата для соседа, руб")
 					div
-						input.option-set-small(type="text", placeholder="Дата въезда")
+						input#flat_enter_date.option-set-small(type="text", placeholder="Дата въезда")
 				div.user-setting
 					if locals.utilities
 						for utility in locals.utilities
 							label= utility.name
-								input(type="checkbox", value=utility.id)
+								if utility.isChecked
+									input(type="checkbox", value=utility.id, checked)
+								else
+									input(type="checkbox", value=utility.id)
 			input#btn-saveall.final-ad(type="button", value="Сохранить объявление")
 		include includes/footer.pug
 		include includes/message_popup.pug

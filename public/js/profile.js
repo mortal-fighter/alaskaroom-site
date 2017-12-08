@@ -37,6 +37,14 @@ function handlersProfileEdit() {
 	$('#btn-showflat').on('click', function(e) { 
 		e.preventDefault();
 		$('.room-info').fadeIn(200);
+		$('#flat_enter_date').datepicker({
+			dayNames: [ "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота" ],
+			dayNamesShort: [ "Вос", "Пон", "Вто", "Сре", "Чет", "Пят", "Суб" ],
+			dayNamesMin: [ "Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб" ],
+			monthNames: [ "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" ],
+			monthNamesShort: [ "Янв", "Фев", "Мар", "Апр", "Май", "Инь", "Иль", "Авг", "Сен", "Окт", "Ноя", "Дек" ],
+			dateFormat: "dd.mm.yy"
+		});
 	});
 
 	$('#btn-saveall').on('click', function(e) {
@@ -63,8 +71,6 @@ function handlersProfileEdit() {
 			$('.option-set').each(function() {
 				form.priority.push(processInputSelect(this.id));
 			});
-
-			console.log(form.priority);
 
 			Promise.resolve().then(function() {
 				$.ajax({
@@ -124,6 +130,85 @@ function handlersProfileEdit() {
 				console.log('Ошибка интернет-соединения');
 			}
 		});
+	});
+
+	$('#btn-photo-add').on('click', function() {
+		$('#files').click();
+	});
+
+	$('#files').on('change', function() {
+		var files = $('#files').get(0).files;
+
+		if (files.length === 0) {
+			return;
+		}
+		if (files.length > 10) {
+			alert('Можно загружать не более 10 фото за раз');
+			return;
+		}
+
+		var filesFiltered = [];
+		var filesRejected = [];
+
+		for (var i = 0; i < files.length; i++) {
+			if (files[i].size <= 10485760 / 2 ) { // 10 / 2 = 5 mb
+				filesFiltered.push(files[i]);
+			} else {
+				alert('Фото \'' + files[i].name + '\' превышает допустимый размер в 5 мб');
+				filesRejected.push(files[i]);
+			}
+		}
+		var formData = new FormData();
+		for (var i = 0; i < filesFiltered.length; i++) {
+			formData.append('uploads', filesFiltered[i], filesFiltered[i].name);
+		}
+
+		$.ajax({
+			url: '/profile/upload_photos',
+			type: 'POST',
+			data: formData,
+			processData: false,
+			contentType: false,
+			success: function(result) {
+				switch (result.status) {
+					case 'ok': 
+						var elems = [];
+						for (var i=0; i<result.newPhotos.length; i++) {
+							elems.push($('<div id="flat-photo-' + result.newPhotos[i].id + '"><img src="' + result.newPhotos[i].href + '" alt="' + result.newPhotos[i] + '" /><a href="javascript:deletePhoto($(this).parent().attr(id))">Удалить</a></div>'));
+						}
+						
+						$('#btn-photo-add').parent().before(elems);
+
+						break;
+					case 'not ok':
+						alert('Ошибка при загрузке фото');
+						break; 
+				}
+			},
+			error: function() {
+				console.log('Ошибка интернет-соединения');
+			}
+		});
+	});
+}
+
+function deletePhoto(id) {
+	$.ajax({
+		url: '/profile/delete_photo/'+id.match(/^flat-photo-(\d+)$/)[1],
+		type: 'DELETE',
+		success: function(result) {
+			switch (result.status) {
+				case 'ok': 
+					$('#flat-photo-'+id).remove();
+					break;
+				case 'not ok':
+					alert('Ошибка при удалении фото');
+					break; 
+			}
+		},
+		error: function() {
+			console.log('Ошибка интернет-соединения');
+		}
 	});
 }
 
@@ -261,7 +346,95 @@ function validateUserInfo() {
 }
 
 function validateFlat() {
+	var flat_description = $('#flat_description').val();
+	if ( flat_description !== '' && flat_description !== ' ') {
+		if (flat_description.length > 200) {
+			alert('Поле \'Описание квартиры\' не может быть длиннее 200 символов');
+			$('#flat_description').focus();
+			return false;
+		}
+	} 
+	
+	var flat_address = $('#flat_address').val();
+	if ( flat_address === '' || flat_address === ' ') {
+		alert('Поле \'Адресс\' не может быть пустым');
+		$('#flat_address').focus();
+		return false;
+	} 
+	if (flat_address.length > 200) {
+		alert('Поле \'Адресс\' не может быть длиннее 200 символов');
+		$('#flat_address').focus();
+		return false;
+	}
 
+	var flat_square = $('#flat_square').val();
+	if ( flat_square === '' || flat_square === ' ') {
+		alert('Поле \'Площадь\' не может быть пустым');
+		$('#flat_square').focus();
+		return false;
+	} 
+	if (flat_square.length > 50) {
+		alert('Поле \'Площадь\' не может быть длиннее 50 символов');
+		$('#flat_square').focus();
+		return false;
+	}
+
+	var flat_room_num = $('#flat_room_num').val();
+	if ( flat_room_num === '' || flat_room_num === ' ') {
+		alert('Поле \'Количество комнат\' не может быть пустым');
+		$('#flat_room_num').focus();
+		return false;
+	} 
+	if (!flat_room_num.match(/^\d+$/)) {
+		alert('Поле \'Количество комнат\' должно быть числом');
+		$('#flat_room_num').focus();
+		return false;
+	}
+
+	var flat_traffic = $('#flat_traffic').val();
+	if ( flat_traffic === '' || flat_traffic === ' ') {
+		alert('Поле \'Общественный транспорт\' не может быть пустым');
+		$('#flat_traffic').focus();
+		return false;
+	} 
+	if (flat_traffic.length > 300) {
+		alert('Поле \'Общественный транспорт\' не может быть длиннее 300 символов');
+		$('#flat_traffic').focus();
+		return false;
+	}
+
+	var flat_total_pay = $('#flat_total_pay').val();
+	if ( flat_total_pay === '' || flat_total_pay === ' ') {
+		alert('Поле \'Общая аренда\' не может быть пустым');
+		$('#flat_total_pay').focus();
+		return false;
+	} 
+	if (!flat_total_pay.match(/^\d+$/)) {
+		alert('Поле \'Общая аренда\' должно быть числом');
+		$('#flat_total_pay').focus();
+		return false;
+	}
+
+	var flat_rent_pay = $('#flat_rent_pay').val();
+	if ( flat_rent_pay === '' || flat_rent_pay === ' ') {
+		alert('Поле \'Плата румейта\' не может быть пустым');
+		$('#flat_rent_pay').focus();
+		return false;
+	} 
+	if (!flat_rent_pay.match(/^\d+$/)) {
+		alert('Поле \'Плата румейта\' должно быть числом');
+		$('#flat_rent_pay').focus();
+		return false;
+	}
+
+	var flat_enter_date = $('#flat_enter_date').val();
+	if (!flat_enter_date.match(/^\d{2}.\d{2}.\d{4}$/)) {
+		alert('Поле \'Дата въезда\' заполнено неправильно');
+		$('#flat_enter_date').focus();
+		return false;
+	}
+
+	return true;
 }
 
 

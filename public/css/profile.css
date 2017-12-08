@@ -9,3 +9,7 @@
 .priorities > div > p {
     height: 27px;
 }
+
+#btn-photo-add {
+	cursor: pointer;
+}

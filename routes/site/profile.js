@@ -7,6 +7,7 @@ const logger = require('log4js').getLogger();
 const moment = require('moment');
 const fs = Promise.promisifyAll(require('fs'));
 const path = require('path');
+const sizeOfAsync = Promise.promisify(require('image-size'));
 
 const multer  = require('multer');
 
@@ -227,7 +228,7 @@ router.get('/view/:userId(\\d+)', function(req, res, next) {
 		logger.debug(result);
 		data = result[0];
 
-		var sql = `	SELECT priority_name, option_name
+		var sql = `	SELECT priority_name_full, option_name
 					FROM v_user_priority
 					WHERE user_id = ${req.params.userId};`;
 		logger.debug(sql);
@@ -364,8 +365,6 @@ router.get('/edit/:userId(\\d+)', function(req, res, next) {
 				curPriorityId = priority.priority_id;
 			}
 
-			console.log(`i=${i}, curPriorityId=${curPriorityId}, priorSelIndex=${priorSelIndex}, isSelected=${isSelected}`);
-
 			if (!isSelected && userPriorities.length) {
 				for (var j = 0; j < userPriorities.length; j++) {
 					if (userPriorities[j].option_id === priority.option_id) {
@@ -375,15 +374,11 @@ router.get('/edit/:userId(\\d+)', function(req, res, next) {
 				}
 			}
 
-			console.log(`isSelected=${isSelected}`);
-
 			prioritySelect[priorSelIndex].options.push({
 				id: priority.option_id,
 				name: priority.option_name,
 				isSelected: isSelected
 			});
-
-			console.log(`prioritySelect=${JSON.stringify(prioritySelect)}`);
 		}	
 		
 		if (data.flat_id) {
@@ -403,8 +398,6 @@ router.get('/edit/:userId(\\d+)', function(req, res, next) {
 		}
 	
 	}).then(function() {
-		
-		console.log('prioritySelect=', JSON.stringify(prioritySelect));
 
 		res.render('site/profile_edit.pug', {
 			user_id: req.params.userId,
@@ -477,8 +470,6 @@ router.post('/edit_user', function(req, res, next) {
 		if (!req.body.priority.length) {
 			return Promise.resolve();
 		}	
-
-		console.log('req.body.priority=',req.body.priority);
 
 		var sql = `	INSERT INTO user_priority_option(user_id, priority_option_id) 
 					VALUES (${req.body.user.id}, ${req.body.priority[0]})`;
@@ -592,6 +583,107 @@ router.post('/upload_avatar', uploader.single('upload'), function(req, res, next
 			status: 'not ok'
 		});
 
+	});
+});
+
+router.post('/upload_photos', uploader.array('uploads'), function(req, res, next) {
+	
+	function convertResourceLocator(path) {
+		var uri = path.replace(/\\/g, '/');
+		var ind = uri.indexOf('/');
+		var res = uri.substr(ind);
+		return res;
+	}
+
+	//todo: handle errors when file uploading
+	var db = null;
+	var newPhotos = [];
+	
+	connectionPromise().then(function(connection) {
+		
+		db = connection;
+		
+		var promises = [];
+		for (var i = 0; i < req.files.length; i++) {
+			promises.push(sizeOfAsync(req.files[i].path));
+		}
+		
+		return Promise.all(promises);
+	
+	}).then(function(dimensionsArray) {
+		var sql = `	INSERT INTO Photo(	src_small, 
+										src_orig, 
+										width_small, 
+										height_small, 
+										width_orig, 
+										height_orig,
+										date_created,
+										date_updated,
+										temporary_user_id)
+					VALUES 
+			`;
+		//todo: abstract photo upload
+		//todo: compress photo
+		for (var i = 0; i < req.files.length; i++) {
+			
+			var photoHref = convertResourceLocator(req.files[i].path);
+			newPhotos.push({href: photoHref});
+
+			sql += `(	'${photoHref}', 
+						'${photoHref}', 
+						${dimensionsArray[i].width}, 
+						${dimensionsArray[i].height}, 
+						${dimensionsArray[i].width}, 
+						${dimensionsArray[i].height}, 
+						NOW(),
+						NOW(),
+						${req.user_id})`;
+			if (i !== (req.files.length - 1)) {
+				sql += ', ';
+			}
+		}	
+
+		logger.debug(sql);
+		return db.queryAsync(sql);
+	}).then(function(result) {
+		logger.debug(result);
+		
+		for (var i = 0; i < result.affectedRows - 1; i++) {
+			newPhotos[i].id = result.insertId + result.affectedRows[i];
+		}
+
+		res.json({
+			status: 'ok',
+			newPhotos: newPhotos
+		});
+
+	}).catch(function(err) {
+	
+		logger.error(err.message, err.stack);
+		res.json({
+			status: 'not ok'
+		});
+	
+	});
+});
+
+router.delete('/delete_photo/(\\d+)', function(req, res, next) {
+	var db = connection;
+	connectionPromise().then(function(connection) {
+		db = connection;
+		var sql = `	DELETE FROM Photo WHERE id = ${req.params.id};`;
+		logger.debug(sql);
+		return db.queryAsync(sql);
+	}).then(function(result) {
+		logger.debug(result);
+		res.json({
+			status: 'ok'
+		});
+	}).catch(function(err) {
+		logger.error(err.stack + err.message);
+		res.json({
+			status: 'not ok'
+		});
 	});
 });
 
