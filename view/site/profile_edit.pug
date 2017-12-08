@@ -94,9 +94,9 @@ html(lang=ru)
 						div(id=photo.id)
 							img(src=photo.href, alt="Room photo")
 							a(href="#") Удалить
-				div
+				div(style="position: relative")
 					img#btn-photo-add(src="/images/add_photo_200_x_133.png", alt="Загрузить фотографии", title="Загрузить фотографии")
-					input#files(type="file", accept=".jpg, .png, .gif", multiple="multiple")
+					input#files(type="file", accept=".jpg, .png, .gif")
 			div.room-info.profile-param
 				div.user-desc
 					textarea#flat_description(placeholder="Напишите тут несколько предложений о квартире ...")= locals.data.flat_description

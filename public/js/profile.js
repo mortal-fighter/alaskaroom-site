@@ -142,8 +142,8 @@ function handlersProfileEdit() {
 		if (files.length === 0) {
 			return;
 		}
-		if (files.length > 10) {
-			alert('Можно загружать не более 10 фото за раз');
+		if (files.length > 1) {
+			alert('Можно загружать не более 1 фото за раз');
 			return;
 		}
 
@@ -174,7 +174,18 @@ function handlersProfileEdit() {
 					case 'ok': 
 						var elems = [];
 						for (var i=0; i<result.newPhotos.length; i++) {
-							elems.push($('<div id="flat-photo-' + result.newPhotos[i].id + '"><img src="' + result.newPhotos[i].href + '" alt="' + result.newPhotos[i] + '" /><a href="javascript:deletePhoto($(this).parent().attr(id))">Удалить</a></div>'));
+							elems.push(
+								$('<div id="flat-photo-' + result.newPhotos[i].id + '"></div>')
+									.append($('<img src="' + result.newPhotos[i].href + '" alt="' + result.newPhotos[i] + '" />'))
+									.append(
+										$('<a href="#">Удалить</a>')
+										.on('click', function(e) {
+											e.preventDefault();
+											var ident = $(this).parent().attr('id');
+											deletePhoto(ident);
+										})
+									)
+							);
 						}
 						
 						$('#btn-photo-add').parent().before(elems);
@@ -192,14 +203,18 @@ function handlersProfileEdit() {
 	});
 }
 
-function deletePhoto(id) {
+function deletePhoto(photoId) {
+	var ident = photoId.match(/^flat-photo-(\d+)$/)[1];
 	$.ajax({
-		url: '/profile/delete_photo/'+id.match(/^flat-photo-(\d+)$/)[1],
+		url: '/profile/delete_photo/',
 		type: 'DELETE',
+		data: {
+			'photo_id': ident
+		},
 		success: function(result) {
 			switch (result.status) {
 				case 'ok': 
-					$('#flat-photo-'+id).remove();
+					$('#flat-photo-'+ident).remove();
 					break;
 				case 'not ok':
 					alert('Ошибка при удалении фото');

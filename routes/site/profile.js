@@ -10,6 +10,7 @@ const path = require('path');
 const sizeOfAsync = Promise.promisify(require('image-size'));
 
 const multer  = require('multer');
+//todo: fix bug with duplicating && corrupting images 
 
 const storage = multer.diskStorage({
 	
@@ -613,6 +614,8 @@ router.post('/upload_photos', uploader.array('uploads'), function(req, res, next
 	}).then(function(dimensionsArray) {
 		var sql = `	INSERT INTO Photo(	src_small, 
 										src_orig, 
+										filename_small,
+										filename_orig,
 										width_small, 
 										height_small, 
 										width_orig, 
@@ -630,7 +633,9 @@ router.post('/upload_photos', uploader.array('uploads'), function(req, res, next
 			newPhotos.push({href: photoHref});
 
 			sql += `(	'${photoHref}', 
-						'${photoHref}', 
+						'${photoHref}',
+						'${req.files[i].filename}',
+						'${req.files[i].filename}', 
 						${dimensionsArray[i].width}, 
 						${dimensionsArray[i].height}, 
 						${dimensionsArray[i].width}, 
@@ -648,8 +653,8 @@ router.post('/upload_photos', uploader.array('uploads'), function(req, res, next
 	}).then(function(result) {
 		logger.debug(result);
 		
-		for (var i = 0; i < result.affectedRows - 1; i++) {
-			newPhotos[i].id = result.insertId + result.affectedRows[i];
+		for (var i = 0; i < result.affectedRows; i++) {
+			newPhotos[i].id = result.insertId + i;
 		}
 
 		res.json({
@@ -667,23 +672,41 @@ router.post('/upload_photos', uploader.array('uploads'), function(req, res, next
 	});
 });
 
-router.delete('/delete_photo/(\\d+)', function(req, res, next) {
-	var db = connection;
+router.delete('/delete_photo', function(req, res, next) {
+	var db = null;
 	connectionPromise().then(function(connection) {
+		
 		db = connection;
-		var sql = `	DELETE FROM Photo WHERE id = ${req.params.id};`;
+		var sql = ` SELECT filename_orig FROM Photo WHERE id = ${req.body.photo_id};`;
 		logger.debug(sql);
 		return db.queryAsync(sql);
+	
 	}).then(function(result) {
+	
+		logger.debug(result);
+		return fs.unlinkAsync(path.normalize(__dirname + '/../../public/images/uploads/user_'+req.user_id+'/'+result[0].filename_orig));
+	
+	}).then(function() {
+		
+		logger.debug(`Unlink file success`);
+		var sql = `	DELETE FROM Photo WHERE id = ${req.body.photo_id};`;
+		logger.debug(sql);
+		return db.queryAsync(sql);
+	
+	}).then(function(result) {
+	
 		logger.debug(result);
 		res.json({
 			status: 'ok'
 		});
+	
 	}).catch(function(err) {
+	
 		logger.error(err.stack + err.message);
 		res.json({
 			status: 'not ok'
 		});
+	
 	});
 });
 
