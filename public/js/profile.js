@@ -1,5 +1,7 @@
 'use strict';
 
+var hasFlat = false;
+
 /* HANDLERS UI CONTROLS */
 function handlersProfileView() {
 
@@ -45,6 +47,7 @@ function handlersProfileEdit() {
 			monthNamesShort: [ "Янв", "Фев", "Мар", "Апр", "Май", "Инь", "Иль", "Авг", "Сен", "Окт", "Ноя", "Дек" ],
 			dateFormat: "dd.mm.yy"
 		});
+		hasFlat = true;
 	});
 
 	$('#btn-saveall').on('click', function(e) {
@@ -72,10 +75,30 @@ function handlersProfileEdit() {
 				form.priority.push(processInputSelect(this.id));
 			});
 
-			Promise.resolve().then(function() {
+			var validationFailed = false;
+
+			if (hasFlat) {
+				if (!validateFlat()) {
+					validationFailed = true;
+					return;
+				}
+
+				form.flat = {};
+				form.flat.id = $('#flat_id').val();
+				form.flat.description = $('#flat_description').val();
+				form.flat.address = $('#flat_address').val();
+				form.flat.square = $('#flat_square').val();
+				form.flat.room_num = $('#flat_room_num').val();
+				form.flat.traffic = $('#flat_traffic').val();
+				form.flat.total_pay = $('#flat_total_pay').val();
+				form.flat.rent_pay = $('#flat_rent_pay').val();
+				form.flat.enter_date = $('#flat_enter_date').val();
+			}
+
+			if (!validationFailed) {
 				$.ajax({
 					method: 'POST',
-					url: '/profile/edit_user',
+					url: '/profile/edit',
 					dataType: 'json',
 					data: form,
 					success: function(result) {
@@ -89,7 +112,7 @@ function handlersProfileEdit() {
 						alert('Проверьте соединение с Интернетом');
 					}
 				});
-			});
+			}
 		}
 	});
 

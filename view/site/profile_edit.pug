@@ -105,19 +105,19 @@ html(lang=ru)
 					else
 						input#flat_id(type="hidden", value="")
 				div.user-setting
-					input#flat_address.option-set-big(type="text", placeholder="Адрес квартиры")
+					input#flat_address.option-set-big(type="text", placeholder="Адрес квартиры", value=locals.data.flat_address)
 					div
-						input#flat_square.option-set-small(type="text", placeholder="Площадь квартиры")
+						input#flat_square.option-set-small(type="text", placeholder="Площадь квартиры", value=locals.data.flat_square)
 					div
-						input#flat_room_num.option-set-small(type="text", placeholder="Количество комнат")
+						input#flat_room_num.option-set-small(type="text", placeholder="Количество комнат", value=locals.data.flat_room_num)
 					div
-						input#flat_traffic.option-set-small(type="text", placeholder="Ближайший транспорт")
+						input#flat_traffic.option-set-small(type="text", placeholder="Ближайший транспорт", value=locals.data.flat_traffic)
 					div
-						input#flat_total_pay.option-set-small(type="text", placeholder="Общая аренда, руб")
+						input#flat_total_pay.option-set-small(type="text", placeholder="Общая аренда, руб", value=locals.data.flat_total_pay)
 					div
-						input#flat_rent_pay.option-set-small(type="text", placeholder="Плата для соседа, руб")
+						input#flat_rent_pay.option-set-small(type="text", placeholder="Плата для соседа, руб", value=locals.data.flat_rent_pay)
 					div
-						input#flat_enter_date.option-set-small(type="text", placeholder="Дата въезда")
+						input#flat_enter_date.option-set-small(type="text", placeholder="Дата въезда", value=locals.data.flat_enter_date)
 				div.user-setting
 					if locals.utilities
 						for utility in locals.utilities

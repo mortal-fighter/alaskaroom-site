@@ -124,6 +124,9 @@ function validateFlat(flat) {
 	if (flat.traffic && flat.traffic.length > 300) {
 		throw new Error(`Parameters validation error: flat.traffic.length = ${flat.traffic.length}.`);
 	}
+	if (!flat.enter_date.match(/^\d{2}.\d{2}.\d{4}$/)) {
+		throw new Error(`Parameters validation error (flat.enter_date): '${flat.enter_date}'.`);
+	}
 }
 
 function validateUser(user) {
@@ -286,13 +289,17 @@ router.get('/edit/:userId(\\d+)', function(req, res, next) {
 	var priorities = [];
 	var userPriorities = [];
 	var prioritySelect = [];
+	var utilities = [];
+	var flatUtilities = [];
+	var utilityObject = [];
+	var hasFlat = false;
 	
 	connectionPromise().then(function(connection) {
 		
 		db = connection;
 		
 		var sql = `	SELECT 
-						\`User\`.id 	user_id,
+						\`User\`.id user_id,
 						avatar 		user_avatar,
 						sex			user_sex,
 						DATE_FORMAT(birth_date, '%d.%m.%Y') user_birth_date,
@@ -327,6 +334,9 @@ router.get('/edit/:userId(\\d+)', function(req, res, next) {
 
 		logger.debug(result);
 		data = result[0];
+		if (data.flat_id) {
+			hasFlat = true;
+		}
 
 		var sql = `	SELECT * FROM v_priority`;
 		logger.debug(sql);
@@ -382,7 +392,9 @@ router.get('/edit/:userId(\\d+)', function(req, res, next) {
 			});
 		}	
 		
-		if (data.flat_id) {
+		// construct priority <select>s (end)
+
+		if (hasFlat) {
 			return Promise.resolve().then(function() {	
 				var sql = `	SELECT 
 								src_small, src_orig,
@@ -400,11 +412,59 @@ router.get('/edit/:userId(\\d+)', function(req, res, next) {
 	
 	}).then(function() {
 
+		var sql = `	SELECT 
+						id 				utility_id, 
+						display_name	utility_name 
+					FROM Utility
+					ORDER BY display_order;`;
+		logger.debug(sql);
+		return db.queryAsync(sql);
+	
+	}).then(function(result) {
+
+		logger.debug(result);
+		logger.debug('hasFlat='+hasFlat);
+		utilities = result;
+
+		if (hasFlat) {
+			var sql = `	SELECT utility_id
+						FROM Flat_utility
+						WHERE flat_id = ${data.flat_id}; `;
+			return db.queryAsync(sql);			
+		} else {
+			return Promise.resolve();
+		}
+
+	}).then(function(result) {
+
+		if (hasFlat) {
+			logger.debug(result);
+			flatUtilities = result;
+		}
+
+		for (var i = 0; i < utilities.length; i++) {
+			utilityObject.push({
+				id: utilities[i].utility_id,
+				name: utilities[i].utility_name,
+				isChecked: false
+			});
+			
+			if (hasFlat) {
+				for (var j = 0; j < flatUtilities.length; j++) {
+					if (flatUtilities[j].utility_id === utilities[i].utility_id) {
+						utilityObject[i].isChecked = true;
+						break;
+					}
+				}
+			}
+		}
+
 		res.render('site/profile_edit.pug', {
 			user_id: req.params.userId,
 			data: data,
 			photos: photos,
-			priorities: prioritySelect
+			priorities: prioritySelect,
+			utilities: utilityObject
 		});
 	
 	}).catch(function(err) {
@@ -416,7 +476,7 @@ router.get('/edit/:userId(\\d+)', function(req, res, next) {
 
 });
 
-router.post('/edit_user', function(req, res, next) {
+router.post('/edit', function(req, res, next) {
 	var db = null;
 
 	if (!req.isAuthorized) {
@@ -484,7 +544,113 @@ router.post('/edit_user', function(req, res, next) {
 
 	}).then(function(result) {
 
-		logger.debug(result);
+		// if has flat
+		var hasFlat = (req.body.flat.address) ? true : false;
+		var hasId = (req.body.flat.id) ? true : false;
+
+
+		if (hasFlat) {
+			validateFlat(req.body.flat);
+			formatObjectForSQL(req.body.flat);
+			var sql;
+
+			if (hasId) {
+				// update
+
+				sql = `	UPDATE Flat
+						SET description = ${req.body.flat.description},
+							address = ${req.body.flat.address},
+							square = ${req.body.flat.square},
+							room_num = ${req.body.flat.room_num},
+							traffic = ${req.body.flat.traffic},
+							rent_pay = ${req.body.flat.rent_pay},
+							total_pay = ${req.body.flat.total_pay},
+							STR_TO_DATE(${req.body.flat.enter_date}, '%d.%m.%Y')
+						WHERE id = ${req.body.flat.id.replace('\'', '')};`
+
+				logger.debug(sql);
+				return db.queryAsync(sql).then(function(result) {
+
+					logger.debug(result);
+					
+					if (req.body.flat.id === 'NULL') {
+						req.body.flat.id = result.insertId;
+					}
+
+					var sql = `	UPDATE Photo 
+								SET flat_id = ${req.body.flat.id}, 
+									temporary_user_id = NULL
+								WHERE temporary_user_id = ${req.user_id};`;
+					logger.debug(sql);
+					return db.queryAsync(sql);
+
+				});
+
+			} else {
+				// insert
+
+				sql = `		INSERT INTO Flat(	description,
+												address,
+												square,
+												room_num,
+												traffic,
+												rent_pay,
+												total_pay,
+												enter_date)
+							VALUES (	${req.body.flat.description},
+										${req.body.flat.address},
+										${req.body.flat.square},
+										${req.body.flat.room_num},
+										${req.body.flat.traffic},
+										${req.body.flat.rent_pay},
+										${req.body.flat.total_pay},
+										STR_TO_DATE(${req.body.flat.enter_date}, '%d.%m.%Y'));`;
+				logger.debug(sql);
+				
+				return db.queryAsync(sql).then(function(result) {
+
+					logger.debug(result);
+					var sql = `	UPDATE \`User\` 
+								SET flat_id = ${req.body.flat.id}
+								WHERE id = ${req.user_id}`;
+					logger.debug(sql);
+					return db.queryAsync(sql);
+
+				}).then(function(result) {
+
+					logger.debug(result);
+					
+					if (req.body.flat.id === 'NULL') {
+						req.body.flat.id = result.insertId;
+					}
+
+					var sql = `	UPDATE Photo 
+								SET flat_id = ${req.body.flat.id}, 
+									temporary_user_id = NULL
+								WHERE temporary_user_id = ${req.user_id};`;
+					logger.debug(sql);
+					return db.queryAsync(sql);
+
+				});
+
+			} // end has flatId
+
+		} else { // end has flat
+
+			return Promise.resolve();
+			
+		}
+
+	}).then(function() {
+
+		if (result) {
+			logger.debug(result);
+		}
+		
+	}).then(function(result) {
+
+		
+
 		res.json({
 			status: 'ok'
 		});
@@ -496,52 +662,6 @@ router.post('/edit_user', function(req, res, next) {
 			status: 'not ok'
 		})
 	
-	});
-});
-
-router.post('/edit_flat', function(req, res, next) {
-	var db = null;
-
-	connectionPromise().then(function(connection) {
-		db = connection;
-
-		var sql =
-			`	INSERT INTO Post(	type, 
-									enter_date, 
-									date_created,
-									date_updated,
-									rent_pay,
-									user_sex,
-									user_age_range,
-									user_activity,
-									user_badhabbits,
-									user_pets,
-									user_university,
-									user_car,
-									user_success,
-									user_id,
-									flat_id)
-				VALUES (${req.body.type},
-					STR_TO_DATE(${req.body.enter_date}, '%d.%m.%Y'),
-					NOW(),
-					NOW(),
-					${req.body.rent_pay},
-					${req.body.user_sex},
-					${req.body.user_age_range},
-					${req.body.user_activity},
-					${req.body.user_badhabbits},
-					${req.body.user_pets},
-					${req.body.user_university},
-					${req.body.user_car},
-					${req.body.user_success},
-					${currentUserId},
-					${flatId});
-			`;
-	}).catch(function(err) {
-		logger.error(err.stack, err.message);
-		res.json({
-			status: 'not ok'
-		})
 	});
 });
 
