@@ -10,9 +10,6 @@ html(lang=ru)
 		script(src="/js/profile.js", type="text/javascript")
 		link(href="/css/profile.css", type="text/css", rel="stylesheet")
 		
-		style
-			| .room-info {display:none;}
-			| .final-ad {clear:both;}
 	body
 		include includes/header.pug
 		
@@ -84,20 +81,24 @@ html(lang=ru)
 						div
 							p Сколько Вы готовы платить за аренду?
 							input.option-set-small(type="text", placeholder="Плата румейта", value=locals.data.wish_pay)
-				p.add-room У вас есть квартира и вы ищите соседа?
-					a#btn-showflat(href="#") Рассказать про квартиру и условия
-			div.room-info.roommate-header
+				if !locals.data.flat_id
+					p.add-room У вас есть квартира и вы ищите соседа?
+						a#btn-showflat(href="#") Рассказать про квартиру и условия
+			-
+				var flatDisplay = (locals.data.flat_id) ? 'display:block' : 'display:none'
+			div.room-info.roommate-header(style=flatDisplay)
 				h6 Описание квартиры
-			div.room-info.room-photos
+			div.room-info.room-photos(style=flatDisplay)
 				if locals.photos
 					for photo in locals.photos
-						div(id=photo.id)
-							img(src=photo.href, alt="Room photo")
+						div(id='flat-photo-'+photo.id)
+							img(src=photo.src_small, alt="Room photo")
 							a(href="#") Удалить
 				div(style="position: relative")
 					img#btn-photo-add(src="/images/add_photo_200_x_133.png", alt="Загрузить фотографии", title="Загрузить фотографии")
 					input#files(type="file", accept=".jpg, .png, .gif")
-			div.room-info.profile-param
+			
+			div.room-info.profile-param(style=flatDisplay)
 				div.user-desc
 					textarea#flat_description(placeholder="Напишите тут несколько предложений о квартире ...")= locals.data.flat_description
 					if locals.data.flat_id
@@ -118,7 +119,7 @@ html(lang=ru)
 						input#flat_rent_pay.option-set-small(type="text", placeholder="Плата для соседа, руб", value=locals.data.flat_rent_pay)
 					div
 						input#flat_enter_date.option-set-small(type="text", placeholder="Дата въезда", value=locals.data.flat_enter_date)
-				div.user-setting
+				div#utility.user-setting
 					if locals.utilities
 						for utility in locals.utilities
 							label= utility.name

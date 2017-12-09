@@ -98,9 +98,7 @@ function validateFlat(flat) {
 	if (flat.id && !flat.id.match(/^\d+$/)) {
 		throw new Error(`Parameters validation error (flat.id): '${flat.id}'.`);
 	}
-	if (!flat.description) {
-		throw new Error(`Parameters validation error (flat.description): '${flat.description}'.`);
-	} else if (flat.description.length > 200) {
+	if (flat.description && flat.description.length > 200) {
 		throw new Error(`Parameters validation error: flat.description.length = ${flat.description.length}.`);
 	}
 	if (!flat.address) {
@@ -323,7 +321,8 @@ router.get('/edit/:userId(\\d+)', function(req, res, next) {
 						address 	flat_address,
 						room_num 	flat_room_num,
 						rent_pay 	flat_rent_pay,
-						total_pay 	flat_total_pay
+						total_pay 	flat_total_pay,
+						DATE_FORMAT(enter_date, '%d.%m.%Y')	flat_enter_date
 					FROM \`User\`
 					LEFT JOIN Flat ON \`User\`.flat_id = Flat.id
 					WHERE \`User\`.id = ${req.params.userId};`;
@@ -397,7 +396,7 @@ router.get('/edit/:userId(\\d+)', function(req, res, next) {
 		if (hasFlat) {
 			return Promise.resolve().then(function() {	
 				var sql = `	SELECT 
-								src_small, src_orig,
+								id, src_small, src_orig,
 								width_small, height_small, width_orig, height_orig
 							FROM Photo
 							WHERE flat_id = ${data.flat_id};`;
@@ -485,7 +484,111 @@ router.post('/edit', function(req, res, next) {
 	}
 
 	connectionPromise().then(function(connection) {
+		
 		db = connection;
+		
+		var hasFlat = (req.body.flat.address) ? true : false; 	// address is primary field
+		var hasId = (req.body.flat.id) ? true : false;			// 
+
+		if (hasFlat) {
+			validateFlat(req.body.flat);
+			formatObjectForSQL(req.body.flat);
+			var sql;
+
+			if (hasId) {
+				// update
+
+				sql = `	UPDATE Flat
+						SET description = ${req.body.flat.description},
+							address = ${req.body.flat.address},
+							square = ${req.body.flat.square},
+							room_num = ${req.body.flat.room_num},
+							traffic = ${req.body.flat.traffic},
+							rent_pay = ${req.body.flat.rent_pay},
+							total_pay = ${req.body.flat.total_pay},
+							enter_date = STR_TO_DATE(${req.body.flat.enter_date}, '%d.%m.%Y')
+						WHERE id = ${req.body.flat.id};`
+
+			} else {
+				// insert
+
+				sql = `		INSERT INTO Flat(	description,
+												address,
+												square,
+												room_num,
+												traffic,
+												rent_pay,
+												total_pay,
+												enter_date)
+							VALUES (	${req.body.flat.description},
+										${req.body.flat.address},
+										${req.body.flat.square},
+										${req.body.flat.room_num},
+										${req.body.flat.traffic},
+										${req.body.flat.rent_pay},
+										${req.body.flat.total_pay},
+										STR_TO_DATE(${req.body.flat.enter_date}, '%d.%m.%Y'));`;
+
+			} // end has flatId
+
+			logger.debug(sql);
+
+			return db.queryAsync(sql).then(function(result) {
+
+				logger.debug(result);
+				
+				if (!hasFlat) {
+					req.body.flat.id = result.insertId;
+				}
+
+				var sql = `	UPDATE Photo 
+							SET flat_id = ${req.body.flat.id}, 
+								temporary_user_id = NULL
+							WHERE temporary_user_id = ${req.user_id};`;
+				logger.debug(sql);
+				return db.queryAsync(sql);
+
+			}).then(function(result) {
+
+				logger.debug(result);
+				
+				if (!hasFlat) {
+					var sql = `	DELETE FROM flat_utility WHERE flat_id = ${req.body.flat.id}`;
+					logger.debug(sql);
+					return db.queryAsync(sql);
+				} else {
+					return Promise.resolve();
+				}
+
+			}).then(function(result) {
+
+				if (result) {
+					logger.debug(result);
+				}
+
+				if (req.body.utility.length) {
+					var sql = `	INSERT INTO flat_utility(flat_id, utility_id) 
+								VALUES 
+									(${req.body.flat.id}, ${req.body.utility[0]})`;
+					for (var i = 1; i < req.body.utility.length; i++) {
+						sql += `\n, (${req.body.flat.id}, ${req.body.utility[i]})`;
+					}
+					logger.debug(sql);
+					return db.queryAsync(sql);
+				}
+			});
+
+		} else { // end has flat
+
+			return Promise.resolve();
+			
+		}
+
+	}).then(function(result) {
+
+		if (result) {
+			logger.debug(result);
+		}
 			
 		validateUser(req.body.user);
 		formatObjectForSQL(req.body.user);
@@ -512,7 +615,8 @@ router.post('/edit', function(req, res, next) {
 					speciality = ${req.body.user.speciality},
 					study_year = ${req.body.user.study_year},
 					phone = ${req.body.user.phone},
-					wish_pay = ${wish_pay}
+					wish_pay = ${wish_pay},
+					flat_id = ${req.body.flat.id}
 				WHERE id = ${req.body.user.id};`;
 		logger.debug(sql);
 		return db.queryAsync(sql);
@@ -528,6 +632,7 @@ router.post('/edit', function(req, res, next) {
 
 		logger.debug(result);
 			
+		// todo: ?
 		if (!req.body.priority.length) {
 			return Promise.resolve();
 		}	
@@ -544,113 +649,7 @@ router.post('/edit', function(req, res, next) {
 
 	}).then(function(result) {
 
-		// if has flat
-		var hasFlat = (req.body.flat.address) ? true : false;
-		var hasId = (req.body.flat.id) ? true : false;
-
-
-		if (hasFlat) {
-			validateFlat(req.body.flat);
-			formatObjectForSQL(req.body.flat);
-			var sql;
-
-			if (hasId) {
-				// update
-
-				sql = `	UPDATE Flat
-						SET description = ${req.body.flat.description},
-							address = ${req.body.flat.address},
-							square = ${req.body.flat.square},
-							room_num = ${req.body.flat.room_num},
-							traffic = ${req.body.flat.traffic},
-							rent_pay = ${req.body.flat.rent_pay},
-							total_pay = ${req.body.flat.total_pay},
-							STR_TO_DATE(${req.body.flat.enter_date}, '%d.%m.%Y')
-						WHERE id = ${req.body.flat.id.replace('\'', '')};`
-
-				logger.debug(sql);
-				return db.queryAsync(sql).then(function(result) {
-
-					logger.debug(result);
-					
-					if (req.body.flat.id === 'NULL') {
-						req.body.flat.id = result.insertId;
-					}
-
-					var sql = `	UPDATE Photo 
-								SET flat_id = ${req.body.flat.id}, 
-									temporary_user_id = NULL
-								WHERE temporary_user_id = ${req.user_id};`;
-					logger.debug(sql);
-					return db.queryAsync(sql);
-
-				});
-
-			} else {
-				// insert
-
-				sql = `		INSERT INTO Flat(	description,
-												address,
-												square,
-												room_num,
-												traffic,
-												rent_pay,
-												total_pay,
-												enter_date)
-							VALUES (	${req.body.flat.description},
-										${req.body.flat.address},
-										${req.body.flat.square},
-										${req.body.flat.room_num},
-										${req.body.flat.traffic},
-										${req.body.flat.rent_pay},
-										${req.body.flat.total_pay},
-										STR_TO_DATE(${req.body.flat.enter_date}, '%d.%m.%Y'));`;
-				logger.debug(sql);
-				
-				return db.queryAsync(sql).then(function(result) {
-
-					logger.debug(result);
-					var sql = `	UPDATE \`User\` 
-								SET flat_id = ${req.body.flat.id}
-								WHERE id = ${req.user_id}`;
-					logger.debug(sql);
-					return db.queryAsync(sql);
-
-				}).then(function(result) {
-
-					logger.debug(result);
-					
-					if (req.body.flat.id === 'NULL') {
-						req.body.flat.id = result.insertId;
-					}
-
-					var sql = `	UPDATE Photo 
-								SET flat_id = ${req.body.flat.id}, 
-									temporary_user_id = NULL
-								WHERE temporary_user_id = ${req.user_id};`;
-					logger.debug(sql);
-					return db.queryAsync(sql);
-
-				});
-
-			} // end has flatId
-
-		} else { // end has flat
-
-			return Promise.resolve();
-			
-		}
-
-	}).then(function() {
-
-		if (result) {
-			logger.debug(result);
-		}
-		
-	}).then(function(result) {
-
-		
-
+		logger.debug(result);
 		res.json({
 			status: 'ok'
 		});

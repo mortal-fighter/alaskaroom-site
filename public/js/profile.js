@@ -1,7 +1,5 @@
 'use strict';
 
-var hasFlat = false;
-
 /* HANDLERS UI CONTROLS */
 function handlersProfileView() {
 
@@ -23,9 +21,9 @@ function handlersProfileView() {
 function handlersProfileEdit() {
 
 	$('#user_birth_date').datepicker({
-		dayNames: [ "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота" ],
-		dayNamesShort: [ "Вос", "Пон", "Вто", "Сре", "Чет", "Пят", "Суб" ],
-		dayNamesMin: [ "Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб" ],
+		dayNames: [ "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье" ],
+		dayNamesShort: [ "Пон", "Вто", "Сре", "Чет", "Пят", "Суб", "Вос" ],
+		dayNamesMin: [ "Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс" ],
 		monthNames: [ "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" ],
 		monthNamesShort: [ "Янв", "Фев", "Мар", "Апр", "Май", "Инь", "Иль", "Авг", "Сен", "Окт", "Ноя", "Дек" ],
 		dateFormat: "dd.mm.yy",
@@ -36,85 +34,26 @@ function handlersProfileEdit() {
 
 	$("#user_phone").mask("+7(999)-999-99-99");
 
+	$('.room-photos > div > a').on('click', function(e) {
+		e.preventDefault();
+		var ident = $(this).parent().attr('id');
+		deletePhoto(ident);
+	});
+
 	$('#btn-showflat').on('click', function(e) { 
 		e.preventDefault();
 		$('.room-info').fadeIn(200);
 		$('#flat_enter_date').datepicker({
-			dayNames: [ "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота" ],
-			dayNamesShort: [ "Вос", "Пон", "Вто", "Сре", "Чет", "Пят", "Суб" ],
-			dayNamesMin: [ "Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб" ],
+			dayNames: [ "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье" ],
+			dayNamesShort: [ "Пон", "Вто", "Сре", "Чет", "Пят", "Суб", "Вос" ],
+			dayNamesMin: [ "Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс" ],
 			monthNames: [ "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" ],
 			monthNamesShort: [ "Янв", "Фев", "Мар", "Апр", "Май", "Инь", "Иль", "Авг", "Сен", "Окт", "Ноя", "Дек" ],
 			dateFormat: "dd.mm.yy"
 		});
-		hasFlat = true;
 	});
 
-	$('#btn-saveall').on('click', function(e) {
-		e.preventDefault();
-		
-		if (validateUserInfo()) {
-		
-			var form = {user: {}};
-			form.user.id = $('#user_id').val();
-			form.user.about = $('#user_about').val();
-			form.user.first_name = $('#user_first_name').val();
-			form.user.last_name = $('#user_last_name').val();
-			form.user.sex = processInputSelect('user_sex');
-			form.user.birth_date = $('#user_birth_date').val();
-			form.user.phone = $('#user_phone').val();
-			form.user.email = $('#user_email').val();
-			form.user.city = $('#user_city').val();
-			form.user.university = $('#user_university').val();
-			form.user.faculty = $('#user_faculty').val();
-			form.user.speciality = $('#user_speciality').val();
-			form.user.study_year = $('#user_study_year').val();
-			//form.user.wish_pay = $('#user_study_year').val();
-			form.priority = [];
-			$('.option-set').each(function() {
-				form.priority.push(processInputSelect(this.id));
-			});
-
-			var validationFailed = false;
-
-			if (hasFlat) {
-				if (!validateFlat()) {
-					validationFailed = true;
-					return;
-				}
-
-				form.flat = {};
-				form.flat.id = $('#flat_id').val();
-				form.flat.description = $('#flat_description').val();
-				form.flat.address = $('#flat_address').val();
-				form.flat.square = $('#flat_square').val();
-				form.flat.room_num = $('#flat_room_num').val();
-				form.flat.traffic = $('#flat_traffic').val();
-				form.flat.total_pay = $('#flat_total_pay').val();
-				form.flat.rent_pay = $('#flat_rent_pay').val();
-				form.flat.enter_date = $('#flat_enter_date').val();
-			}
-
-			if (!validationFailed) {
-				$.ajax({
-					method: 'POST',
-					url: '/profile/edit',
-					dataType: 'json',
-					data: form,
-					success: function(result) {
-						if (result.status === 'ok') {
-							alert('Информация сохранена');
-						} else {
-							alert('При загрузке данных произошла ошибка');
-						}
-					},
-					error: function() {
-						alert('Проверьте соединение с Интернетом');
-					}
-				});
-			}
-		}
-	});
+	
 
 	$('#user_avatar_1').on('click', function() { $('#user_avatar_2').click(); });
 
@@ -223,6 +162,80 @@ function handlersProfileEdit() {
 				console.log('Ошибка интернет-соединения');
 			}
 		});
+	});
+
+	$('#btn-saveall').on('click', function(e) {
+		e.preventDefault();
+		
+		if (validateUserInfo()) {
+		
+			var form = {user: {}};
+			form.user.id = $('#user_id').val();
+			form.user.about = $('#user_about').val();
+			form.user.first_name = $('#user_first_name').val();
+			form.user.last_name = $('#user_last_name').val();
+			form.user.sex = processInputSelect('user_sex');
+			form.user.birth_date = $('#user_birth_date').val();
+			form.user.phone = $('#user_phone').val();
+			form.user.email = $('#user_email').val();
+			form.user.city = $('#user_city').val();
+			form.user.university = $('#user_university').val();
+			form.user.faculty = $('#user_faculty').val();
+			form.user.speciality = $('#user_speciality').val();
+			form.user.study_year = $('#user_study_year').val();
+			//form.user.wish_pay = $('#user_study_year').val();
+			form.priority = [];
+			$('.option-set').each(function() {
+				form.priority.push(processInputSelect(this.id));
+			});
+
+			var validationFailed = false;
+
+			if (hasFlat()) {
+				if (!validateFlat()) {
+					validationFailed = true;
+					return;
+				}
+
+				form.flat = {};
+				form.flat.id = $('#flat_id').val();
+				form.flat.description = $('#flat_description').val();
+				form.flat.address = $('#flat_address').val();
+				form.flat.square = $('#flat_square').val();
+				form.flat.room_num = $('#flat_room_num').val();
+				form.flat.traffic = $('#flat_traffic').val();
+				form.flat.total_pay = $('#flat_total_pay').val();
+				form.flat.rent_pay = $('#flat_rent_pay').val();
+				form.flat.enter_date = $('#flat_enter_date').val();
+				
+				form.utility = [];
+				$('#utility > label > [type=checkbox]').each(function() {
+					if ($(this).prop('checked')) {
+						form.utility.push($(this).val());
+					}
+				});
+
+			}
+
+			if (!validationFailed) {
+				$.ajax({
+					method: 'POST',
+					url: '/profile/edit',
+					dataType: 'json',
+					data: form,
+					success: function(result) {
+						if (result.status === 'ok') {
+							alert('Информация сохранена');
+						} else {
+							alert('При загрузке данных произошла ошибка');
+						}
+					},
+					error: function() {
+						alert('Проверьте соединение с Интернетом');
+					}
+				});
+			}
+		}
 	});
 }
 
@@ -473,6 +486,10 @@ function validateFlat() {
 	}
 
 	return true;
+}
+
+function hasFlat() {
+	return ( $('#flat_address').val() !== '' ) ? true : false;
 }
 
 
