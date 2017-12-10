@@ -218,7 +218,8 @@ router.get('/view/:userId(\\d+)', function(req, res, next) {
 						address 	flat_address,
 						room_num 	flat_room_num,
 						rent_pay 	flat_rent_pay,
-						total_pay 	flat_total_pay
+						total_pay 	flat_total_pay,
+						DATE_FORMAT(enter_date, '%d.%m') flat_enter_date
 					FROM \`User\`
 					LEFT JOIN Flat ON \`User\`.flat_id = Flat.id
 					WHERE \`User\`.id = ${req.params.userId};`;

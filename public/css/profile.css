@@ -1,9 +1,30 @@
-.profile-user > img { cursor: pointer; }
+div.profile-user {
+	position: relative;
+}
 
 #user_avatar_2 { display: none; }
 
+#avatar-container {
+	cursor: pointer;
+}
+
+#avatar-container:hover #upload-icon {
+	display: block;
+}
+
+#upload-icon {
+	position: absolute;
+	left: 104px;
+	top: 97px;
+	width: 64px;
+	height: 64px;
+	background: 0 0 url(../images/upload_file_64_x_64.png) no-repeat;
+	cursor: pointer;
+	display: none;
+}
+
 .info div {
-	height: 60px;
+	height: 75px;
 }
 
 .priorities > div > p {
@@ -12,6 +33,7 @@
 
 #btn-photo-add {
 	cursor: pointer;
+	border-bottom: 1px solid #ccc;
 }
 
 #files {

@@ -53,9 +53,7 @@ function handlersProfileEdit() {
 		});
 	});
 
-	
-
-	$('#user_avatar_1').on('click', function() { $('#user_avatar_2').click(); });
+	$('#user_avatar_1, #upload-icon').on('click', function() { $('#user_avatar_2').click(); });
 
 	$('#user_avatar_2').on('change', function() {
 		
