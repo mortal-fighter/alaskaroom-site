@@ -54,8 +54,8 @@ html(lang=ru)
 						p Ваш email
 						input#user_email.option-set-small(type="text", placeholer="Ваш email", value=locals.data.user_email)
 					div
-						p Страна вашего ВУЗа
-						input#user_city.option-set-small(type="text", placeholer="Страна вашего ВУЗа", value=locals.data.user_city)
+						p Город вашего ВУЗа
+						input#user_city.option-set-small(type="text", placeholer="Город вашего ВУЗа", value=locals.data.user_city)
 					div
 						p Название вашего ВУЗа
 						input#user_university.option-set-small(type="text", placeholer="Название вашего ВУЗа", value=locals.data.user_university)
@@ -73,7 +73,7 @@ html(lang=ru)
 						for priority in locals.priorities
 							div
 								p= priority.priority_name_full
-								select.option-set(id="priority-"+priority.priority_id, size="1")
+								select.option-set.priority(id="priority-"+priority.priority_id, size="1")
 									for option in priority.options
 										if option.isSelected
 											option(value=option.id, selected)= option.name
@@ -131,4 +131,3 @@ html(lang=ru)
 									input(type="checkbox", value=utility.id)
 			input#btn-saveall.final-ad(type="button", value="Сохранить объявление")
 		include includes/footer.pug
-		include includes/message_popup.pug

@@ -3,6 +3,10 @@ html(lang=ru)
 	head
 		include includes/head_common.pug
 		script(src="/js/profile.js", type="text/javascript")
+
+		<!-- lightbox (Magnific popup) -->
+		link(type="text/css", rel="stylesheet", href="/lib/magnific-popup/magnific_popup.css")
+		script(src="/lib/magnific-popup/magnific_popup.js")
 	body
 		include includes/header.pug
 		div.wrp
@@ -37,13 +41,15 @@ html(lang=ru)
 						- 
 							var counter = 0;
 						if locals.photos
-							for photo in locals.photos
-								if (counter == 0)
-									img.big-pic(src=photo.src_orig, alt="Room pic")
-								else
-									img.small-pic(src=photo.src_small, alt="Room pic")
-								-
-									counter++;
+							div.photos
+								for photo in locals.photos
+									if (counter == 0)
+										img.big-pic(src=photo.src_orig, alt="Room pic")
+									else
+										a(href=photo.src_orig)
+											img.small-pic(src=photo.src_small, alt="Room pic")
+									-
+										counter++;
 					div.room-desc
 						if locals.data.flat_description
 							h3 Описание квартиры

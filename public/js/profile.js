@@ -16,6 +16,17 @@ function handlersProfileView() {
 	$('#btn-showhide-flat').on('click', function() {
 		opencloseFlatInfo();
 	});
+
+	$('.photos').magnificPopup({
+		delegate: 'a',
+		type: 'image',
+		gallery: {
+			enabled: true,
+			tPrev: 'Предыдущее (Стрелка "Влево")',
+			tNext: 'Следующее (Стрелка "Вправо")'
+		},
+		preload: [1,3]
+	});
 }
 
 function handlersProfileEdit() {
@@ -183,7 +194,7 @@ function handlersProfileEdit() {
 			form.user.study_year = $('#user_study_year').val();
 			//form.user.wish_pay = $('#user_study_year').val();
 			form.priority = [];
-			$('.option-set').each(function() {
+			$('.priority').each(function() {
 				form.priority.push(processInputSelect(this.id));
 			});
 
