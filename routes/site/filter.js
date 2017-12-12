@@ -92,7 +92,8 @@ router.post('/ajax', function(req, res, next) {
 
 		var priority_list;
 		var priority_count;
-		var limit = 9;
+		var limit = (req.body.limit) ? req.body.limit : 9;
+		var offset = (req.body.offset) ? req.body.offset : 0;
 
 		if (req.body.priorities) {
 			priority_list = req.body.priorities.join(',');
@@ -130,7 +131,8 @@ router.post('/ajax', function(req, res, next) {
 			sql+= `		GROUP BY user_id
 						HAVING cnt_priority >= ${priority_count}
 					) matched ON \`User\`.id = matched.user_id
-					LIMIT ${limit};`;
+					LIMIT ${limit}
+					OFFSET ${offset};`;
 		
 		} else {
 		
@@ -159,7 +161,8 @@ router.post('/ajax', function(req, res, next) {
 					) matched ON \`User\`.id = matched.user_id
 					/* кроме тех, у кого есть квартира */
 					WHERE flat_id IS NULL
-					LIMIT ${limit};`;
+					LIMIT ${limit}
+					OFFSET ${offset};`;
 		}
 
 		logger.debug(sql);

@@ -1,5 +1,9 @@
 'use strict'
 
+var countRecords = 0;
+var lastForm = null;
+var type = null;
+
 /* HANDLERS UI CONTROLS */
 function handlersFilter() {
 	/*$('.room-list, .user-list').on('click', function() {
@@ -14,11 +18,15 @@ function handlersFilter() {
 		e.preventDefault();
 		search();
 	});
+
+	$('#load-more').on('click', function(e) {
+		e.preventDefault();
+		loadMore();
+	});
 }
 
 function search() {
 	var form = {};
-	var type;
 	form.type = type = processInputSelect('type');
 	form.priorities = [];
 	$('.priority').each(function() {
@@ -28,15 +36,79 @@ function search() {
 		}
 	});
 
+	lastForm = form;
+
 	$.ajax({
 		method: 'POST',
 		url: '/filter/ajax',
 		dataType: 'json',
 		data: form,
 		success: function(result) {
+			
 			if (result.status === 'ok') {
+				
+				countRecords = result.records.length;
+
 				var listing = $('#listing-content');
 				listing.html('');
+				
+				for (var i = 0; i < result.records.length; i++) {
+					var record = result.records[i];
+					var newItem = null;
+					if (type === 'find-flat') {
+						newItem = $('<div class="room-list"></div>');
+						newItem.append($('<img src="'+ record.photo_src_small +'" alt="Room"/>'));
+						newItem
+							.append($('<h5>' + record.flat_rent_pay + '</h5>')
+								.append($('<span> рублей</span>')));
+						newItem
+							.append($('<h4></h4>')
+								.append($('<span>' + record.user_city + '</span>'))
+								.append($('<span>, ' + record.flat_address + '</span>')));
+						newItem
+							.append($('<p>Сосед: </p>')
+								.append($('<span>' + record.user_sex + ', </span>'))
+								.append($('<span>' + record.user_age + ', </span>'))
+								.append($('<span>' + record.user_university + '</span>')));
+					} else {
+						newItem = $('<div class="user-list"></div>');
+						newItem.append($('<img src="'+ record.user_avatar +'" alt="Room"/>'));
+						newItem.append($('<h4>'+record.user_first_name+' '+record.user_last_name+'</h4>'));
+						newItem
+							.append($('<p>Ваш сосед: </p>')
+								.append($('<span>' + record.user_sex + ', </span>'))
+								.append($('<span>' + record.user_age + ', </span>'))
+								.append($('<span>' + record.user_university + '</span>')));
+					}
+					newItem.appendTo(listing);
+				}
+			} else {
+				alert('При загрузке данных произошла ошибка');
+			}
+		},
+		error: function() {
+			alert('Проверьте соединение с Интернетом');
+		}
+	});
+}
+
+function loadMore() {
+	
+	lastForm.offset = countRecords;
+
+	$.ajax({
+		method: 'POST',
+		url: '/filter/ajax',
+		dataType: 'json',
+		data: lastForm,
+		success: function(result) {
+			
+			if (result.status === 'ok') {
+				
+				countRecords += result.records.length;
+
+				var listing = $('#listing-content');
+				
 				for (var i = 0; i < result.records.length; i++) {
 					var record = result.records[i];
 					var newItem = null;
