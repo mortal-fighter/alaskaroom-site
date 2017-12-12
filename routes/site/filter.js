@@ -29,7 +29,7 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 						age			user_age,
 						university	user_university,
 						city		user_city,
-						address		user_address,
+						address		flat_address,
 						rent_pay	flat_rent_pay,
 						(SELECT src_small FROM Photo WHERE Photo.flat_id = Flat.id LIMIT 1) photo_src_small,
 						flat_id
@@ -90,16 +90,27 @@ router.post('/ajax', function(req, res, next) {
 		db = connection;
 		var sql;
 
-		var priority_list = req.body.priorities.join(',');
+		var priority_list;
+		var priority_count;
+		var limit = 9;
+
+		if (req.body.priorities) {
+			priority_list = req.body.priorities.join(',');
+			priority_count = req.body.priorities.length;
+		} else {
+			priority_list = '';
+			priority_count = 0
+		}
 
 		if (req.body.type === 'find-flat') {
+		
 			sql = `  SELECT 
 						\`User\`.id	user_id,
 						sex			user_sex,
 						age			user_age,
 						university	user_university,
 						city		user_city,
-						address		user_address,
+						address		flat_address,
 						rent_pay	flat_rent_pay,
 						(SELECT src_small FROM Photo WHERE Photo.flat_id = Flat.id LIMIT 1) photo_src_small,
 						flat_id
@@ -110,14 +121,20 @@ router.post('/ajax', function(req, res, next) {
 					JOIN (
 						/*выбрать пользователей у которых совпадают приоритеры с заданными*/
 						SELECT user_id, COUNT(priority_option_id) cnt_priority
-						FROM user_priority_option
-						WHERE priority_option_id IN (${priority_list})
-						GROUP BY user_id
-						HAVING cnt_priority >= 
-							(SELECT COUNT(*) FROM priority)
-					) matched ON \`User\`.id = matched.user_id`;
+						FROM user_priority_option\n`;
+			
+			if (priority_count > 0) {
+				sql+= `	WHERE priority_option_id IN (${priority_list})`;
+			}
+			
+			sql+= `		GROUP BY user_id
+						HAVING cnt_priority >= ${priority_count}
+					) matched ON \`User\`.id = matched.user_id
+					LIMIT ${limit};`;
+		
 		} else {
-			sql = `	SELECT 
+		
+			sql = `	SELECT
 						\`User\`.id	user_id,
 						first_name	user_first_name,
 						last_name	user_last_name,
@@ -131,14 +148,18 @@ router.post('/ajax', function(req, res, next) {
 					JOIN (
 						/*выбрать пользователей у которых совпадают приоритеры с заданными*/
 						SELECT user_id, COUNT(priority_option_id) cnt_priority
-						FROM user_priority_option
-						WHERE priority_option_id IN (${priority_list})
-						GROUP BY user_id
-						HAVING cnt_priority >= 
-							(SELECT COUNT(*) FROM priority)
+						FROM user_priority_option\n`;
+		
+			if (priority_count > 0) {
+				sql+= `	WHERE priority_option_id IN (${priority_list})`;
+			}
+		
+			sql+= `		GROUP BY user_id
+						HAVING cnt_priority >= ${priority_count}
 					) matched ON \`User\`.id = matched.user_id
 					/* кроме тех, у кого есть квартира */
-					WHERE flat_id IS NULL`;
+					WHERE flat_id IS NULL
+					LIMIT ${limit};`;
 		}
 
 		logger.debug(sql);

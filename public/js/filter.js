@@ -18,13 +18,15 @@ function handlersFilter() {
 
 function search() {
 	var form = {};
-	form.type = processInputSelect('type');
+	var type;
+	form.type = type = processInputSelect('type');
 	form.priorities = [];
 	$('.priority').each(function() {
-		form.priorities.push(processInputSelect($(this).attr('id')));
+		var cur = processInputSelect($(this).attr('id'), true);
+		if (cur) {
+			form.priorities.push(cur);
+		}
 	});
-
-	console.log(form);
 
 	$.ajax({
 		method: 'POST',
@@ -33,14 +35,12 @@ function search() {
 		data: form,
 		success: function(result) {
 			if (result.status === 'ok') {
-				console.log(result.records);
-				
 				var listing = $('#listing-content');
 				listing.html('');
 				for (var i = 0; i < result.records.length; i++) {
 					var record = result.records[i];
 					var newItem = null;
-					if (record.type === 'find-flat') {
+					if (type === 'find-flat') {
 						newItem = $('<div class="room-list"></div>');
 						newItem.append($('<img src="'+ record.photo_src_small +'" alt="Room"/>'));
 						newItem
@@ -80,12 +80,18 @@ function search() {
 /* VALIDATION */
 
 /* OTHER */
-function processInputSelect(id) {
+function processInputSelect(id, isSkipDefault) {
 	var elems = $('#'+id+'>option')
-	var result = elems.eq(0).val(); // default return first val
+	var result;
+
+	if (isSkipDefault) {
+		result = null;
+	} else {
+		result = elems.eq(0).val(); // default return first val
+	}
 	
-	elems.each(function() {
-		if ($(this).prop('selected')) {
+	elems.each(function(index) {
+		if ($(this).prop('selected') && !(isSkipDefault && index === 0)) {
 			result = $(this).val();
 			return false; // break the loop
 		}
