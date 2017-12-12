@@ -185,13 +185,17 @@ function validateUser(user) {
 
 }
 
-router.get('/view/:userId(\\d+)', function(req, res, next) {
+router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 	
 	var db = null;
 	
 	if (!req.isAuthorized) {
-		res.redirect(`/?message='Пожалуйста, авторизуйтесь в системе`);
+		res.redirect(`/?message=Пожалуйста,%20авторизуйтесь%20в%20системе`);
 		return;
+	}
+
+	if (req.params.userId === 'me') {
+		req.params.userId = req.user_id;
 	}
 
 	var data = null;
@@ -264,7 +268,9 @@ router.get('/view/:userId(\\d+)', function(req, res, next) {
 			user_id: req.params.userId,
 			data: data,
 			photos: photos,
-			priorities: priorities
+			priorities: priorities,
+			isAuthorized: req.isAuthorized,
+			userId: req.user_id
 		});
 	
 	}).catch(function(err) {
@@ -275,12 +281,16 @@ router.get('/view/:userId(\\d+)', function(req, res, next) {
 	});
 });
 
-router.get('/edit/:userId(\\d+)', function(req, res, next) {
+router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 	var db = null;
 	
 	if (!req.isAuthorized) {
 		res.redirect(`/?message='Пожалуйста, авторизуйтесь в системе`);
 		return;
+	}
+
+	if (req.params.userId === 'me') {
+		req.params.userId = req.user_id;
 	}
 
 	var data = null;
@@ -464,7 +474,9 @@ router.get('/edit/:userId(\\d+)', function(req, res, next) {
 			data: data,
 			photos: photos,
 			priorities: prioritySelect,
-			utilities: utilityObject
+			utilities: utilityObject,
+			isAuthorized: req.isAuthorized,
+			userId: req.user_id
 		});
 	
 	}).catch(function(err) {
@@ -488,8 +500,13 @@ router.post('/edit', function(req, res, next) {
 		
 		db = connection;
 		
-		var hasFlat = (req.body.flat.address) ? true : false; 	// address is primary field
-		var hasId = (req.body.flat.id) ? true : false;			// 
+		if (!req.body.flat) {
+			req.body.flat = {
+				id: 'NULL'
+			};
+		}
+		var hasFlat = (req.body.flat.address) ? true : false; 		// address is primary field
+		var hasId = (req.body.flat.id !== 'NULL') ? true : false;	//
 
 		if (hasFlat) {
 			validateFlat(req.body.flat);

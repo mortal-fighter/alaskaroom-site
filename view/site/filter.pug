@@ -1,0 +1,64 @@
+doctype
+html(lang=ru)
+	head
+		include includes/head_common.pug
+		script(src="/js/filter.js", type="text/javascript")
+	body
+		include includes/header.pug
+		div.wrp
+			div.main-page
+				div.main-filter
+					form
+						p Я ищу
+						select.prime-filter(size="1", id="type")
+							if (locals.type === 'find-flat')
+								option(value="find-flat", selected) Квартиру
+								option(value="find-roommate") Румейта 
+							else 
+								option(value="find-flat") Квартиру
+								option(value="find-roommate", selected) Румейта 
+						if locals.priorities
+							for priority in locals.priorities
+								p= priority.priority_name_full
+								select.lower-filter.priority(id="priority-"+priority.priority_id, size="1")
+									for option in priority.options
+										if option.isSelected
+											option(value=option.id, selected)= option.name
+										else
+											option(value=option.id)= option.name
+						a.find-filter(id="btn-find", href="#") Найти
+				if locals.records
+					div.listing
+						div(id="listing-content")
+							for record in records
+								if record.flat_id
+									a(href="/profile/view/"+record.user_id)
+										div.room-list(data-user-id=record.user_id)
+											img(src=record.photo_src_small, alt="Room")
+											h5=record.flat_rent_pay
+												span  рублей
+											h4 
+												span= record.user_city+',' 
+												span= record.flat_address
+											p Сосед: 
+												span= record.user_sex+', '
+												span= record.user_age+', '
+												span= record.user_university
+								else
+									a(href="/profile/view/"+record.user_id)
+										div.user-list(data-user-id=record.user_id)
+											img(src=record.user_avatar, alt="User")
+											h4= record.user_name
+											p Ваш сосед: 
+												span= record.user_sex+', '
+												span= record.user_age+', '
+												span= record.user_university
+						img#progress
+						a.load-more(href="#") Загрузить больше...
+				else
+					div.listing
+						div(id="listing-content")
+							div.nobody Никого не найдено
+						img#progress
+
+		include includes/footer.pug

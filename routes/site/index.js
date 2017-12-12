@@ -31,7 +31,7 @@ router.use(function(req, res, next) {
 });
 
 router.use('/auth', require('./auth'));
-router.use('/post', require('./post'));
+router.use('/filter', require('./filter'));
 router.use('/profile', require('./profile'));
 router.use('/', require('./homepage'));
 

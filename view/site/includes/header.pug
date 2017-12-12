@@ -1,13 +1,11 @@
 div.top
-	a.logo(href="#") AlaskaRoom
-	-
-		var isLoggedIn = false;
-	if isLoggedIn 
-		a.user-profile(href="#") Профиль
-		a.mbl-viev.mbl-profile(href="#")
+	a.logo(href="/") AlaskaRoom
+	if locals.isAuthorized 
+		a.user-profile(href="/profile/view/"+locals.userId) Профиль
+		a.mbl-viev.mbl-profile(href="/profile/view/"+locals.userId)
 			img(src="/images/usericon.png", alt="profile")
 		div.top-nav
-			a(href="#") Поиск
+			a(href="/filter") Поиск
 			a(href="#") Отклики
 			a(href="#") Факультет
 	else
