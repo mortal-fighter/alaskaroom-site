@@ -8,9 +8,12 @@ const auth = require('../../components/auth.js');
 router.use(function(req, res, next) {
 	// urls which are allowed with no authorization
 	if (
-		// starting with '/auth'
+		// '/favicon.ico'
 		req.originalUrl.match(/^\/favicon.ico$/) ||
 
+		// '/robots.txt'
+		req.originalUrl.match(/^\/robots.txt$/) ||
+		
 		// starting with '/auth'
 		req.originalUrl.match(/^\/auth/) ||
 		
@@ -33,6 +36,7 @@ router.use(function(req, res, next) {
 router.use('/auth', require('./auth'));
 router.use('/filter', require('./filter'));
 router.use('/profile', require('./profile'));
+router.use('/request', require('./request'));
 router.use('/', require('./homepage'));
 
 module.exports = router;

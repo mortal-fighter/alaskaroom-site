@@ -44,3 +44,15 @@ div.profile-user {
 }
 
 .final-ad {clear:both;}
+
+.roommate-status {
+	width: 80%;
+}
+
+.accepted {
+	color: #3e9fd7 !important;
+}
+
+.declined {
+	color: #f77474 !important;
+}

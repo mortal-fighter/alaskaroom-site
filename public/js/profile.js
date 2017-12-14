@@ -3,6 +3,31 @@
 /* HANDLERS UI CONTROLS */
 function handlersProfileView() {
 
+	$('#request-roommate').on('click', function() {
+		var _this = this;
+		$.ajax({
+			url: '/request/invite',
+			type: 'POST',
+			data: {
+				user_id: $('#user_id').val() 
+			},
+			success: function(result) {
+				switch (result.status) {
+					case 'ok': 
+						$(_this).after( $('<p class="roommate-status"> &#x029D6; Вы предложили соседство</p>') );
+						$(_this).remove();
+						break;
+					case 'not ok':
+						alert('При попытке предложить соседство произошла ошибка');
+						break; 
+				}
+			},
+			error: function() {
+				console.log('Ошибка интернет-соединения');
+			}
+		});
+	})
+
 	$('#btn-edit-user-info').on('click', function(e) { 
 		e.preventDefault();
 		window.location.href='/profile/edit/' + $('#user_id').val();

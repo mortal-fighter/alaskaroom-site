@@ -1,0 +1,48 @@
+doctype
+html(lang=ru)
+	head
+		include includes/head_common.pug
+		script(src="/js/request.js", type="text/javascript")
+	body
+		include includes/header.pug
+		div.wrp
+			div.respond-line
+				a(href="/request") Отправленные
+				a(href="/request/incoming") Полученные 
+					span + 34
+				a(href="#") Одобренные
+					span + 34
+				a(href="#") Жалобы
+
+			div.user-requests 
+				if locals.records
+					-
+						var className = (locals.type === 'sended') ? '' : 'got-prop';
+
+					for request in locals.records
+						
+						div(class=className, data-request-id=request.request_id)
+							
+							a(href='/profile/view/'+request.user_id, target="_blank", title="Просмотреть профиль "+request.first_name)
+								img(src=request.avatar, alt="User photo")
+								h3= request.first_name + ' ' + request.last_name
+							p= request.age+', '+request.university+', '+request.faculty+', '+request.study_year+' курс'
+							
+							if locals.type === 'sended'
+								if request.status === 'pending'
+									a.in-wait В ожидании ответа
+								else if request.status === 'accepted'
+									a.in-pos Одобрено
+								else if request.status === 'declined'
+									a.in-neg Отклонено
+							else if locals.type === 'incoming'
+								a.btn-request-accept.in-pos(href="#") Одобрить
+								a.btn-request-decline.in-neg(href="#") Отклонить
+								a.btn-complain.in-com(href="#") Пожаловаться
+
+				else
+					if locals.type === 'sended'
+						div Вы не отправили ни одной заявки на соседство
+					else if locals.type === 'incoming'
+						div У Вас нет входящих заявок на соседство
+		include includes/footer.pug

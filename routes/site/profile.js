@@ -201,6 +201,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 	var data = null;
 	var priorities = [];
 	var photos = [];
+	var roommate_request_status = null;
 
 	connectionPromise().then(function(connection) {
 		
@@ -263,12 +264,33 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 		}
 	
 	}).then(function() {
+		if (req.params.userId != req.user_id) {
+			var sql = `	SELECT status 
+						FROM Roommate_request 
+						WHERE from_user_id = ${req.user_id}
+						  AND to_user_id = ${req.params.userId};`
+			logger.debug(sql);
+			return db.queryAsync(sql);
+		} else {
+			return Promise.resolve();
+		}
+
+	}).then(function(result) {
 		
+		if (result) {
+			logger.debug(result);
+		}
+
+		if (result && result.length) {
+			roommate_request_status = result[0].status;
+		}
+
 		res.render('site/profile_view.pug', {
 			user_id: req.params.userId,
 			data: data,
 			photos: photos,
 			priorities: priorities,
+			roommate_request_status: roommate_request_status,
 			isAuthorized: req.isAuthorized,
 			userId: req.user_id
 		});

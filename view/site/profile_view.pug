@@ -3,6 +3,7 @@ html(lang=ru)
 	head
 		include includes/head_common.pug
 		script(src="/js/profile.js", type="text/javascript")
+		link(href="/css/profile.css", type="text/css", rel="stylesheet")
 
 		<!-- lightbox (Magnific popup) -->
 		link(type="text/css", rel="stylesheet", href="/lib/magnific-popup/magnific_popup.css")
@@ -16,8 +17,16 @@ html(lang=ru)
 				img(src=locals.data.user_avatar, alt="User")
 				h3= locals.data.user_name
 				p= locals.data.user_age + ' год, ' + locals.data.user_university + ', ' + locals.data.user_faculty
-				input.request-info(type="button", value="Предложить соседство")
-				input.complain(type="button", value="Жалоба на румейта")
+				if locals.user_id != locals.userId
+					if locals.roommate_request_status === 'pending'
+						p.roommate-status &#x029D6; Вы предложили соседство
+					else if locals.roommate_request_status === 'accepted'
+						p.roommate-status.accepted &check; Ваш сосед
+					else if locals.roommate_request_status === 'declined'
+						p.roommate-status.declined &cross; Отказался от соседства
+					else
+						input#request-roommate.request-info(type="button", value="Предложить соседство")
+					input.complain(type="button", value="Жалоба на румейта")
 			div.profile-param
 				div.user-desc
 					h3 Обо мне
