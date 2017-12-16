@@ -180,7 +180,6 @@ ol, ul {
 .action {
 	display: block;
 	width: 100%;
-	border-bottom: 1px solid #bcbcbc;
 	border-top: 1px solid #bcbcbc;
 	margin: 30px auto;
 	text-align: center;

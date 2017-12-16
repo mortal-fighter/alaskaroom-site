@@ -20,14 +20,7 @@ html(lang=ru)
 				div
 					img(src="images/step-2.jpg", alt="Cover")
 					h3 Только студенты
-			div.action
-				h3 Получите приглашение до старта проекта!
-				h2 Вы сами позже укажите условия проживания и дату возможного въезда. Ваше объявления увидят только студенты
-				form(method="post", action="")
-					input.action-input(type="text", id="user_name", placeholder="Ваше имя")
-					input.action-input(type="email", id="user_email", placeholder="Ваш email")
-					input.action-btn(type="button", id="btn-invite", value="Получить приглашение", placeholder="Получить приглашение")
-				p Мы сделали вход на сайт через ВК, чтобы мы смогли отсеивать не студентов в дальнейшем
+			
 			div.cover-info
 				div
 					p 1
@@ -53,35 +46,19 @@ html(lang=ru)
 					p 6
 					h2 Дальше больше
 					h3 Скоро вы найдете на сайте не только соседа, но и предметы для обустройства квартиры;
-			div.roommate-cover
-				h3 Последние добавленные румейты и квартиры
-				h2 После открытия сайта, вы увидите все предложения
-				
-				div.room-ex
-					img(src="images/room.jpg", alt="Room")
-					h5 5000 рублей
-					h4 Ростов-на-Дону, Комбайностроительный переулок 76
-					p Сосед: M, 21, РГЭУ РИНХ
-				div.room-ex
-					img(src="images/room1.jpg", alt="Room")
-					h5 17000 рублей
-					h4 Ростов-на-Дону, Большая Садовая 36
-					p Сосед: Ж, 22, ЮФУ
-				div.room-ex
-					img(src="images/room2.jpg", alt="Room")
-					h5 2000 рублей
-					h4 Ростов-на-Дону, Чехова 55
-					p Сосед: Сосед: M, 21, РИСИ
-				div.room-ex
-					img(src="images/room.jpg", alt="Room")
-					h5 7000 рублей
-					h4 Ростов-на-Дону, Малиновского 51В
-					p Сосед: M, 21, РГЭУ РИНХ
-				div.room-ex
-					img(src="images/room.jpg", alt="Room")
-					h5 15000 рублей
-					h4 Ростов-на-Дону, Театральный 23
-					p Сосед: M, 23, ДГТУ
+			if locals.lastFlats && locals.lastFlats.length
+				div.roommate-cover
+					h3 Последние добавленные румейты и квартиры
+					h2 После открытия сайта, вы увидите все предложения
+					
+					for flat in locals.lastFlats
+						div.room-ex
+							img(src=flat.photo)
+							h5= flat.rent_pay + ' рублей'
+							h4= flat.address
+							-
+								var sex = flat.sex.substr(0, 1).toUpperCase();
+							p= 'Сосед: ' + sex + ', ' + flat.age + ', ' + flat.university
 			div.uni-cover
 				h3 Популярные ВУЗЫ среди наших румейтов
 				h4 в Ростове-на-Дону
@@ -91,4 +68,8 @@ html(lang=ru)
 				p РИИЖТ 
 				p РИСИ 
 				p ИУБИП 
+			div.action
+				h3 Мы открыты для диалога!
+				h2 Если у Вас есть вопросы, Вы можете связаться с нами
+				img(src="/images/email.jpg", style="margin-bottom: 35px")
 		include includes/footer.pug

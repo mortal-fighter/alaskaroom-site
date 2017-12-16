@@ -15,10 +15,7 @@ router.use(function(req, res, next) {
 		req.originalUrl.match(/^\/robots.txt$/) ||
 		
 		// starting with '/auth'
-		req.originalUrl.match(/^\/auth/) ||
-		
-		// main page (possibly with parameters)
-		req.originalUrl.match(/^\/(\?.+)?$/) ) { 
+		req.originalUrl.match(/^\/auth/)) { 
 		
 		next(); 
 		return;
