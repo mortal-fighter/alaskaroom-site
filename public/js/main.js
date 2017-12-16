@@ -12,17 +12,18 @@ function handlersHeader() {
 /* MESSAGE POPUP */
 function closePopup() {
 	$('body').removeClass('stop-scrolling');
-	$('#popup-window').fadeOut(400);
-	$('#popup-window .popup-header').css('background-color', '#fff'); // reset color
+	$('#popup-window').fadeOut(200);
 	_resetPopupHeightPosition();
 }
-function showPopup(type, message) {
+function showPopup(message, type) {
 	if (!type) {
 		type = 'info';
 	}
 
 	if (message) {
 		$('#popup-window .popup-content').html(message);
+	} else {
+		//$('#popup-window .popup-content').html('');
 	}
 
 	$('body').addClass('stop-scrolling');
@@ -33,16 +34,16 @@ function showPopup(type, message) {
 			$('#popup-window .popup-header').css('background-color', '#0a5c82');
 			break;
 		case 'error':
-			$('#popup-window .popup-header').css('background-color', 'lightcoral');
+			$('#popup-window .popup-header').css('background-color', '#f34040');
 			break;
 		case 'success':
-			$('#popup-window .popup-header').css('background-color', 'lightgreen');
+			$('#popup-window .popup-header').css('background-color', '#1cbd4d');
 			break;
 	}
 
 	_setPopupHeightPosition();
 
-	$('#popup-window').fadeIn(400);
+	$('#popup-window').fadeIn(200);
 }
 function initPopup() {
 	$('#popup-window .popup-header, #popup-window .popup-content').on('click', function(evt) {

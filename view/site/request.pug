@@ -3,46 +3,90 @@ html(lang=ru)
 	head
 		include includes/head_common.pug
 		script(src="/js/request.js", type="text/javascript")
+		link(href="/css/request.css", type="text/css", rel="stylesheet")
 	body
 		include includes/header.pug
 		div.wrp
 			div.respond-line
-				a(href="/request") Отправленные
-				a(href="/request/incoming") Полученные 
-					span + 34
-				a(href="#") Одобренные
-					span + 34
-				a(href="#") Жалобы
+				if (locals.type === 'sended')
+					a.current(href="/requests") Отправленные 
+				else
+					a(href="/requests") Отправленные 
+				
+				if (locals.type === 'incoming') 
+					a.current(href="/requests/incoming") Полученные 
+						span#count-incoming
+				else
+					a(href="/requests/incoming") Полученные 
+						span#count-incoming
 
-			div.user-requests 
-				if locals.records
+				if (locals.type === 'accepted')
+					a.current(href="/requests/accepted") Одобренные 
+						span#count-accepted
+				else
+					a(href="/requests/accepted") Одобренные 
+						span#count-accepted
+
+				if (locals.type === 'complains')
+					a.current(href="#") Жалобы 
+				else
+					a(href="#") Жалобы
+			
+			div.user-requests
+				if locals.records.length
 					-
-						var className = (locals.type === 'sended') ? '' : 'got-prop';
+						var className = (locals.type === 'sended' || locals.type === 'accepted') ? '' : 'got-prop';
 
 					for request in locals.records
 						
-						div(class=className, data-request-id=request.request_id)
+						div(class=className, data-request-id=request.request_id, data-user-id=request.user_id)
 							
 							a(href='/profile/view/'+request.user_id, target="_blank", title="Просмотреть профиль "+request.first_name)
 								img(src=request.avatar, alt="User photo")
 								h3= request.first_name + ' ' + request.last_name
 							p= request.age+', '+request.university+', '+request.faculty+', '+request.study_year+' курс'
 							
-							if locals.type === 'sended'
+							if locals.type === 'sended' || locals.type === 'accepted'
+							
 								if request.status === 'pending'
 									a.in-wait В ожидании ответа
 								else if request.status === 'accepted'
 									a.in-pos Одобрено
 								else if request.status === 'declined'
 									a.in-neg Отклонено
+							
 							else if locals.type === 'incoming'
-								a.btn-request-accept.in-pos(href="#") Одобрить
-								a.btn-request-decline.in-neg(href="#") Отклонить
+								
+								if request.status === 'pending'
+									a.btn-request-accept.in-pos(href="#") Одобрить
+									a.btn-request-decline.in-neg(href="#") Отклонить
+								else if request.status === 'accepted'
+									a.in-pos Одобрено
+								else if request.status === 'declined'
+									a.in-neg Отклонено
+
 								a.btn-complain.in-com(href="#") Пожаловаться
 
 				else
 					if locals.type === 'sended'
-						div Вы не отправили ни одной заявки на соседство
+						div.message Вы не отправили ни одной заявки на соседство
+					else if locals.type === 'accepted'
+						div.message У Вас пока нет одобренных заявок
 					else if locals.type === 'incoming'
-						div У Вас нет входящих заявок на соседство
+						div.message У Вас нет входящих заявок на соседство
 		include includes/footer.pug
+
+		link(href="/css/message_popup.css", type="text/css", rel="stylesheet")
+		div#popup-window
+			div.popup-layout
+				div.popup-container.popup-container-medium
+					div.popup-header
+						div.popup-close закрыть
+					div.popup-content.complain-form
+						p По какой причине?
+						select#complain-reason.option-set
+							for reason in locals.complainReasons
+								option(value= reason.id)= reason.name
+						p Можете оставить свой комментарий (не обязательно)
+						textarea#complain-comment
+						a.find-filter(id="btn-send-complain", href="#") Отправить

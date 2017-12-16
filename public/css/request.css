@@ -1,0 +1,49 @@
+.respond-line a.current {
+    background-color: #dedede;
+}
+
+.user-requests .message {
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    left: 0;
+    top: 50%;
+}
+
+.complain-form textarea {
+    display: block;
+    width: 97%;
+    height: 100px;
+    border: none;
+    border-radius: 3px;
+    font-size: 14px;
+    color: #333;
+    font-family: 'Roboto', sans-serif;
+    padding-left: 10px;
+    margin: 10px auto;
+}
+
+.complain-form p {
+    font-size: 13px !important; 
+    color: #555 !important;
+    margin: 10px;
+    line-height: 15px;
+    text-align: left;
+}
+
+.in-pos, .in-neg {
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    -o-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+}
+
+.in-pos.btn:hover {
+    background: #1cbd4d;
+    color: #fff;
+}
+
+.in-neg.btn:hover {
+    background: #f34040;
+    color: #fff;
+}
