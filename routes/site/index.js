@@ -37,6 +37,7 @@ router.use('/auth', require('./auth'));
 router.use('/filter', require('./filter'));
 router.use('/profile', require('./profile'));
 router.use('/requests', require('./request'));
+router.use('/faculty', require('./faculty'));
 router.use('/', require('./homepage'));
 
 module.exports = router;

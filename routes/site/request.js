@@ -150,7 +150,8 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 			complainReasons: complainReasons,
 			type: req.params.type,
 			isAuthorized: req.isAuthorized,
-			userId: req.user_id
+			userId: req.user_id,
+			isUnderConstruction: (req.params.type === 'complains') ? true : false
 		});
 	
 	}).catch(function(err) {
