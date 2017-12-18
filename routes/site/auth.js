@@ -71,7 +71,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 			qs: {
 				access_token: access.access_token,
 				user_ids: access.user_id,
-				fields: 'about,contacts,personal,bdate,sex,universities,photo_200,photo_max'
+				fields: 'about,contacts,personal,bdate,sex,universities,photo_200'
 			},
 			json: true
 		};
@@ -80,7 +80,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 	
 	}).then(function(result) {
 
-		logger.debug(result);
+		logger.debug(JSON.stringify(result));
 		user = result.response[0];
 		
 		var sql = `SELECT id FROM \`User\` WHERE vk_id = ${user.uid};`;
@@ -111,20 +111,27 @@ router.get('/login_vk_callback', function(req, res, next) {
 		} else {
 			
 			//new user
-			var options = {
-				uri: 'https://api.vk.com/method/database.getCitiesById',
-				qs: {
-					access_token: access.access_token,
-					city_ids: user.universities[0].city
-				},
-				json: true
-			};
-			logger.debug(options);
-			
-			rp(options).then(function(result) {
-				logger.debug(result);
-				user.universities[0].cityName = result.response[0].name;
+			var startPromise = null;
 
+			if (user.universities.length && user.universities[0].city != '0') {	
+				var options = {
+					uri: 'https://api.vk.com/method/database.getCitiesById',
+					qs: {
+						access_token: access.access_token,
+						city_ids: user.universities[0].city
+					},
+					json: true
+				};
+				logger.debug(options);
+				startPromise = rp(options).then(function(result) {
+					logger.debug(result);
+					user.universities[0].cityName = result.response[0].name;
+				});	
+			} else {
+				startPromise = Promise.resolve();
+			}
+			
+			startPromise.then(function() {
 				var sex;
 				switch (user.sex) {
 					case 1:
@@ -154,6 +161,21 @@ router.get('/login_vk_callback', function(req, res, next) {
 
 				var about = (user.about) ? user.about : '';
 
+				var university = '';
+				if (user.universities.length) {
+					university = user.universities[0].name
+				}
+
+				var faculty = '';
+				if (user.universities.length && user.universities[0].faculty_name !== '') {
+					faculty = user.universities[0].faculty_name;
+				}
+
+				var city = '';
+				if (user.universities.length && user.universities[0].city != '0') {
+					city = user.universities[0].cityName;
+				}
+
 				var sql = `	INSERT INTO \`User\`(	first_name, last_name, sex, age, birth_date, city, about,
 													university, faculty, avatar,
 													login, password, 
@@ -163,10 +185,10 @@ router.get('/login_vk_callback', function(req, res, next) {
 										'${sex}',
 										'${age}',
 										STR_TO_DATE('${user.bdate}', '${dateFormat}'),
-										'${user.universities[0].cityName}',
+										'${city}',
 										'${about}',
-										'${user.universities[0].name}',
-										'${user.universities[0].faculty_name}',
+										'${university}',
+										'${faculty}',
 										'/images/photo.jpg',
 										NULL,
 										NULL,
