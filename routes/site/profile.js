@@ -306,13 +306,15 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 	var db = null;
 	
+	if (req.params.userId === 'me') {
+		req.params.userId = req.user_id;
+	}
 	if (!req.isAuthorized) {
 		res.redirect(`/?message='Пожалуйста, авторизуйтесь в системе`);
 		return;
-	}
-
-	if (req.params.userId === 'me') {
-		req.params.userId = req.user_id;
+	} else if (req.user_id != req.params.userId) {
+		res.render('errors/403.pug');
+		return;
 	}
 
 	var data = null;
