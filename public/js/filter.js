@@ -80,7 +80,9 @@ function search() {
 								.append($('<span>' + record.user_age + ', </span>'))
 								.append($('<span>' + record.user_university + '</span>')));
 					}
-					newItem.appendTo(listing);
+					$('<a href="/profile/view/'+record.user_id+'"></a>')
+						.append(newItem)
+						.appendTo(listing);
 				}
 			} else {
 				alert('При загрузке данных произошла ошибка');
