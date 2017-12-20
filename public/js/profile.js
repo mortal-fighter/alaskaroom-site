@@ -68,7 +68,40 @@ function handlersProfileEdit() {
 		yearRange: "1980:2013"
 	});
 
+	$('#flat_enter_date').datepicker({
+		dayNames: [ "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье" ],
+		dayNamesShort: [ "Пон", "Вто", "Сре", "Чет", "Пят", "Суб", "Вос" ],
+		dayNamesMin: [ "Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс" ],
+		monthNames: [ "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" ],
+		monthNamesShort: [ "Янв", "Фев", "Мар", "Апр", "Май", "Инь", "Иль", "Авг", "Сен", "Окт", "Ноя", "Дек" ],
+		dateFormat: "dd.mm.yy"
+	});
+
 	$("#user_phone").mask("+7(999)-999-99-99");
+
+	$('#user_university').on('change', function() {
+		disableAllControls();
+		$.ajax({
+			method: 'GET',
+			url: '/profile/get_faculties/' + processInputSelect('user_university'),
+			success: function(result) {
+				if (result.status === 'ok') {
+					//
+					var target = $('#user_faculty').html(''); // returns element itself
+					for (var i = 0; i < result.faculties.length; i++) {
+						target.append( $('<option value="'+result.faculties[i].id+'">'+result.faculties[i].name_full+'</option>') );
+					}
+				} else {
+					console.log('При загрузке факультетов для ВУЗА id="' + processInputSelect('user_university') + '" произошла ошибка');
+				}
+				enableAllControls();
+			},
+			error: function(error) {
+				console.log('Ошибка сетевого соединения');
+				enableAllControls();
+			}
+		})
+	});
 
 	$('.room-photos > div > a').on('click', function(e) {
 		e.preventDefault();
@@ -79,14 +112,6 @@ function handlersProfileEdit() {
 	$('#btn-showflat').on('click', function(e) { 
 		e.preventDefault();
 		$('.room-info').fadeIn(200);
-		$('#flat_enter_date').datepicker({
-			dayNames: [ "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье" ],
-			dayNamesShort: [ "Пон", "Вто", "Сре", "Чет", "Пят", "Суб", "Вос" ],
-			dayNamesMin: [ "Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс" ],
-			monthNames: [ "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" ],
-			monthNamesShort: [ "Янв", "Фев", "Мар", "Апр", "Май", "Инь", "Иль", "Авг", "Сен", "Окт", "Ноя", "Дек" ],
-			dateFormat: "dd.mm.yy"
-		});
 	});
 
 	$('#user_avatar_1, #upload-icon').on('click', function() { $('#user_avatar_2').click(); });
@@ -115,7 +140,7 @@ function handlersProfileEdit() {
 			success: function(result) {
 				switch (result.status) {
 					case 'ok': 
-						$('#user_avatar_1').attr('src', result.user_avatar);
+						doCrop(result);
 						break;
 					case 'not ok':
 						alert('Произошла ошибка при загрузке фотографии');
@@ -213,8 +238,8 @@ function handlersProfileEdit() {
 			form.user.phone = $('#user_phone').val();
 			form.user.email = $('#user_email').val();
 			form.user.city = $('#user_city').val();
-			form.user.university = $('#user_university').val();
-			form.user.faculty = $('#user_faculty').val();
+			form.user.university = processInputSelect('user_university');
+			form.user.faculty = processInputSelect('user_faculty');
 			form.user.speciality = $('#user_speciality').val();
 			form.user.study_year = $('#user_study_year').val();
 			//form.user.wish_pay = $('#user_study_year').val();
@@ -297,6 +322,65 @@ function deletePhoto(photoId) {
 	});
 }
 
+function doCrop(result) {
+	$('#avatar-cropper').attr('src', result.user_avatar);
+
+	var cropper = new Cropper($('#avatar-cropper').get(0), {
+		aspectRatio: 1
+	});
+	
+	/* 	A polyfill for Canvas.toBlob method
+		https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob
+	*/
+	if (!HTMLCanvasElement.prototype.toBlob) {
+		Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
+			value: function (callback, type, quality) {
+				var canvas = this;
+				setTimeout(function() {
+					var binStr = atob( canvas.toDataURL(type, quality).split(',')[1] ),
+						len = binStr.length,
+						arr = new Uint8Array(len);
+					for (var i = 0; i < len; i++ ) {
+						arr[i] = binStr.charCodeAt(i);
+					}
+					callback( new Blob( [arr], {type: type || 'image/png'} ) );
+				});
+			}
+		});
+	}
+
+	$('#btn-crop').on('click', function() {
+		cropper.getCroppedCanvas().toBlob(function (blob) {
+			var formData = new FormData();
+
+			console.log("blob=", blob);
+			formData.append('upload', blob, 'upload');
+			formData.append('user_id', $('#user_id').val());
+
+			$.ajax('/profile/upload_avatar', {
+					method: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function (result) {
+						console.log(result);	
+						if (result.status === 'ok') {
+							$('#user_avatar_1').attr('src', result.user_avatar);
+							closePopup();
+						} else {
+							alert('При загрузке аватара произошла ошибка');
+						}
+					},
+					error: function () {
+						alert('Ошибка интернет-соединения');
+					}
+			});
+		});
+	});
+
+	showPopup();
+}
+
 /* VALIDATION */
 
 function validateUserInfo() {
@@ -376,30 +460,6 @@ function validateUserInfo() {
 	if (user_city.length > 100) {
 		alert('Поле \'Страна Вашего ВУЗа\' не может быть длиннее 100 символов');
 		$('#user_city').focus();
-		return false;
-	}
-
-	var user_university = $('#user_university').val();
-	if ( user_university === '' || user_university === ' ') {
-		alert('Поле \'Название ВУЗа\' не может быть пустым');
-		$('#user_university').focus();
-		return false;
-	} 
-	if (user_university.length > 200) {
-		alert('Поле \'Название ВУЗа\' не может быть длиннее 200 символов');
-		$('#user_university').focus();
-		return false;
-	}
-
-	var user_faculty = $('#user_faculty').val();
-	if ( user_faculty === '' || user_faculty === ' ') {
-		alert('Поле \'Факультет\' не может быть пустым');
-		$('#user_faculty').focus();
-		return false;
-	} 
-	if (user_faculty.length > 200) {
-		alert('Поле \'Факультет\' не может быть длиннее 200 символов');
-		$('#user_faculty').focus();
 		return false;
 	}
 
@@ -543,17 +603,11 @@ function processInputSelect(id) {
 
 // can't enable controls after insertion, because photos on client were not updated... ehhhh
 function enableAllControls() {
-	$('#btn-find-roommate').fadeIn(200);
-	$('#btn-find-flat').fadeIn(200);
-	$('.room-pic:last').fadeIn(200); // show add photo
-	$('#btn-add-post').prop('disabled', false);
+	//$('select, button, input, textarea, a').prop('disabled', false);
 }
 
 function disableAllControls() {
-	$('#btn-find-roommate').fadeOut(200);
-	$('#btn-find-flat').fadeOut(200);
-	$('.room-pic:last').fadeOut(200); // hide add photo
-	$('#btn-add-post').prop('disabled', true);
+	//$('select, button, input, textarea, a').prop('disabled', true);
 }
 
 $(document).ready(function() {

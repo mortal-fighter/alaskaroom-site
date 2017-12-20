@@ -56,3 +56,14 @@ div.profile-user {
 .declined {
 	color: #f77474 !important;
 }
+
+#avatar-before {
+    width: 100%;
+    max-width: 100%;
+}
+
+[disabled] {
+    cursor: default;
+    color: #ccc;
+    border-color: #ccc;
+}

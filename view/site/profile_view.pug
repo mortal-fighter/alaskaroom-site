@@ -16,7 +16,7 @@ html(lang=ru)
 			div.profile-user
 				img(src=locals.data.user_avatar, alt="User")
 				h3= locals.data.user_name
-				p= locals.data.user_age + ' год, ' + locals.data.user_university + ', ' + locals.data.user_faculty
+				p= locals.data.user_age + ' год, ' + locals.data.university_name + ', ' + locals.data.faculty_name
 				if locals.user_id != locals.userId
 					if locals.roommate_request_status === 'pending'
 						p.roommate-status &#x029D6; Вы предложили соседство

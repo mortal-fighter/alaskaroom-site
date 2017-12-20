@@ -5,10 +5,16 @@ html(lang=ru)
 		
 		script(src="/lib/jquery-ui-datepicker/jquery-ui.min.js")
 		link(href="/lib/jquery-ui-datepicker/jquery-ui.min.css", type="text/css", rel="stylesheet")
+
 		script(src="/lib/jquery-maskedinput/maskedinput.min.js")
+
+		script(src="/lib/cropperjs/cropper.min.js")
+		link(href="/lib/cropperjs/cropper.min.css", type="text/css", rel="stylesheet")
 
 		script(src="/js/profile.js", type="text/javascript")
 		link(href="/css/profile.css", type="text/css", rel="stylesheet")
+		link(href="/css/message_popup.css", type="text/css", rel="stylesheet")
+		
 		
 	body
 		include includes/header.pug
@@ -22,7 +28,7 @@ html(lang=ru)
 					input#user_avatar_2(type="file", accept=".jpg, .png, .gif")
 					div#upload-icon
 				h3= locals.data.user_name
-				p= locals.data.user_age + ' год, ' + locals.data.user_university + ', ' + locals.data.user_faculty
+				p= locals.data.user_age + ' год, ' + locals.data.university_name + ', ' + locals.data.faculty_name
 			div.profile-param
 				div.user-desc
 					h3 Обо мне
@@ -58,13 +64,23 @@ html(lang=ru)
 						input#user_city.option-set-small(type="text", placeholer="Город вашего ВУЗа", value=locals.data.user_city)
 					div
 						p Название вашего ВУЗа
-						input#user_university.option-set-small(type="text", placeholer="Название вашего ВУЗа", value=locals.data.user_university)
+						select#user_university.option-set.university(size="1")
+							for university in locals.universities					
+								if university.id === locals.data.university_id
+									option(value=university.id, selected)= university.name_short
+								else
+									option(value=university.id)= university.name_short
 					div
 						p Ваш факультет
-						input#user_faculty.option-set-small(type="text", placeholer="Ваш факультет", value=locals.data.user_faculty)
+						select#user_faculty.option-set(size="1")
+							for faculty in locals.faculties					
+								if faculty.id === locals.data.faculty_id
+									option(value=faculty.id, selected)= faculty.name_full
+								else
+									option(value=faculty.id)= faculty.name_full
 					div
 						p Ваше направление
-						input#user_speciality.option-set-small(type="text", placeholer="Ваша специальность", value=locals.data.user_speciality)
+						input#user_speciality.option-set-small(type="text", placeholer="Ваша специальность", value=locals.data.speciality_name)
 					div
 						p Ваш курс
 						input#user_study_year.option-set-small(type="text", placeholer="Ваш курс", value=locals.data.user_study_year)
@@ -131,3 +147,13 @@ html(lang=ru)
 									input(type="checkbox", value=utility.id)
 			input#btn-saveall.final-ad(type="button", value="Сохранить объявление")
 		include includes/footer.pug
+		div#popup-window
+			div.popup-layout
+				div.popup-container.popup-container-medium
+					div.popup-header
+						div.popup-close закрыть
+					div.popup-content.form-crop-avatar
+						h3.title Выберите область для аватарки
+						div
+							img#avatar-cropper
+						a.find-filter(id="btn-crop", href="#") Сохранить

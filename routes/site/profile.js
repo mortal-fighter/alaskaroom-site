@@ -161,16 +161,6 @@ function validateUser(user) {
 	} else if (user.city.length > 100) {
 		throw new Error(`Parameters validation error: user.city.length = ${user.city.length}.`);
 	}
-	if (!user.university) {
-		throw new Error(`Parameters validation error (user.university): '${user.university}'.`);
-	} else if (user.university.length > 200) {
-		throw new Error(`Parameters validation error: user.university.length = ${user.university.length}.`);
-	}
-	if (!user.faculty) {
-		throw new Error(`Parameters validation error (user.faculty): '${user.faculty}'.`);
-	} else if (user.faculty.length > 200) {
-		throw new Error(`Parameters validation error: user.faculty.length = ${user.faculty.length}.`);
-	}
 	if (!user.speciality) {
 		throw new Error(`Parameters validation error (user.speciality): '${user.speciality}'.`);
 	} else if (user.speciality.length > 150) {
@@ -208,26 +198,28 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 		db = connection;
 		
 		var sql = `	SELECT 
-						avatar 		user_avatar,
-						age 		user_age,
-						university 	user_university,
-						faculty 	user_faculty,
-						about 		user_about,
-						first_name	user_first_name,
-						last_name	user_last_name,
-						CONCAT(first_name, " ", last_name) user_name,
+						user_id,
+						user_first_name,
+						user_last_name,
+						user_name,
+						user_age,
+						user_about,
+						user_avatar,
+						university_id,
+						university_name,	
+						faculty_id,
+						faculty_name,	
 						flat_id,
-						description flat_description,
-						square 		flat_square,
-						traffic 	flat_traffic,
-						address 	flat_address,
-						room_num 	flat_room_num,
-						rent_pay 	flat_rent_pay,
-						total_pay 	flat_total_pay,
-						DATE_FORMAT(enter_date, '%d.%m') flat_enter_date
-					FROM \`User\`
-					LEFT JOIN Flat ON \`User\`.flat_id = Flat.id
-					WHERE \`User\`.id = ${req.params.userId};`;
+						flat_description,
+						flat_square,
+						flat_traffic,
+						flat_address,
+						flat_room_num,
+						flat_rent_pay,
+						flat_total_pay,
+						DATE_FORMAT(flat_enter_date, '%d.%m') flat_enter_date
+					FROM v_user
+					WHERE user_id = ${req.params.userId};`;
 		logger.debug(sql);
 		return db.queryAsync(sql);
 	
@@ -318,6 +310,8 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 	}
 
 	var data = null;
+	var universities = [];
+	var faculties = [];
 	var photos = [];
 	var priorities = [];
 	var userPriorities = [];
@@ -332,35 +326,36 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 		db = connection;
 		
 		var sql = `	SELECT 
-						\`User\`.id user_id,
-						avatar 		user_avatar,
-						sex			user_sex,
-						DATE_FORMAT(birth_date, '%d.%m.%Y') user_birth_date,
-						age  		user_age,
-						phone		user_phone,
-						email		user_email,
-						city		user_city,
-						university 	user_university,
-						faculty 	user_faculty,
-						speciality 	user_speciality,
-						study_year	user_study_year,
-						about 		user_about,
-						first_name	user_first_name,
-						last_name	user_last_name,
-						CONCAT(first_name, " ", last_name) user_name,
-						wish_pay	user_wish_pay,
+						user_id,
+						user_avatar,
+						user_sex,
+						user_birth_date,
+						user_age,
+						user_phone,
+						user_email,
+						user_city,
+						university_id,
+						university_name,
+						faculty_id,
+						faculty_name,
+						speciality_name,
+						user_study_year,
+						user_about,
+						user_first_name,
+						user_last_name,
+						CONCAT(user_first_name, " ", user_last_name) user_name,
+						user_wish_pay,
 						flat_id,
-						description flat_description,
-						square 		flat_square,
-						traffic 	flat_traffic,
-						address 	flat_address,
-						room_num 	flat_room_num,
-						rent_pay 	flat_rent_pay,
-						total_pay 	flat_total_pay,
-						DATE_FORMAT(enter_date, '%d.%m.%Y')	flat_enter_date
-					FROM \`User\`
-					LEFT JOIN Flat ON \`User\`.flat_id = Flat.id
-					WHERE \`User\`.id = ${req.params.userId};`;
+						flat_description,
+						flat_square,
+						flat_traffic,
+						flat_address,
+						flat_room_num,
+						flat_rent_pay,
+						flat_total_pay,
+						DATE_FORMAT(flat_enter_date, '%d.%m.%Y')	flat_enter_date
+					FROM v_user
+					WHERE user_id = ${req.params.userId};`;
 		logger.debug(sql);
 		return db.queryAsync(sql);
 	
@@ -371,6 +366,24 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 		if (data.flat_id) {
 			hasFlat = true;
 		}
+
+		var sql = ` SELECT id, name_short FROM university;`;
+		logger.debug(sql);
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		logger.debug(result);
+		universities = result;
+
+		var sql = ` SELECT id, name_full FROM faculty WHERE university_id = ${data.university_id};`;
+		logger.debug(sql);
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		logger.debug(result);
+		faculties = result;
 
 		var sql = `	SELECT * FROM v_priority`;
 		logger.debug(sql);
@@ -496,6 +509,8 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 		res.render('site/profile_edit.pug', {
 			user_id: req.params.userId,
 			data: data,
+			universities: universities,
+			faculties: faculties,
 			photos: photos,
 			priorities: prioritySelect,
 			utilities: utilityObject,
@@ -524,14 +539,16 @@ router.post('/edit', function(req, res, next) {
 		
 		db = connection;
 		
+		console.log('FLAT=',req.body.flat);
+
 		if (!req.body.flat) {
 			req.body.flat = {
-				id: 'NULL'
+				id: ''
 			};
 		}
 		var hasFlat = (req.body.flat.address) ? true : false; 		// address is primary field
-		var hasId = (req.body.flat.id !== 'NULL') ? true : false;	//
-
+		var hasId = (req.body.flat.id !== '') ? true : false;	//
+		console.log('hasFlat, hasId', hasFlat, hasId);
 		if (hasFlat) {
 			validateFlat(req.body.flat);
 			formatObjectForSQL(req.body.flat);
@@ -579,7 +596,7 @@ router.post('/edit', function(req, res, next) {
 
 				logger.debug(result);
 				
-				if (!hasFlat) {
+				if (!hasId) {
 					req.body.flat.id = result.insertId;
 				}
 
@@ -594,7 +611,7 @@ router.post('/edit', function(req, res, next) {
 
 				logger.debug(result);
 				
-				if (!hasFlat) {
+				if (!hasId) {
 					var sql = `	DELETE FROM flat_utility WHERE flat_id = ${req.body.flat.id}`;
 					logger.debug(sql);
 					return db.queryAsync(sql);
@@ -652,8 +669,8 @@ router.post('/edit', function(req, res, next) {
 					phone = ${req.body.user.phone},
 					email = ${req.body.user.email},
 					city = ${req.body.user.city},
-					university = ${req.body.user.university},
-					faculty = ${req.body.user.faculty},
+					university_id = ${req.body.user.university},
+					faculty_id = ${req.body.user.faculty},
 					speciality = ${req.body.user.speciality},
 					study_year = ${req.body.user.study_year},
 					phone = ${req.body.user.phone},
@@ -868,6 +885,26 @@ router.delete('/delete_photo', function(req, res, next) {
 			status: 'not ok'
 		});
 	
+	});
+});
+
+router.get('/get_faculties/:university_id', function(req, res, next) {
+	var db = null;
+	connectionPromise().then(function(connection) {
+		db = connection;
+		var sql = ` SELECT id, name_full FROM faculty WHERE university_id = ${req.params.university_id};`;	
+		logger.debug(sql);
+		return db.queryAsync(sql);
+	}).then(function(result) {
+		logger.debug(result);
+		res.json({
+			status: 'ok',
+			faculties: result
+		});
+	}).catch(function(err) {
+		res.json({
+			status: 'not ok'
+		});
 	});
 });
 
