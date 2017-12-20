@@ -140,7 +140,8 @@ function handlersProfileEdit() {
 			success: function(result) {
 				switch (result.status) {
 					case 'ok': 
-						doCrop(result);
+						$('#user_avatar_1').attr('src', result.user_avatar);
+						//doCrop(result);
 						break;
 					case 'not ok':
 						alert('Произошла ошибка при загрузке фотографии');
