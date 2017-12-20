@@ -1,0 +1,1 @@
+{"university":84304,"completed_faculties":1,"faculties":[["158758","Юридический факультет"]]}
