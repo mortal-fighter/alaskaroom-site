@@ -24,7 +24,7 @@ function sessionUserIdByToken(token) {
 	});
 }
 
-function sessionExistsByUserId(userId) {
+function isSessionExistsByUserId(userId) {
 	return new Promise(function(resolve, reject) {
 		connectionPromise().then(function(connection) {
 			db = connection;
@@ -88,5 +88,7 @@ module.exports = {
 				});
 			}
 		});
-	}
+	},
+
+	isSessionExistsByUserId: isSessionExistsByUserId
 }

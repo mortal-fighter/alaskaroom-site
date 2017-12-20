@@ -9,6 +9,7 @@ const moment = require('moment');
 const fs = require('fs');
 const path = require('path');
 const logger = require('log4js').getLogger();
+const imageDownloader = require('image-downloader');
 
 const config = require('../../config/common.js');
 const connectionPromise = require('../../components/connectionPromise.js');
@@ -24,7 +25,8 @@ router.get('/login_vk_callback', function(req, res, next) {
 	var user = null;
 	var university = null;
 	var newUserId = null; 
-	var avatar = null;
+	var avatarPath = null;
+	var avatarHref = null;
 	var isAvatarFileCreated = false;
 	var userHasPhoto = false;
 	var userId = null;
@@ -90,7 +92,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 	
 	}).then(function(result) {
 	
-		logger.debug(result);
+		logger.debug('USER' + JSON.stringify(result));
 
 		if (result.length) {
 			userId = result[0].id;
@@ -111,8 +113,9 @@ router.get('/login_vk_callback', function(req, res, next) {
 		} else {
 			
 			//new user
-			var startPromise = null;
+			var promiseChain = Promise.resolve();
 
+			// get city name from vk
 			if (user.universities.length && user.universities[0].city != '0') {	
 				var options = {
 					uri: 'https://api.vk.com/method/database.getCitiesById',
@@ -123,15 +126,14 @@ router.get('/login_vk_callback', function(req, res, next) {
 					json: true
 				};
 				logger.debug(options);
-				startPromise = rp(options).then(function(result) {
+				
+				promiseChain.then(rp(options).then(function(result) {
 					logger.debug(result);
 					user.universities[0].cityName = result.response[0].name;
-				});	
-			} else {
-				startPromise = Promise.resolve();
-			}
+				}));	
+			} 
 			
-			startPromise.then(function() {
+			promiseChain.then(function() {
 				var sex;
 				switch (user.sex) {
 					case 1:
@@ -166,20 +168,19 @@ router.get('/login_vk_callback', function(req, res, next) {
 					university = user.universities[0].name
 				}
 
-				var faculty = '';
+				/*var faculty = '';
 				if (user.universities.length && user.universities[0].faculty_name !== '') {
 					faculty = user.universities[0].faculty_name;
-				}
+				}*/
 
 				var city = '';
 				if (user.universities.length && user.universities[0].city != '0') {
 					city = user.universities[0].cityName;
 				}
 
-				var sql = `	INSERT INTO \`User\`(	first_name, last_name, sex, age, birth_date, city, about,
-													university, faculty, avatar,
-													login, password, 
-													vk_id, register_from_vk, date_register)
+				var sql = `	INSERT INTO \`User\`(	first_name, last_name, sex, age, birth_date, city, about, avatar,
+													university_id, faculty_id,
+													vk_id, date_register)
 							VALUES (	'${user.first_name}',
 										'${user.last_name}',
 										'${sex}',
@@ -187,13 +188,10 @@ router.get('/login_vk_callback', function(req, res, next) {
 										STR_TO_DATE('${user.bdate}', '${dateFormat}'),
 										'${city}',
 										'${about}',
-										'${university}',
-										'${faculty}',
 										'/images/photo.jpg',
-										NULL,
-										NULL,
+										(SELECT id FROM university WHERE vk_id = '${user.universities[0].id}'),
+										(SELECT id FROM faculty WHERE vk_id = '${user.universities[0].faculty}'),
 										${user.uid},
-										1,
 										NOW())`;
 				logger.debug(sql);
 				return db.queryAsync(sql);
@@ -204,44 +202,43 @@ router.get('/login_vk_callback', function(req, res, next) {
 				newUserId = result.insertId;
 				auth.sessionStart(newUserId);
 
-				avatar = path.normalize(__dirname + '/../../public/images/avatar-user-'+newUserId+'.jpg');
 				userHasPhoto = (user.photo_200 !== 'https://vk.com/images/camera_200.png') ? true : false;		
 				
-				/*if (userHasPhoto) {
-					// download photo
-					const options = {
-						url: user.photo_200,
-						encoding: 'binary'
-					};	
-					return request.get(options);
-				} else {
-					return Promise.resolve();
-				}*/
-				return Promise.resolve();
-			
-			}).then(function(res) {
-				
-				/*if (userHasPhoto) {
-					// save photo to disk
-					isAvatarFileCreated = true;
-
-					const buffer = Buffer.from(res, 'utf8');
-					fs.writeFileSync(avatar, buffer);
+				var promiseChain = Promise.resolve();
+				if (userHasPhoto) {
 					
-					//update db
-					var sql = `UPDATE \`User\` SET avatar = '/images/avatar-user-`+newUserId+`.jpg' WHERE id = ${newUserId};`;
-					logger.debug(sql);
-					return db.queryAsync(sql);
-				} else {
-					return Promise.resolve();
-				}*/
-				return Promise.resolve();
+					// create user folder, download photo from vk, save it and update mysql
+					promiseChain.then(function() {
+						fs.mkdirSync(path.normalize(__dirname + '/../../public/images/uploads/user_'+newUserId), 0o755);
+					}).then(function() {
+						var ext = user.photo_200.substr(user.photo_200.lastIndexOf('.') + 1);
+						var time = (new Date()).getTime();
+						avatarPath = path.normalize(`${__dirname}/../../public/images/uploads/user_${newUserId}/avatar_${time}.${ext}`);
+						avatarHref = `/images/uploads/user_${newUserId}/avatar_${time}.${ext}`;
+						
+						const options = {
+							url: user.photo_200,
+							dest: avatarPath                 
+						}
+						return imageDownloader.image(options);
+					}).then(function(res) {
+						isAvatarFileCreated = true;
+						//update db
+						var sql = `UPDATE \`User\` SET avatar = '${avatarHref}' WHERE id = ${newUserId};`;
+						logger.debug(sql);
+						return db.queryAsync(sql);
+					});
+				}
+				return promiseChain;
 			
 			}).then(function(result) {
-			
-				/*if (userHasPhoto) {
-					logger.debug(result);
-				}*/	
+				/*todo: fix sessions duplicate
+				
+					[2017-12-20 11:54:25.487] [DEBUG] [default] -   INSERT INTO Session(token, user_id)
+			                                                        VALUES ('6WSrrtUEwEGy8nn76L5hAD8VWqt5IiDQ', 25);
+					[2017-12-20 11:54:25.490] [DEBUG] [default] -   INSERT INTO Session(token, user_id)
+					                                                        VALUES ('cQGhDKdL72rjd40ZFy3mdQgGlGdZT4AZ', 25);
+				*/
 				auth.sessionStart(newUserId).then(function(token) {
 					res.cookie('AlaskaRoomAuthToken', token);
 					res.redirect(`/profile/edit/${newUserId}`);	
@@ -256,17 +253,16 @@ router.get('/login_vk_callback', function(req, res, next) {
 				
 				if (isAvatarFileCreated) {
 					logger.debug('REMOVE AVATAR FROM DISK...');
-					fs.unlinkSync(avatar);
+					fs.unlinkSync(avatarPath);
 				}
-
-				logger.debug(`END SESSION FOR USER ${newUserId}...`);
-				auth.sessionEnd(newUserId);
 
 				if (newUserId) {
 					logger.debug('ROLLBACK User...');
 					var sql = `DELETE FROM \`User\` WHERE id = ${newUserId};`;
 					logger.debug(sql);
 					db.queryAsync(sql);
+					/*logger.debug(`END SESSION FOR USER ${newUserId}...`);
+					auth.sessionEnd(newUserId);*/
 				}
 
 				if (access) {
@@ -285,8 +281,9 @@ router.get('/login_vk_callback', function(req, res, next) {
 	
 		logger.error(err.message, err.stack);
 		
-		logger.debug(`END SESSION FOR USER ${userId}...`);
-		auth.sessionEnd(userId);
+		//todo: remove both on server and client
+		/*logger.debug(`END SESSION FOR USER ${userId}...`);
+		auth.sessionEnd(userId);*/
 
 		if (access) {
 			logger.debug('ROLLBACK access_token...');

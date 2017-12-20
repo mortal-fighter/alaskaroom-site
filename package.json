@@ -28,6 +28,7 @@
     "request": "2.83.0",
     "request-promise": "4.2.2",
     "moment": "2.19.2",
-    "randomstring": "1.1.5"
+    "randomstring": "1.1.5",
+    "image-downloader": "3.3.0"
   }
 }
