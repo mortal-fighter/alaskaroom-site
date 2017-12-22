@@ -244,7 +244,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 				var sql = `	SELECT 
 								src_small, src_orig,
 								width_small, height_small, width_orig, height_orig
-							FROM Photo
+							FROM photo
 							WHERE flat_id = ${data.flat_id};`;
 				return db.queryAsync(sql);
 			}).then(function(result) {
@@ -258,7 +258,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 	}).then(function() {
 		if (req.params.userId != req.user_id) {
 			var sql = `	SELECT status 
-						FROM Roommate_request 
+						FROM roommate_request 
 						WHERE from_user_id = ${req.user_id}
 						  AND to_user_id = ${req.params.userId};`
 			logger.debug(sql);
@@ -446,7 +446,7 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 				var sql = `	SELECT 
 								id, src_small, src_orig,
 								width_small, height_small, width_orig, height_orig
-							FROM Photo
+							FROM photo
 							WHERE flat_id = ${data.flat_id};`;
 				return db.queryAsync(sql);
 			}).then(function(result) {
@@ -462,7 +462,7 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 		var sql = `	SELECT 
 						id 				utility_id, 
 						display_name	utility_name 
-					FROM Utility
+					FROM utility
 					ORDER BY display_order;`;
 		logger.debug(sql);
 		return db.queryAsync(sql);
@@ -475,7 +475,7 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 
 		if (hasFlat) {
 			var sql = `	SELECT utility_id
-						FROM Flat_utility
+						FROM flat_utility
 						WHERE flat_id = ${data.flat_id}; `;
 			return db.queryAsync(sql);			
 		} else {
@@ -557,7 +557,7 @@ router.post('/edit', function(req, res, next) {
 			if (hasId) {
 				// update
 
-				sql = `	UPDATE Flat
+				sql = `	UPDATE flat
 						SET description = ${req.body.flat.description},
 							address = ${req.body.flat.address},
 							square = ${req.body.flat.square},
@@ -600,7 +600,7 @@ router.post('/edit', function(req, res, next) {
 					req.body.flat.id = result.insertId;
 				}
 
-				var sql = `	UPDATE Photo 
+				var sql = `	UPDATE photo 
 							SET flat_id = ${req.body.flat.id}, 
 								temporary_user_id = NULL
 							WHERE temporary_user_id = ${req.user_id};`;
@@ -659,7 +659,7 @@ router.post('/edit', function(req, res, next) {
 		var about = (req.body.user.about) ? req.body.user.about : '\'\'';
 
 		var sql =
-			`	UPDATE \`User\`
+			`	UPDATE \`user\`
 				SET first_name = ${req.body.user.first_name},
 					last_name = ${req.body.user.last_name},
 					sex = ${req.body.user.sex},
@@ -740,7 +740,7 @@ router.post('/upload_avatar', uploader.single('upload'), function(req, res, next
 		photo = convertResourceLocator(req.file.path);
 
 		var sql = `
-			UPDATE \`User\`
+			UPDATE \`user\`
 			SET avatar = '${photo}'
 			WHERE id = ${req.body.user_id};`;
 
@@ -855,7 +855,7 @@ router.delete('/delete_photo', function(req, res, next) {
 	connectionPromise().then(function(connection) {
 		
 		db = connection;
-		var sql = ` SELECT filename_orig FROM Photo WHERE id = ${req.body.photo_id};`;
+		var sql = ` SELECT filename_orig FROM photo WHERE id = ${req.body.photo_id};`;
 		logger.debug(sql);
 		return db.queryAsync(sql);
 	
@@ -867,7 +867,7 @@ router.delete('/delete_photo', function(req, res, next) {
 	}).then(function() {
 		
 		logger.debug(`Unlink file success`);
-		var sql = `	DELETE FROM Photo WHERE id = ${req.body.photo_id};`;
+		var sql = `	DELETE FROM photo WHERE id = ${req.body.photo_id};`;
 		logger.debug(sql);
 		return db.queryAsync(sql);
 	

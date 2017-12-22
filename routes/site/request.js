@@ -21,12 +21,12 @@ router.get('/get_count_:type(\\S+)', function(req, res, next) {
 
 			if (req.params.type === 'incoming') {
 				sql = ` SELECT count(*) cnt
-						FROM Roommate_request
+						FROM roommate_request
 						WHERE to_user_id = ${req.user_id}
 						  AND is_viewed = false;`;
 			} else if (req.params.type === 'accepted') {
 				sql = ` SELECT count(*) cnt
-						FROM Roommate_request
+						FROM roommate_request
 						WHERE from_user_id = ${req.user_id}
 						  AND \`status\` = 'accepted'
 						  AND is_viewed = false;`;
@@ -76,7 +76,7 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 				sql = `	SELECT 	req.id 	request_id,
 						to_user_id,
 						\`status\`,
-						\`User\`.id 	user_id,
+						\`user\`.id 	user_id,
 						first_name,
 						last_name,
 						age,
@@ -84,8 +84,8 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 						faculty,
 						study_year,
 						avatar
-				FROM Roommate_request req
-				JOIN \`User\` ON to_user_id = \`User\`.id
+				FROM roommate_request req
+				JOIN \`user\` ON to_user_id = \`user\`.id
 				WHERE from_user_id = ${req.user_id}
 				  AND \`status\` <> 'accepted'`;
 				break;
@@ -93,7 +93,7 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 				sql = `	SELECT 	req.id 		request_id,
 							from_user_id,
 							\`status\`,
-							\`User\`.id 	user_id,
+							\`user\`.id 	user_id,
 							first_name,
 							last_name,
 							age,
@@ -101,15 +101,15 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 							faculty,
 							study_year,
 							avatar
-						FROM Roommate_request req
-						JOIN \`User\` ON from_user_id = \`User\`.id
+						FROM roommate_request req
+						JOIN \`user\` ON from_user_id = \`user\`.id
 						WHERE to_user_id = ${req.user_id};`;
 				break;
 			case 'accepted':
 				sql = `	SELECT 	req.id 	request_id,
 								to_user_id,
 								\`status\`,
-								\`User\`.id 	user_id,
+								\`user\`.id 	user_id,
 								first_name,
 								last_name,
 								age,
@@ -117,8 +117,8 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 								faculty,
 								study_year,
 								avatar
-						FROM Roommate_request req
-						JOIN \`User\` ON to_user_id = \`User\`.id
+						FROM roommate_request req
+						JOIN \`user\` ON to_user_id = \`user\`.id
 						WHERE from_user_id = ${req.user_id}
 						  AND \`status\` = 'accepted'`;
 				break;
@@ -135,7 +135,7 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 		logger.debug(result);
 		records = result;	
 
-		var sql = `	SELECT id, name FROM Complain;`;	
+		var sql = `	SELECT id, name FROM complain;`;	
 		logger.debug(sql);
 
 		return db.queryAsync(sql);
@@ -175,7 +175,7 @@ router.post('/invite', function(req, res, next) {
 	
 		db = connection;
 		var sql = ` SELECT COUNT(*) cnt
-					FROM Roommate_request 
+					FROM roommate_request 
 					WHERE from_user_id = ${req.user_id}
 					  AND to_user_id = ${req.body.user_id}`;
 
@@ -190,7 +190,7 @@ router.post('/invite', function(req, res, next) {
 			throw new Error('USER_ALREADY_INVITED');
 		}
 
-		var sql = `	INSERT INTO Roommate_request(
+		var sql = `	INSERT INTO roommate_request(
 						from_user_id,
 						to_user_id,
 						status,
@@ -234,7 +234,7 @@ router.post('/accept', function(req, res, next) {
 	connectionPromise().then(function(connection) {
 	
 		db = connection;
-		var sql = ` UPDATE Roommate_request
+		var sql = ` UPDATE roommate_request
 					SET \`status\` = 'accepted'	
 					WHERE id = ${req.body.requestId};`;
 
@@ -246,8 +246,8 @@ router.post('/accept', function(req, res, next) {
 		logger.debug(result);
 
 		var sql = `	SELECT phone
-					FROM \`User\`
-					JOIN Roommate_request req ON \`User\`.id = from_user_id
+					FROM \`user\`
+					JOIN roommate_request req ON \`user\`.id = from_user_id
 					WHERE req.id = ${req.body.requestId};`;
 
 		logger.debug(sql);
@@ -282,7 +282,7 @@ router.post('/decline', function(req, res, next) {
 	connectionPromise().then(function(connection) {
 	
 		db = connection;
-		var sql = ` UPDATE Roommate_request
+		var sql = ` UPDATE roommate_request
 					SET \`status\` = 'declined'	
 					WHERE id = ${req.body.requestId};`;
 
@@ -323,10 +323,10 @@ router.post('/complain', function(req, res, next) {
 			SELECT 
 				complains_available,
 				(SELECT COUNT(*)
-					FROM User_complains
+					FROM user_complains
 					WHERE from_user_id = ${req.user_id}
 					AND to_user_id = ${req.body.user_id}) cnt
-			FROM \`User\`	
+			FROM \`user\`	
 			WHERE id = ${req.user_id};`;
 		logger.debug(sql);
 		return db.queryAsync(sql);
@@ -344,7 +344,7 @@ router.post('/complain', function(req, res, next) {
 			throw new Error('COMPLAIN_IS_ALREADY_EXISTS');	
 		}
 
-		var sql = ` UPDATE \`User\`
+		var sql = ` UPDATE \`user\`
 					SET complains_available = ${complainsAvailable - 1} 	
 					WHERE id = ${req.user_id};`;
 
@@ -359,7 +359,7 @@ router.post('/complain', function(req, res, next) {
 			isUserUpdated = true;
 		}
 
-		var sql = ` INSERT INTO User_complains(
+		var sql = ` INSERT INTO user_complains(
 						from_user_id,
 						to_user_id,
 						complain_id,
@@ -388,8 +388,8 @@ router.post('/complain', function(req, res, next) {
 		logger.error(err.message + '\n' + err.stack);
 
 		if (isUserUpdated) {
-			logger.debug('Rollback table \'User\'');
-			var sql = ` UPDATE \`User\` 
+			logger.debug('Rollback table \'user\'');
+			var sql = ` UPDATE \`user\` 
 						SET complains_available = ${complainsAvailable}
 						WHERE id = ${req.user_id};`;
 			logger.debug(sql);

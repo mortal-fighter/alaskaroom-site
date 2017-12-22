@@ -24,20 +24,20 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 
 		if (req.params.type === 'find-flat') {
 			sql = ` SELECT 
-						\`User\`.id	user_id,
+						\`user\`.id	user_id,
 						sex			user_sex,
 						age			user_age,
 						university	user_university,
 						city		user_city,
 						address		flat_address,
 						rent_pay	flat_rent_pay,
-						(SELECT src_small FROM Photo WHERE Photo.flat_id = Flat.id LIMIT 1) photo_src_small,
+						(SELECT src_small FROM photo WHERE photo.flat_id = Flat.id LIMIT 1) photo_src_small,
 						flat_id
-					FROM \`User\`
+					FROM \`user\`
 					JOIN Flat ON flat_id = Flat.id`;
 		} else {
 			sql = `	SELECT 
-						\`User\`.id	user_id,
+						\`user\`.id	user_id,
 						first_name	user_first_name,
 						last_name	user_last_name,
 						sex			user_sex,
@@ -45,7 +45,7 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 						university	user_university,
 						avatar		user_avatar,
 						flat_id
-					FROM \`User\` 
+					FROM \`user\` 
 					WHERE flat_id IS NULL`;
 		}
 
@@ -106,18 +106,18 @@ router.post('/ajax', function(req, res, next) {
 		if (req.body.type === 'find-flat') {
 		
 			sql = `  SELECT 
-						\`User\`.id	user_id,
+						\`user\`.id	user_id,
 						sex			user_sex,
 						age			user_age,
 						university	user_university,
 						city		user_city,
 						address		flat_address,
 						rent_pay	flat_rent_pay,
-						(SELECT src_small FROM Photo WHERE Photo.flat_id = Flat.id LIMIT 1) photo_src_small,
+						(SELECT src_small FROM photo WHERE photo.flat_id = flat.id LIMIT 1) photo_src_small,
 						flat_id
-					FROM \`User\`
+					FROM \`user\`
 					/* отсеить тех, у кого нет квартиры*/
-					JOIN Flat ON flat_id = Flat.id
+					JOIN flat ON flat_id = flat.id
 					/* отсеить тех, у кого не совпадают приоритеры*/
 					JOIN (
 						/*выбрать пользователей у которых совпадают приоритеры с заданными*/
@@ -130,14 +130,14 @@ router.post('/ajax', function(req, res, next) {
 			
 			sql+= `		GROUP BY user_id
 						HAVING cnt_priority >= ${priority_count}
-					) matched ON \`User\`.id = matched.user_id
+					) matched ON \`user\`.id = matched.user_id
 					LIMIT ${limit}
 					OFFSET ${offset};`;
 		
 		} else {
 		
 			sql = `	SELECT
-						\`User\`.id	user_id,
+						\`user\`.id	user_id,
 						first_name	user_first_name,
 						last_name	user_last_name,
 						sex			user_sex,
@@ -145,7 +145,7 @@ router.post('/ajax', function(req, res, next) {
 						university	user_university,
 						avatar		user_avatar,
 						flat_id
-					FROM \`User\` 
+					FROM \`user\` 
 					/* кроме тех, у кого не совпадают приоритеры*/
 					JOIN (
 						/*выбрать пользователей у которых совпадают приоритеры с заданными*/
@@ -158,7 +158,7 @@ router.post('/ajax', function(req, res, next) {
 		
 			sql+= `		GROUP BY user_id
 						HAVING cnt_priority >= ${priority_count}
-					) matched ON \`User\`.id = matched.user_id
+					) matched ON \`user\`.id = matched.user_id
 					/* кроме тех, у кого есть квартира */
 					WHERE flat_id IS NULL
 					LIMIT ${limit}

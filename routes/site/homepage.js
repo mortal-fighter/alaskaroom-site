@@ -18,19 +18,19 @@ router.get('/', function(req, res, next) {
 		db = connection;
 		
 		var sql = ` SELECT 
-						\`User\`.sex,
-						\`User\`.age,
-						\`User\`.university,
-						\`User\`.city,
-						Flat.rent_pay,
-						Flat.address,
+						\`user\`.sex,
+						\`user\`.age,
+						\`user\`.university,
+						\`user\`.city,
+						flat.rent_pay,
+						flat.address,
 						(SELECT 
-							Photo.src_small
-						FROM Photo
-						WHERE flat_id = \`User\`.flat_id
+							photo.src_small
+						FROM photo
+						WHERE flat_id = \`user\`.flat_id
 						LIMIT 1) photo
-					FROM \`User\`
-					JOIN Flat ON Flat.id = \`User\`.flat_id
+					FROM \`user\`
+					JOIN flat ON flat.id = \`user\`.flat_id
 					ORDER BY date_register DESC
 					LIMIT 6`;
 

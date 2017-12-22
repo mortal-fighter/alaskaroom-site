@@ -10,7 +10,7 @@ function sessionUserIdByToken(token) {
 	return new Promise(function(resolve, reject) {
 		connectionPromise().then(function(connection) {
 			db = connection;
-			var sql = `	SELECT user_id FROM Session WHERE token = '${token}';`;
+			var sql = `	SELECT user_id FROM session WHERE token = '${token}';`;
 			logger.debug(sql);
 			return db.queryAsync(sql);
 		}).then(function(result) {
@@ -28,7 +28,7 @@ function isSessionExistsByUserId(userId) {
 	return new Promise(function(resolve, reject) {
 		connectionPromise().then(function(connection) {
 			db = connection;
-			var sql = `	SELECT count(*) cnt FROM Session WHERE user_id = ${userId};`;
+			var sql = `	SELECT count(*) cnt FROM session WHERE user_id = ${userId};`;
 			logger.debug(sql);
 			return db.queryAsync(sql);
 		}).then(function(result) {
@@ -49,7 +49,7 @@ module.exports = {
 			connectionPromise().then(function(connection) {
 				db = connection;
 				token = randomstring.generate();
-				var sql = `	INSERT INTO Session(token, user_id) 
+				var sql = `	INSERT INTO session(token, user_id) 
 							VALUES ('${token}', ${userId});`;
 				logger.debug(sql);
 				return db.queryAsync(sql);
@@ -66,7 +66,7 @@ module.exports = {
 	sessionEnd: function(userId) {
 		return connectionPromise().then(function(connection) {
 			db = connection;
-			var sql = `	DELETE FROM Session WHERE user_id = ${userId};`;
+			var sql = `	DELETE FROM session WHERE user_id = ${userId};`;
 			logger.debug(sql);
 			return db.queryAsync(sql);
 		});

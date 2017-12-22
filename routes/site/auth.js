@@ -2,7 +2,7 @@
 
 const router = require('express').Router();
 
-const Promise = require('Bluebird');
+const Promise = require('bluebird');
 const rp = require('request-promise');
 const request = require('request');
 const moment = require('moment');
@@ -85,7 +85,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 		logger.debug(JSON.stringify(result));
 		user = result.response[0];
 		
-		var sql = `SELECT id FROM \`User\` WHERE vk_id = ${user.uid};`;
+		var sql = `SELECT id FROM \`user\` WHERE vk_id = ${user.uid};`;
 
 		logger.debug(sql);
 		return db.queryAsync(sql);
@@ -178,7 +178,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 					city = user.universities[0].cityName;
 				}
 
-				var sql = `	INSERT INTO \`User\`(	first_name, last_name, sex, age, birth_date, city, about, avatar,
+				var sql = `	INSERT INTO \`user\`(	first_name, last_name, sex, age, birth_date, city, about, avatar,
 													university_id, faculty_id,
 													vk_id, date_register)
 							VALUES (	'${user.first_name}',
@@ -224,7 +224,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 					}).then(function(res) {
 						isAvatarFileCreated = true;
 						//update db
-						var sql = `UPDATE \`User\` SET avatar = '${avatarHref}' WHERE id = ${newUserId};`;
+						var sql = `UPDATE \`user\` SET avatar = '${avatarHref}' WHERE id = ${newUserId};`;
 						logger.debug(sql);
 						return db.queryAsync(sql);
 					});
@@ -258,7 +258,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 
 				if (newUserId) {
 					logger.debug('ROLLBACK User...');
-					var sql = `DELETE FROM \`User\` WHERE id = ${newUserId};`;
+					var sql = `DELETE FROM \`user\` WHERE id = ${newUserId};`;
 					logger.debug(sql);
 					db.queryAsync(sql);
 					/*logger.debug(`END SESSION FOR USER ${newUserId}...`);
