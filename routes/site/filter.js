@@ -31,10 +31,10 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 						city		user_city,
 						address		flat_address,
 						rent_pay	flat_rent_pay,
-						(SELECT src_small FROM photo WHERE photo.flat_id = Flat.id LIMIT 1) photo_src_small,
+						(SELECT src_small FROM photo WHERE photo.flat_id = flat.id LIMIT 1) photo_src_small,
 						flat_id
 					FROM \`user\`
-					JOIN Flat ON flat_id = Flat.id`;
+					JOIN flat ON flat_id = flat.id`;
 		} else {
 			sql = `	SELECT 
 						\`user\`.id	user_id,

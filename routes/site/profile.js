@@ -655,7 +655,7 @@ router.post('/edit', function(req, res, next) {
 		var now = moment();
 		var bdate = moment(req.body.user.birth_date, 'DD.MM.YYYY');
 		var age = now.diff(bdate, 'years');
-		var wish_pay = (req.body.user.wish_pay) ? req.body.user.wish_pay : '\'\'';
+		var wish_pay = (req.body.user.wish_pay) ? req.body.user.wish_pay : 'NULL';
 		var about = (req.body.user.about) ? req.body.user.about : '\'\'';
 
 		var sql =
