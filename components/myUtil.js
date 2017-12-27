@@ -23,7 +23,7 @@ module.exports = {
 			indexCurrent: ind
 		};
 	},
-	generatePrioritySelects: function(req, fill) {
+	generatePrioritySelects: function(req, opts) {
 		var db = null;
 		var priorities = [];
 		var userPriorities = [];
@@ -41,7 +41,7 @@ module.exports = {
 			//logger.debug(result);
 			priorities = result;
 
-			if (fill) {
+			if (opts.fill) {
 				var sql = `	SELECT * FROM v_user_priority WHERE user_id = ${req.user_id};`;
 				//logger.debug(sql);
 				return db.queryAsync(sql);
@@ -52,7 +52,7 @@ module.exports = {
 		}).then(function(result) {
 
 			//logger.debug(result);
-			if (fill) {
+			if (opts.fill) {
 				userPriorities = result;
 			}
 
@@ -76,7 +76,7 @@ module.exports = {
 					curPriorityId = priority.priority_id;
 				}
 
-				if (fill && !isSelected && userPriorities.length) {
+				if (opts.fill && !isSelected && userPriorities.length) {
 					for (var j = 0; j < userPriorities.length; j++) {
 						if (userPriorities[j].option_id === priority.option_id) {
 							isSelected = true;
@@ -96,5 +96,72 @@ module.exports = {
 			return Promise.resolve(prioritySelect);
 		
 		})
+	},
+
+	generateUniversitySelect: function(opts) {
+		var db = null;
+		var universitySelect = [];
+
+		return connectionPromise().then(function(connection) {
+
+			db = connection;
+
+			var sql = `	SELECT id, name_short name FROM university;`;
+			
+			return db.queryAsync(sql);
+
+		}).then(function(result) {
+
+			for (var i = 0; i < result.length; i++) {
+				universitySelect.push({
+					id: result[i].id,
+					name: result[i].name,
+					isSelected: (result[i].id == opts.default) ? true : false 
+				});
+			}
+
+			return Promise.resolve(universitySelect);
+
+		}).catch(function(err) {
+
+			logger.error(err.message+err.stack);
+
+		});
+	},
+
+	generateFacultySelect: function(university_id, isDefaultOption) {
+		var db = null;
+		var facultySelect = [];
+
+		return connectionPromise().then(function(connection) {
+
+			db = connection;
+
+			var sql = '';
+
+			if (isDefaultOption) {
+				sql += ` SELECT 0 id, 'не выбран' name 
+					   	UNION\n`;
+			}
+
+			sql += `	SELECT id, name_full name FROM faculty WHERE university_id = ${university_id};`;
+			
+			return db.queryAsync(sql);
+
+		}).then(function(result) {
+
+			for (var i = 0; i < result.length; i++) {
+				facultySelect.push({
+					id: result[i].id,
+					name: result[i].name});
+			}
+
+			return Promise.resolve(facultySelect);
+
+		}).catch(function(err) {
+
+			logger.error(err.message+err.stack);
+
+		});
 	}
 };

@@ -7,9 +7,34 @@ const logger = require('log4js').getLogger();
 const connectionPromise = require('../../components/connectionPromise.js');
 const util = require('../../components/myUtil.js');
 
+router.get('/get_faculties_by_university_id/:universityId(-?\\d+)', function(req, res, next) {
+	var db = null;
+	return connectionPromise().then(function(connection) {
+
+		db = connection;
+		return util.generateFacultySelect(req.params.universityId, true);
+
+	}).then(function(result) {
+
+		res.json({
+			status: 'ok',
+			faculties: result
+		});
+
+	}).catch(function(err) {
+
+		logger.error(err.message + err.stack);
+		res.json({ status: 'not ok' })
+
+	});
+});
+
 router.get('/:type(\\S+)?', function(req, res, next) {
 	var db = null;
-	var records = null;
+	var records = [];
+	var priorities = [];
+	var universities = [];
+
 	req.params.type = (req.params.type) ? req.params.type : 'find-flat';
 
 	if (!req.isAuthorized) {
@@ -23,51 +48,62 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 		var sql;
 
 		if (req.params.type === 'find-flat') {
-			sql = ` SELECT 
-						\`user\`.id	user_id,
-						sex			user_sex,
-						age			user_age,
-						university	user_university,
-						city		user_city,
-						address		flat_address,
-						rent_pay	flat_rent_pay,
-						(SELECT src_small FROM photo WHERE photo.flat_id = flat.id LIMIT 1) photo_src_small,
-						flat_id
-					FROM \`user\`
-					JOIN flat ON flat_id = flat.id`;
+			sql = ` SELECT
+						user_id,
+						user_sex,
+						user_age,
+						university_name,
+						user_city,
+						flat_address,
+						flat_rent_pay,
+						flat_id,
+						flat_first_photo
+					FROM v_user
+					WHERE flat_id IS NOT NULL
+					LIMIT 15`;
 		} else {
 			sql = `	SELECT 
-						\`user\`.id	user_id,
-						first_name	user_first_name,
-						last_name	user_last_name,
-						sex			user_sex,
-						age			user_age,
-						university	user_university,
-						avatar		user_avatar,
+						user_id,
+						user_first_name,
+						user_last_name,
+						user_sex,
+						user_age,
+						university_name,
+						ser_avatar,
 						flat_id
-					FROM \`user\` 
-					WHERE flat_id IS NULL`;
+					FROM v_user 
+					WHERE flat_id IS NULL
+					LIMIT 15`;
 		}
 
-		//logger.debug(sql);
+		logger.debug(sql);
 		return db.queryAsync(sql);
 	
 	}).then(function(result) {
 		
-		//logger.debug(result);
+		logger.debug(result);
 		records = result;
 
-		return util.generatePrioritySelects(req, false);
+		return util.generatePrioritySelects(req, { fill: false });
 
 	}).then(function(result) {
 
-		console.log('result='+JSON.stringify(records));
+		//logger.debug('priorities='+JSON.stringify(result));
+		priorities = result;
+
+		return util.generateUniversitySelect({ default: 0 });
+
+	}).then(function(result) {
+
+		//logger.debug('universities='+JSON.stringify(result));
+		universities = result;
 
 		res.render('site/filter.pug', {
 			message: '',
 			messageType: '',
 			records: records,
-			priorities: result,
+			priorities: priorities,
+			universities: universities,
 			type: req.params.type,
 			isAuthorized: req.isAuthorized,
 			userId: req.user_id
@@ -92,7 +128,7 @@ router.post('/ajax', function(req, res, next) {
 
 		var priority_list;
 		var priority_count;
-		var limit = (req.body.limit) ? req.body.limit : 9;
+		var limit = (req.body.limit) ? req.body.limit : 15;
 		var offset = (req.body.offset) ? req.body.offset : 0;
 
 		if (req.body.priorities) {
@@ -105,7 +141,7 @@ router.post('/ajax', function(req, res, next) {
 
 		if (req.body.type === 'find-flat') {
 		
-			sql = `  SELECT 
+			sql = ` SELECT 
 						\`user\`.id	user_id,
 						sex			user_sex,
 						age			user_age,
@@ -130,7 +166,32 @@ router.post('/ajax', function(req, res, next) {
 			
 			sql+= `		GROUP BY user_id
 						HAVING cnt_priority >= ${priority_count}
-					) matched ON \`user\`.id = matched.user_id
+					) matched ON \`user\`.id = matched.user_id 
+					WHERE 1=1`;
+			
+			if (req.body.user_sex !== '') {
+				sql+= ` 
+					  AND \`user\`.sex = '${req.body.user_sex}'`;
+			}
+			
+			if (req.body.user_age_range !== '') {
+				var age_from = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[1];
+				var age_to = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[2];
+				sql+= ` 
+					  AND \`user\`.age >= ${age_from} AND \`user\`.age <= ${age_to}`;
+			}
+
+			if (req.body.university_id != 0) {
+				sql+= `
+					  AND \`user\`.university_id = ${req.body.university_id}`;
+			}
+
+			if (req.body.faculty_id != 0) {
+				sql+= ` 
+					  AND \`user\`.faculty_id = ${req.body.faculty_id}`;
+			}
+
+			sql+=`
 					LIMIT ${limit}
 					OFFSET ${offset};`;
 		
@@ -160,8 +221,29 @@ router.post('/ajax', function(req, res, next) {
 						HAVING cnt_priority >= ${priority_count}
 					) matched ON \`user\`.id = matched.user_id
 					/* кроме тех, у кого есть квартира */
-					WHERE flat_id IS NULL
-					LIMIT ${limit}
+					WHERE flat_id IS NULL`;
+			if (req.body.user_sex !== '') {
+				sql+= ` 
+					  AND \`user\`.sex = '${req.body.user_sex}'`;
+			}
+			
+			if (req.body.user_age_range !== '') {
+				var age_from = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[1];
+				var age_to = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[2];
+				sql+= ` 
+					  AND \`user\`.age >= ${age_from} AND \`user\`.age <= ${age_to}`;
+			}
+
+			if (req.body.university_id != 0) {
+				sql+= `
+					  AND \`user\`.university_id = ${req.body.university_id}`;
+			}
+
+			if (req.body.faculty_id != 0) {
+				sql+= ` 
+					  AND \`user\`.faculty_id = ${req.body.faculty_id}`;
+			}
+			sql+=`	LIMIT ${limit}
 					OFFSET ${offset};`;
 		}
 
@@ -170,7 +252,7 @@ router.post('/ajax', function(req, res, next) {
 	
 	}).then(function(result) {	
 		
-		logger.debug('result');
+		//logger.debug('result');
 		records = result;
 
 		res.json({

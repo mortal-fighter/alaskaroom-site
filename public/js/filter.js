@@ -14,6 +14,34 @@ function handlersFilter() {
 		search();
 	});
 
+	$('#user_university').on('change', function() {
+		var universityId = processInputSelect('user_university');
+		if (universityId === '0') {
+			$('#user_faculty_container').hide();
+			return;
+		}
+		
+		$.ajax({
+			method: 'GET',
+			url: '/filter/get_faculties_by_university_id/' + universityId,
+			success: function(result) {
+				if (result.status === 'ok') {
+					//
+					var target = $('#user_faculty').html(''); // returns element itself
+					for (var i = 0; i < result.faculties.length; i++) {
+						target.append( $('<option value="'+result.faculties[i].id+'">'+result.faculties[i].name+'</option>') );
+					}
+					$('#user_faculty_container').show();
+				} else {
+					console.log('При загрузке факультетов для ВУЗА id="' + universityId + '" произошла ошибка');
+				}
+			},
+			error: function(error) {
+				console.log('Ошибка сетевого соединения');
+			}
+		})
+	});
+
 	$('#btn-find').on('click', function(e) {
 		e.preventDefault();
 		search();
@@ -36,6 +64,11 @@ function search() {
 		}
 	});
 
+	form.user_sex = processInputSelect('user_sex');
+	form.user_age_range = processInputSelect('user_age_range');
+	form.university_id = processInputSelect('user_university');
+	form.faculty_id = processInputSelect('user_faculty');
+
 	lastForm = form;
 
 	$.ajax({
@@ -52,6 +85,14 @@ function search() {
 				var listing = $('#listing-content');
 				listing.html('');
 				
+				if (result.records.length === 0) {
+					listing.html('<div class="no-records">Поиск не дал результатов</div>');	
+					$('#load-more').hide();
+				} else {
+					listing.html('');
+					$('#load-more').show();
+				}
+
 				for (var i = 0; i < result.records.length; i++) {
 					var record = result.records[i];
 					var newItem = null;

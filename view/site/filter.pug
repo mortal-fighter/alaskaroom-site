@@ -3,6 +3,12 @@ html(lang=ru)
 	head
 		include includes/head_common.pug
 		script(src="/js/filter.js", type="text/javascript")
+
+		style
+			|	.no-records {
+			|		text-align: center;
+			|		padding-top: 50%;
+			|	}
 	body
 		include includes/header.pug
 		div.wrp
@@ -17,6 +23,28 @@ html(lang=ru)
 							else 
 								option(value="find-flat") Квартиру
 								option(value="find-roommate", selected) Румейта 
+						p С кем Вы хотите снимать квартиру?
+						select#user_sex.lower-filter
+							option(value="") Не важно с кем
+							option(value="женский") Только с девушками
+							option(value="мужской") Только с парнями
+						p Важен ли возраст Вашего соседа по комнате?
+						select#user_age_range.lower-filter
+							option(value="") Не важен
+							option(value="18-25") 18-25
+							option(value="18-30") 18-30
+						p Нужен сосед с определенного ВУЗа?
+						if locals.universities.length
+							select#user_university.lower-filter
+								for univer in locals.universities
+									if univer.isSelected
+										option(value=univer.id, selected)= univer.name
+									else
+										option(value=univer.id)= univer.name
+						div#user_faculty_container(style="display: none;")
+							p Нужен сосед с определенного факультета?
+							select#user_faculty.lower-filter
+								option(value="") Не выбран
 						if locals.priorities
 							for priority in locals.priorities
 								p= priority.priority_name_full
@@ -34,7 +62,7 @@ html(lang=ru)
 								if record.flat_id
 									a(href="/profile/view/"+record.user_id)
 										div.room-list(data-user-id=record.user_id)
-											img(src=record.photo_src_small, alt="Room")
+											img(src=record.flat_first_photo, alt="Room")
 											h5=record.flat_rent_pay
 												span  рублей
 											h4 
