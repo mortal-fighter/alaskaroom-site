@@ -62,7 +62,7 @@ function handlersHomepage() {
 
 	});
 
-	$('#btn-enter-site').on('click', function() {
+	$('#btn-enter-site, #enter-site-2').on('click', function() {
 		window.location.href='/auth/login_soc';
 	});
 

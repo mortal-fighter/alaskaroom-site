@@ -18,20 +18,16 @@ router.get('/', function(req, res, next) {
 		db = connection;
 		
 		var sql = ` SELECT 
-						\`user\`.sex,
-						\`user\`.age,
-						\`user\`.university,
-						\`user\`.city,
-						flat.rent_pay,
-						flat.address,
-						(SELECT 
-							photo.src_small
-						FROM photo
-						WHERE flat_id = \`user\`.flat_id
-						LIMIT 1) photo
-					FROM \`user\`
-					JOIN flat ON flat.id = \`user\`.flat_id
-					ORDER BY date_register DESC
+						user_sex,
+						user_age,
+						university_name,
+						user_city,
+						flat_rent_pay,
+						flat_address,
+						flat_first_photo
+					FROM v_user
+					WHERE flat_id IS NOT NULL
+					ORDER BY user_date_register DESC
 					LIMIT 6`;
 
 		logger.debug(sql);
@@ -41,7 +37,7 @@ router.get('/', function(req, res, next) {
 
 		logger.debug(result);
 		res.render('site/homepage.pug', {
-			lastFlats: result, 
+			lastRecordsWithFlat: result, 
 			message: req.query.message,
 			isAuthorized: req.isAuthorized,
 			userId: req.user_id

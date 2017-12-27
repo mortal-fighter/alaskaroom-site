@@ -3,6 +3,29 @@ html(lang=ru)
 	head
 		include includes/head_common.pug
 		script(src="js/homepage.js", type="text/javascript")
+
+		style
+			| a.enter-site-2 {
+			|	display: block;
+			|	width: 40%;
+			|	margin: 0 auto;
+			|	background: orange;
+			|	color: #fff;
+			|	text-decoration: none;
+			|	padding: 20px 20px;
+			|	font-size: 17px;
+			|	}
+			| a.logo:after {
+			|	content: 'бета-версия';
+			|	font: 12px Arial, sans-serif;
+			|	color: orange;
+			|	position: absolute;
+			|	right: 0;
+			|	bottom: -10px;
+			|	}
+			| .logo {
+			|	position: relative;
+			|	}
 	body
 		include includes/header.pug
 		div.wrp
@@ -51,14 +74,14 @@ html(lang=ru)
 					h3 Последние добавленные румейты и квартиры
 					h2 После открытия сайта, вы увидите все предложения
 					
-					for flat in locals.lastFlats
+					for record in locals.lastRecordsWithFlat
 						div.room-ex
-							img(src=flat.photo)
-							h5= flat.rent_pay + ' рублей'
-							h4= flat.address
+							img(src=record.flat_first_photo)
+							h5= record.flat_rent_pay + ' рублей'
+							h4= record.flat_address
 							-
-								var sex = flat.sex.substr(0, 1).toUpperCase();
-							p= 'Сосед: ' + sex + ', ' + flat.age + ', ' + flat.university
+								var sex = record.user_sex.substr(0, 1).toUpperCase();
+							p= 'Сосед: ' + sex + ', ' + record.user_age + ', ' + record.university_name
 			div.uni-cover
 				h3 Популярные ВУЗЫ среди наших румейтов
 				h4 в Ростове-на-Дону
@@ -68,6 +91,9 @@ html(lang=ru)
 				p РИИЖТ 
 				p РИСИ 
 				p ИУБИП 
+			div.register.action
+				h3 Регистрация на сайте и вход в один клик
+				a#enter-site-2.enter-site-2(href="#") Войти
 			div.action
 				h3 Мы открыты для диалога!
 				h2 Если у Вас есть вопросы, Вы можете связаться с нами
