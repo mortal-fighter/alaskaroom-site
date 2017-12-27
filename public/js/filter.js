@@ -98,7 +98,7 @@ function search() {
 					var newItem = null;
 					if (type === 'find-flat') {
 						newItem = $('<div class="room-list"></div>');
-						newItem.append($('<img src="'+ record.photo_src_small +'" alt="Room"/>'));
+						newItem.append($('<img src="'+ record.flat_first_photo +'" alt="Room"/>'));
 						newItem
 							.append($('<h5>' + record.flat_rent_pay + '</h5>')
 								.append($('<span> рублей</span>')));
@@ -110,7 +110,7 @@ function search() {
 							.append($('<p>Сосед: </p>')
 								.append($('<span>' + record.user_sex + ', </span>'))
 								.append($('<span>' + record.user_age + ', </span>'))
-								.append($('<span>' + record.user_university + '</span>')));
+								.append($('<span>' + record.university_name + '</span>')));
 					} else {
 						newItem = $('<div class="user-list"></div>');
 						newItem.append($('<img src="'+ record.user_avatar +'" alt="Room"/>'));
@@ -119,7 +119,7 @@ function search() {
 							.append($('<p>Ваш сосед: </p>')
 								.append($('<span>' + record.user_sex + ', </span>'))
 								.append($('<span>' + record.user_age + ', </span>'))
-								.append($('<span>' + record.user_university + '</span>')));
+								.append($('<span>' + record.university_name + '</span>')));
 					}
 					$('<a href="/profile/view/'+record.user_id+'"></a>')
 						.append(newItem)
@@ -157,7 +157,7 @@ function loadMore() {
 					var newItem = null;
 					if (type === 'find-flat') {
 						newItem = $('<div class="room-list"></div>');
-						newItem.append($('<img src="'+ record.photo_src_small +'" alt="Room"/>'));
+						newItem.append($('<img src="'+ record.flat_first_photo +'" alt="Room"/>'));
 						newItem
 							.append($('<h5>' + record.flat_rent_pay + '</h5>')
 								.append($('<span> рублей</span>')));
@@ -169,7 +169,7 @@ function loadMore() {
 							.append($('<p>Сосед: </p>')
 								.append($('<span>' + record.user_sex + ', </span>'))
 								.append($('<span>' + record.user_age + ', </span>'))
-								.append($('<span>' + record.user_university + '</span>')));
+								.append($('<span>' + record.university_name + '</span>')));
 					} else {
 						newItem = $('<div class="user-list"></div>');
 						newItem.append($('<img src="'+ record.user_avatar +'" alt="Room"/>'));
@@ -178,7 +178,7 @@ function loadMore() {
 							.append($('<p>Ваш сосед: </p>')
 								.append($('<span>' + record.user_sex + ', </span>'))
 								.append($('<span>' + record.user_age + ', </span>'))
-								.append($('<span>' + record.user_university + '</span>')));
+								.append($('<span>' + record.university_name + '</span>')));
 					}
 					newItem.appendTo(listing);
 				}

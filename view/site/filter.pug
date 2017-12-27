@@ -71,7 +71,7 @@ html(lang=ru)
 											p Сосед: 
 												span= record.user_sex+', '
 												span= record.user_age+', '
-												span= record.user_university
+												span= record.university_name
 								else
 									a(href="/profile/view/"+record.user_id)
 										div.user-list(data-user-id=record.user_id)
@@ -80,7 +80,7 @@ html(lang=ru)
 											p Ваш сосед: 
 												span= record.user_sex+', '
 												span= record.user_age+', '
-												span= record.user_university
+												span= record.university_name
 						img#progress
 						a#load-more.load-more(href="#") Загрузить больше...
 				else

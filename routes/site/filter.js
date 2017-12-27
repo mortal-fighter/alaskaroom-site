@@ -141,20 +141,18 @@ router.post('/ajax', function(req, res, next) {
 
 		if (req.body.type === 'find-flat') {
 		
-			sql = ` SELECT 
-						\`user\`.id	user_id,
-						sex			user_sex,
-						age			user_age,
-						university	user_university,
-						city		user_city,
-						address		flat_address,
-						rent_pay	flat_rent_pay,
-						(SELECT src_small FROM photo WHERE photo.flat_id = flat.id LIMIT 1) photo_src_small,
-						flat_id
-					FROM \`user\`
-					/* отсеить тех, у кого нет квартиры*/
-					JOIN flat ON flat_id = flat.id
-					/* отсеить тех, у кого не совпадают приоритеры*/
+			sql = ` 
+					SELECT
+						v_user.user_id,
+						user_sex,
+						user_age,
+						university_name,
+						user_city,
+						flat_address,
+						flat_rent_pay,
+						flat_id,
+						flat_first_photo
+					FROM v_user
 					JOIN (
 						/*выбрать пользователей у которых совпадают приоритеры с заданными*/
 						SELECT user_id, COUNT(priority_option_id) cnt_priority
@@ -166,29 +164,31 @@ router.post('/ajax', function(req, res, next) {
 			
 			sql+= `		GROUP BY user_id
 						HAVING cnt_priority >= ${priority_count}
-					) matched ON \`user\`.id = matched.user_id 
-					WHERE 1=1`;
+					) matched ON v_user.user_id = matched.user_id 
+					WHERE 1=1
+					  /* выбрать только тех, у кого есть квартира */
+					  AND flat_id IS NOT NULL`;
 			
 			if (req.body.user_sex !== '') {
 				sql+= ` 
-					  AND \`user\`.sex = '${req.body.user_sex}'`;
+					  AND v_user.user_sex = '${req.body.user_sex}'`;
 			}
 			
 			if (req.body.user_age_range !== '') {
 				var age_from = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[1];
 				var age_to = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[2];
 				sql+= ` 
-					  AND \`user\`.age >= ${age_from} AND \`user\`.age <= ${age_to}`;
+					  AND v_user.user_age >= ${age_from} AND v_user.user_age <= ${age_to}`;
 			}
 
 			if (req.body.university_id != 0) {
 				sql+= `
-					  AND \`user\`.university_id = ${req.body.university_id}`;
+					  AND v_user.university_id = ${req.body.university_id}`;
 			}
 
 			if (req.body.faculty_id != 0) {
 				sql+= ` 
-					  AND \`user\`.faculty_id = ${req.body.faculty_id}`;
+					  AND v_user.faculty_id = ${req.body.faculty_id}`;
 			}
 
 			sql+=`
@@ -198,15 +198,14 @@ router.post('/ajax', function(req, res, next) {
 		} else {
 		
 			sql = `	SELECT
-						\`user\`.id	user_id,
-						first_name	user_first_name,
-						last_name	user_last_name,
-						sex			user_sex,
-						age			user_age,
-						university	user_university,
-						avatar		user_avatar,
-						flat_id
-					FROM \`user\` 
+						v_user.user_id,
+						user_first_name,
+						user_last_name,
+						user_sex,
+						user_age,
+						user_avatar,
+						university_name
+					FROM v_user 
 					/* кроме тех, у кого не совпадают приоритеры*/
 					JOIN (
 						/*выбрать пользователей у которых совпадают приоритеры с заданными*/
@@ -219,29 +218,29 @@ router.post('/ajax', function(req, res, next) {
 		
 			sql+= `		GROUP BY user_id
 						HAVING cnt_priority >= ${priority_count}
-					) matched ON \`user\`.id = matched.user_id
+					) matched ON v_user.user_id = matched.user_id
 					/* кроме тех, у кого есть квартира */
 					WHERE flat_id IS NULL`;
 			if (req.body.user_sex !== '') {
 				sql+= ` 
-					  AND \`user\`.sex = '${req.body.user_sex}'`;
+					  AND v_user.user_sex = '${req.body.user_sex}'`;
 			}
 			
 			if (req.body.user_age_range !== '') {
 				var age_from = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[1];
 				var age_to = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[2];
 				sql+= ` 
-					  AND \`user\`.age >= ${age_from} AND \`user\`.age <= ${age_to}`;
+					  AND v_user.user_age >= ${age_from} AND v_user.user_age <= ${age_to}`;
 			}
 
 			if (req.body.university_id != 0) {
 				sql+= `
-					  AND \`user\`.university_id = ${req.body.university_id}`;
+					  AND v_user.university_id = ${req.body.university_id}`;
 			}
 
 			if (req.body.faculty_id != 0) {
 				sql+= ` 
-					  AND \`user\`.faculty_id = ${req.body.faculty_id}`;
+					  AND v_user.faculty_id = ${req.body.faculty_id}`;
 			}
 			sql+=`	LIMIT ${limit}
 					OFFSET ${offset};`;
