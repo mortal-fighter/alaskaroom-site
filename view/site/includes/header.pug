@@ -1,3 +1,25 @@
+style
+			| a.enter-site-2 {
+			|	display: block;
+			|	width: 40%;
+			|	margin: 0 auto;
+			|	background: orange;
+			|	color: #fff;
+			|	text-decoration: none;
+			|	padding: 20px 20px;
+			|	font-size: 17px;
+			|	}
+			| a.logo:after {
+			|	content: 'бета-версия';
+			|	font: 12px Arial, sans-serif;
+			|	color: orange;
+			|	position: absolute;
+			|	right: 0;
+			|	bottom: -10px;
+			|	}
+			| .logo {
+			|	position: relative;
+			|	}
 div.top
 	a.logo(href="/") AlaskaRoom
 	if locals.isAuthorized 
