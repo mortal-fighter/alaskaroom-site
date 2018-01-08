@@ -6,7 +6,7 @@ function handlersProfileView() {
 	$('#request-roommate').on('click', function() {
 		var _this = this;
 		$.ajax({
-			url: '/request/invite',
+			url: '/requests/invite',
 			type: 'POST',
 			data: {
 				user_id: $('#user_id').val() 
@@ -14,7 +14,7 @@ function handlersProfileView() {
 			success: function(result) {
 				switch (result.status) {
 					case 'ok': 
-						$(_this).after( $('<p class="roommate-status"> &#x029D6; Вы предложили соседство</p>') );
+						$(_this).after( $('<p class="roommate-status">Соседство: в ожидании ответа от пользователя ' + $('#user_first_name').val() + ' &#x029D6;</p>') );
 						$(_this).remove();
 						break;
 					case 'not ok':
@@ -26,7 +26,22 @@ function handlersProfileView() {
 				console.log('Ошибка интернет-соединения');
 			}
 		});
-	})
+	});
+
+	$('#request-complain').on('click', function() {
+		e.preventDefault();
+		
+		$.ajax({
+			method: 'GET',
+			url: '/requests/ajax_get_form_complain',
+			success: function(html) {
+				complainForm(html);
+			},
+			error: function(error) {
+				alert('Ошибка интернет-соединения');
+			}
+		});
+	});
 
 	$('#btn-edit-user-info').on('click', function(e) { 
 		e.preventDefault();
@@ -81,26 +96,7 @@ function handlersProfileEdit() {
 
 	$('#user_university').on('change', function() {
 		disableAllControls();
-		$.ajax({
-			method: 'GET',
-			url: '/profile/get_faculties/' + processInputSelect('user_university'),
-			success: function(result) {
-				if (result.status === 'ok') {
-					//
-					var target = $('#user_faculty').html(''); // returns element itself
-					for (var i = 0; i < result.faculties.length; i++) {
-						target.append( $('<option value="'+result.faculties[i].id+'">'+result.faculties[i].name_full+'</option>') );
-					}
-				} else {
-					console.log('При загрузке факультетов для ВУЗА id="' + processInputSelect('user_university') + '" произошла ошибка');
-				}
-				enableAllControls();
-			},
-			error: function(error) {
-				console.log('Ошибка сетевого соединения');
-				enableAllControls();
-			}
-		})
+		loadFaculties(processInputSelect('user_university'));
 	});
 
 	$('.room-photos > div > a').on('click', function(e) {
@@ -299,6 +295,58 @@ function handlersProfileEdit() {
 	});
 }
 
+function loadFaculties(university_id) {
+	$.ajax({
+		method: 'GET',
+		url: '/profile/get_faculties/' + processInputSelect('user_university'),
+		success: function(result) {
+			if (result.status === 'ok') {
+	
+				var target = $('#user_faculty').html(''); // returns element itself
+				
+				for (var i = 0; i < result.faculties.length; i++) {
+					target.append( $('<option value="'+result.faculties[i].id+'">'+result.faculties[i].name_full+'</option>') );
+				}
+				
+				target.on('change', function() {
+					//disableAllControls();
+					loadDepartments(processInputSelect('user_faculty'));
+				});
+				loadDepartments(processInputSelect('user_faculty'));
+
+				// Очищаем поле "Кафедра"
+				$('#user_department').html('<option value="0">Не выбрана</option>');
+				
+			} else {
+				//console.log('Ошибка');
+				console.log('При загрузке факультетов для ВУЗА id="' + processInputSelect('user_university') + '" произошла ошибка');
+			}
+			enableAllControls();
+		},
+		error: function(error) {
+			console.log('Ошибка сетевого соединения');
+			enableAllControls();
+		}
+	});
+}
+
+function loadDepartments(faculty_id) {
+	$.ajax({
+		method: 'GET',
+		url: '/profile/get_departments/' + processInputSelect('user_department'),
+		success: function(result) {
+			var target = $('#user_department').html('');
+			for (var i = 0; i < result.departments.length; i++) {
+				target.append( $('<option value="'+result.departments[i].id+'">'+result.departments[i].name_full+'</option>') );
+			}
+		},
+		error: function(error) {
+			console.log('Ошибка сетевого соединения');
+			enableAllControls();
+		}
+	});
+}
+
 function deletePhoto(photoId) {
 	var ident = photoId.match(/^flat-photo-(\d+)$/)[1];
 	$.ajax({
@@ -380,6 +428,51 @@ function doCrop(result) {
 	});
 
 	showPopup();
+}
+
+function complainForm(html) {
+	
+	$('.popup-content.complain-form').html(html);
+
+	$('#btn-send-complain').on('click', function(e) {
+			
+		e.preventDefault();
+	
+		if ($('#complain-comment').val().length > 500) {
+			alert('Длина поля \'Комментарий\' не может превышать 500 символов');
+			$('#complain-comment').focus();
+			return;
+		}
+
+		$.ajax({
+			method: 'POST',
+			url: '/requests/complain/',
+			data: {
+				user_id: $('#user_id').val(),
+				complain_id: processInputSelect('complain-reason'),
+				complain_comment: $('#complain-comment').val()
+			},
+			success: function(result) {
+				if (result.status === 'ok') {
+					alert('Ваша жалоба принята. Нам очень важна Ваша активность. Спасибо!');
+					closePopup();
+				} else if (result.reason === 'NO_AVAILABLE_COMPLAINS') {
+					alert('Вы отправили максимальное количество жалоб на этой неделе');
+					closePopup();
+				} else if (result.reason === 'COMPLAIN_IS_ALREADY_EXISTS') {
+					alert('Вы уже отправляли жалобу на этого пользователя');
+					closePopup();
+				} else {
+					alert('При подаче жалобы произошла ошибка. Наверное Вы пожаловались на сына/дочку мэра. Извините, за Вами уже выехали.');
+					closePopup();
+				}
+			},
+			error: function(error) {
+				alert('Ошибка сетевого соединения');
+				closePopup();
+			}
+		});
+	});
 }
 
 /* VALIDATION */

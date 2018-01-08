@@ -1,0 +1,7 @@
+p По какой причине?
+select#complain-reason.option-set
+	for reason in locals.complainReasons
+		option(value= reason.id)= reason.name
+p Можете оставить свой комментарий (не обязательно)
+textarea#complain-comment
+a.find-filter(id="btn-send-complain", href="#") Отправить

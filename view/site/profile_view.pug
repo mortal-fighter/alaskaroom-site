@@ -17,16 +17,19 @@ html(lang=ru)
 				img(src=locals.data.user_avatar, alt="User")
 				h3= locals.data.user_name
 				p= locals.data.user_age + ' год, ' + locals.data.university_name + ', ' + locals.data.faculty_name
-				if locals.user_id != locals.userId
+				if locals.data.user_id != locals.user_id
 					if locals.roommate_request_status === 'pending'
-						p.roommate-status &#x029D6; Вы предложили соседство
+						p.roommate-status= 'Соседство: в ожидании ответа от пользователя ' + locals.data.user_first_name
+							span  &#x029D6;
 					else if locals.roommate_request_status === 'accepted'
-						p.roommate-status.accepted &check; Ваш сосед
+						p.roommate-status= 'Соседство: согласен(а)'
+							span  &check;
 					else if locals.roommate_request_status === 'declined'
-						p.roommate-status.declined &cross; Отказался от соседства
+						p.roommate-status= 'Соседство: пользователь ' + locals.data.user_first_name + ' отказался от соседства'
+							span  &cross;
 					else
 						input#request-roommate.request-info(type="button", value="Предложить соседство")
-					input.complain(type="button", value="Жалоба на румейта")
+					input#request-complain.complain(type="button", value="Жалоба на румейта")
 			div.profile-param
 				div.user-desc
 					h3 Обо мне
@@ -39,8 +42,9 @@ html(lang=ru)
 					div.caracter
 						h4 Сколько плачу \ готов платить?
 						p= locals.data.flat_rent_pay
-				p.edit-user Хотите отредактировать информацию о себе?
-					a#btn-edit-user-info(href="#") Нажмите тут
+				if locals.data.user_id == locals.user_id
+					p.edit-user Хотите отредактировать информацию о себе?
+						a#btn-edit-user-info(href="#") Нажмите тут
 			if locals.data.flat_id
 				div.room-header
 					h6 О квартире \ комнате
@@ -87,4 +91,12 @@ html(lang=ru)
 						foreach util in locals.data.flat_utils
 							h4= util.name
 		include includes/footer.pug
-		input(type="hidden", id="user_id", value=locals.user_id)
+		input(type="hidden", id="user_id", value=locals.data.user_id)
+		input(type="hidden", id="user_first_name", value=locals.data.user_first_name)
+		link(href="/css/message_popup.css", type="text/css", rel="stylesheet")
+		div#popup-window
+			div.popup-layout
+				div.popup-container.popup-container-medium
+					div.popup-header
+						div.popup-close закрыть
+					div.popup-content.complain-form

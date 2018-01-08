@@ -79,8 +79,13 @@ html(lang=ru)
 								else
 									option(value=faculty.id)= faculty.name_full
 					div
-						p Ваше направление
-						input#user_speciality.option-set-small(type="text", placeholer="Ваша специальность", value=locals.data.speciality_name)
+						p Ваш факультет
+						select#user_department.option-set(size="1")
+							for department in locals.departments					
+								if department.id === locals.data.faculty_id
+									option(value=department.id, selected)= department.name_full
+								else
+									option(value=department.id)= department.name_full
 					div
 						p Ваш курс
 						input#user_study_year.option-set-small(type="text", placeholer="Ваш курс", value=locals.data.user_study_year)

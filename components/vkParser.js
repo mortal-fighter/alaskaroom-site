@@ -1,4 +1,7 @@
+process.env.NODE_TLS_REJECT_UNAUTHORIZED='0'; //todo: check it out whats going on
+
 const rp = require('request-promise');
+const fetch = require('isomorphic-fetch');
 const Promise = require('bluebird');
 const fs = Promise.promisifyAll(require('fs'));
 const path = require('path');
@@ -105,6 +108,7 @@ function universitiesImportMysqlFromJSON(path) {
 	});
 }
 
+/**/
 function facultiesImportMysqlFromJSON(path) {
 	var db = null;
 	var university_id = null; // in mysql
@@ -119,7 +123,7 @@ function facultiesImportMysqlFromJSON(path) {
 	
 	}).then(function(data) {
 		
-		console.log(`START IMPORTING FILE '${path}'`);
+		console.log(`START IMPORTING FILE '${path.substr(path.lastIndexOf('\\')+1)}'`);
 
 		facultyJson = JSON.parse(data).faculties;
 		//console.log(data);
@@ -205,12 +209,12 @@ function facultiesImportMysqlFromJSON(path) {
 			console.log('no faculties changed');
 		}
 
-		console.log('FINISH');
+		console.log(`FINISH '${path.substr(path.lastIndexOf('\\')+1)}'`);
 
 	}).catch(function(err) {
 	
 		console.log(err.stack, err.message);
-		console.log('FINISH');
+		console.log(`FINISH '${path.substr(path.lastIndexOf('\\')+1)}'`);
 	
 	});
 }
@@ -246,6 +250,210 @@ function facultiesImportMysqlFromJSON_All(pathToUniversitiesJsonFile) {
 	});
 }
 
+/**/
+function departmentsImportMysqlFromJSON(path) {
+	var db = null;
+	var faculty_id = null; // in mysql
+	var departmentMysql = [];
+	var departmentJson = [];
+	var departmentDiff = [];
+
+	connectionPromise().then(function(connection) {
+
+		db = connection
+		return fs.readFileAsync(path, {encoding: 'utf8'});
+	
+	}).then(function(data) {
+		
+		console.log(`\nSTART IMPORTING DEPARTMENTS FROM FILE '${path.substr(path.lastIndexOf('\\')+1)}'`);
+
+		departmentJson = JSON.parse(data).chairs;
+
+		var sql = ` SELECT id FROM faculty WHERE vk_id = ${JSON.parse(data).faculty};`;
+
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		faculty_id = result[0].id;
+
+		var sql = ` SELECT id, name_full, vk_id FROM department WHERE faculty_id = ${faculty_id};`;
+
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		departmentMysql = result;
+
+		for (var i = 0; i < departmentJson.length; i++) {
+			var indMysql = -1;
+			var isNew = true;
+			var isChanged = false; // if not isNew
+
+			for (var j = 0; j < departmentMysql.length; j++) {
+				if (departmentMysql[j].vk_id == departmentJson[i][0]) {
+					indMysql = j;
+					isNew = false;
+					isChanged = (departmentJson[i][1] != departmentMysql[j].name_full) ? true : false;
+					break;
+				}
+			}
+			departmentDiff.push({
+				isNew: isNew,
+				isChanged: isChanged,
+				idJson: departmentJson[i][0],
+				nameJson: departmentJson[i][1],
+				idMysql: (!isNew) ? departmentMysql[indMysql].id : null
+			});
+		}
+
+		var valuesSQL = [];
+		for (var k = 0; k < departmentDiff.length; k++) {
+			if (departmentDiff[k].isNew) {
+				valuesSQL.push(`('${departmentDiff[k].nameJson}', ${departmentDiff[k].idJson}, ${faculty_id})`);
+			}
+		}
+
+		var sql = ` INSERT INTO department(name_full, vk_id, faculty_id) VALUES ${valuesSQL.join(', ')};`;
+		
+		if (valuesSQL.length) {
+			console.log(sql);
+			return db.queryAsync(sql);	
+		} else {
+			return Promise.resolve('no new departments');
+		}
+
+	}).then(function(result) {
+
+		if (result) console.log(result);
+
+		var promises = [];
+		for (var k = 0; k < departmentDiff.length; k++) {
+			if (departmentDiff[k].isChanged) {
+				var sql = ` UPDATE department SET name_full = '${departmentDiff[k].nameJson}' WHERE id = ${departmentDiff[k].idMysql};`;
+				console.log(sql);
+				promises.push(db.queryAsync(sql));
+			}
+		}
+
+		return Promise.all(promises);
+
+	}).then(function(result) {
+
+		if (result.length) {
+			console.log(result);
+		} else {
+			console.log('no departments changed');
+		}
+
+		console.log(`FINISH '${path.substr(path.lastIndexOf('\\')+1)}'`);
+
+	}).catch(function(err) {
+
+		console.log(err.message, err.stack);
+		console.log(`FINISH '${path.substr(path.lastIndexOf('\\')+1)}'`);
+
+	})	
+}
+
+function departmentsImportMysqlFromJSON_ALL(pathToFacultiesJsonFile) {
+	var db = null;
+	var faculties = [];
+
+	connectionPromise().then(function(connection) {
+
+		db = connection;
+
+		return fs.readFileAsync(pathToFacultiesJsonFile, {encoding: 'utf8'}); 
+
+	}).then(function(data) {
+
+		faculties = JSON.parse(data).faculties;
+
+		var promiseChain = Promise.resolve();
+		for (let i = 0; i < faculties.length; i++) {
+			promiseChain.then(function() {
+				return new Promise(function(resolve, reject) {
+					departmentsImportMysqlFromJSON(path.normalize(`${__dirname}/../vk_data/department/departments_for_${faculties[i][0]}.txt`));
+					resolve();
+				});
+			});
+		}
+
+	}).catch(function(err) {
+
+		console.log(err.stack, err.message);
+
+	});
+}
+
+/**/
+function getDepartmentsFromVKByFaculty(faculty_vk_id) {
+	var FormData = require('form-data');
+	var form = new FormData();
+	
+	form.append('act', 'a_get_fac_info');
+	form.append('fac', faculty_vk_id);
+	
+	fetch('https://vk.com/select_ajax.php', {
+		method: "POST",
+		body: form
+	}).then(function(response) {
+		
+		if (!response.ok) {
+			throw new Error('VK_IS_UNAVAILABLE');
+		}
+
+		return response.text().then(function(result) {
+			//console.log(result);
+			var newFilePath = path.normalize(__dirname+'/../vk_data/department/departments_for_'+faculty_vk_id+'.txt');
+			return fs.writeFileAsync(newFilePath, result, {mode: 0o775});
+		});
+
+	}).catch(function(err) {
+
+		console.error(err.message, err.stack);
+
+	});
+}
+
+function getDepartmentsFromVKByFaculty_ALL(university_id) {
+	var db = null;
+	var faculties = [];
+
+	connectionPromise().then(function(connection) {
+
+		db = connection;
+
+		const filePath = path.normalize(`${__dirname}/../vk_data/faculty/faculty_for_${university_id}.txt`);
+
+		return fs.readFileAsync(filePath, {encoding: 'utf8'}); 
+
+	}).then(function(data) {
+
+		faculties = JSON.parse(data).faculties;
+
+		var promiseChain = Promise.resolve();
+		for (let i = 0; i < faculties.length; i++) {
+			promiseChain.then(function() {
+				return new Promise(function(resolve, reject) {
+					getDepartmentsFromVKByFaculty(faculties[i][0]);
+					resolve();
+				});
+			});
+		}
+
+	}).then(function() {
+
+		console.log('Done import faculties');
+
+	}).catch(function(err) {
+
+		console.log(err.stack, err.message);
+
+	});
+}
+
 module.exports = {
 	parseAndAddCities: function() {
 		//
@@ -258,6 +466,11 @@ module.exports = {
 	universitiesImportMysqlFromJSON: universitiesImportMysqlFromJSON
 };
 
-/* RUN*/
+/* RUN */
 
-facultiesImportMysqlFromJSON_All(path.normalize(__dirname + '/../vk_data/universities.txt'));
+
+// IMPORT DEPARTMENTS FOR ALL FACULTIES IN VUZ
+//getDepartmentsFromVKByFaculty_ALL(3415);
+//departmentsImportMysqlFromJSON_ALL(path.normalize(`${__dirname}/../vk_data/faculty/faculty_for_3415.txt`));
+
+

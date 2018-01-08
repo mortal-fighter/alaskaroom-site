@@ -5,6 +5,8 @@
 */
 process.env.NODE_TLS_REJECT_UNAUTHORIZED='0'; //todo: check it out whats going on
 
+//todo: find out why flat_utilities are so many
+
 const express = require('express');
 const app = express();
 const config = require('./config/common');

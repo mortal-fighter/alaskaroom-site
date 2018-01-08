@@ -51,6 +51,30 @@ router.get('/get_count_:type(\\S+)', function(req, res, next) {
 		});
 });
 
+router.get('/ajax_get_form_complain', function(req, res, next) {
+	var db = null;
+
+	connectionPromise().then(function(connection) {
+
+		db = connection;
+
+		var sql = ' SELECT id, name FROM complain;';
+		return db.queryAsync(sql);
+	
+	}).then(function(result) {
+
+		res.render('site/includes/form_complain.pug', {
+			complainReasons: result
+		});
+
+	}).catch(function(err) {
+
+		logger.error(err.message + '\n' + err.stack);
+		res.render('errors/500.pug');
+
+	});
+});
+
 router.get('/:type(\\S+)?', function(req, res, next) {
 	var db = null;
 	var records = [];

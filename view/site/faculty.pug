@@ -2,9 +2,33 @@ doctype
 html(lang=ru)
 	head
 		include includes/head_common.pug
+		script(src="/js/faculty.js")
+		style
+			|	a.load-nav.current {
+			|		background-color: #dedede;
+			|	}
 	body
 		include includes/header.pug
 		div.wrp
-			div.main-page
-				img.under-construction(src="/images/v_razrabotke.png", title="Страница находится в разработке")
+			div.respond-line
+				a.load-nav.current(href="#", type="university") ВУЗ 
+					span(id="countnew-university")
+				a.load-nav(href="#", type="faculty") Факультет 
+					span(id="countnew-faculty")
+				a.load-nav(href="#", type="department") Специальность
+					span(id="countnew-department")
+				a.load-nav(href="#", type="studyyear") Курс
+					span(id="countnew-studyyear")
+			div.last-five
+				h3 Если Вы не знаете человека, который указал вашу СПЕЦИАЛЬНОСТЬ или КУРС, то отправьте жалобу с его профиля. Так мы вместе сможем бороться с мошенниками, риелторами и фейковыми пользователями.
+				div(id="content")
+					if locals.records && locals.records.length
+						for record in records
+							a(href="profile/view/" + record.user_id)
+								div.user-small
+									img(src=record.user_avatar, alt="User")
+									h4= record.user_first_name + ' ' + record.user_last_name
+									p= record.user_sex.substr(0, 1).toUpperCase() + ', ' + record.user_age + ', ' +  record.university_name
+				if locals.records && locals.records.length < locals.recordsCountTotal					
+					a#load-more.load-more(href="#") Загрузить больше...
 		include includes/footer.pug

@@ -278,13 +278,12 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 		}
 
 		res.render('site/profile_view.pug', {
-			user_id: req.params.userId,
 			data: data,
 			photos: photos,
 			priorities: priorities,
 			roommate_request_status: roommate_request_status,
 			isAuthorized: req.isAuthorized,
-			userId: req.user_id
+			user_id: req.user_id
 		});
 	
 	}).catch(function(err) {
@@ -312,6 +311,7 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 	var data = null;
 	var universities = [];
 	var faculties = [];
+	var departments = [];
 	var photos = [];
 	var priorities = [];
 	var userPriorities = [];
@@ -384,6 +384,15 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 
 		logger.debug(result);
 		faculties = result;
+
+		var sql = ` SELECT id, name_full FROM department WHERE faculty_id = ${data.faculty_id};`;
+		logger.debug(sql);
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		logger.debug(result);
+		departments = result;
 
 		var sql = `	SELECT * FROM v_priority`;
 		logger.debug(sql);
@@ -470,7 +479,7 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 	}).then(function(result) {
 
 		logger.debug(result);
-		logger.debug('hasFlat='+hasFlat);
+		//logger.debug('hasFlat='+hasFlat);
 		utilities = result;
 
 		if (hasFlat) {
@@ -511,6 +520,7 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 			data: data,
 			universities: universities,
 			faculties: faculties,
+			departments: departments,
 			photos: photos,
 			priorities: prioritySelect,
 			utilities: utilityObject,
@@ -900,6 +910,28 @@ router.get('/get_faculties/:university_id', function(req, res, next) {
 		res.json({
 			status: 'ok',
 			faculties: result
+		});
+	}).catch(function(err) {
+		res.json({
+			status: 'not ok'
+		});
+	});
+});
+
+router.get('/get_departments/:faculty_id', function(req, res, next) {
+	var db = null;
+	var departments = [];
+	connectionPromise().then(function(connection) {
+		db = connection;
+		var sql = ` SELECT id, name_full FROM department WHERE faculty_id = ${req.params.faculty_id};`;	
+		logger.debug(sql);
+		return db.queryAsync(sql);
+	}).then(function(result) {
+		logger.debug(result);
+		departments = result;
+		res.json({
+			status: 'ok',
+			departments: departments
 		});
 	}).catch(function(err) {
 		res.json({
