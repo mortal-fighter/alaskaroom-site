@@ -165,21 +165,27 @@ router.get('/login_vk_callback', function(req, res, next) {
 
 				var university = '';
 				if (user.universities.length) {
-					university = user.universities[0].name
+					university = `(SELECT id FROM university WHERE vk_id = '${user.universities[0].id}')`;
+				} else {
+					university = '0';
 				}
 
-				/*var faculty = '';
+				var faculty = '';
 				if (user.universities.length && user.universities[0].faculty_name !== '') {
-					faculty = user.universities[0].faculty_name;
-				}*/
+					faculty = `(SELECT id FROM faculty WHERE vk_id = '${user.universities[0].faculty}')`;
+				} else {
+					faculty = '0';
+				}
 
 				var city = '';
 				if (user.universities.length && user.universities[0].city != '0') {
 					city = user.universities[0].cityName;
 				}
 
+				var department = '0';
+
 				var sql = `	INSERT INTO \`user\`(	first_name, last_name, sex, age, birth_date, city, about, avatar,
-													university_id, faculty_id,
+													university_id, faculty_id, department_id,
 													vk_id, date_register)
 							VALUES (	'${user.first_name}',
 										'${user.last_name}',
@@ -189,8 +195,9 @@ router.get('/login_vk_callback', function(req, res, next) {
 										'${city}',
 										'${about}',
 										'/images/photo.jpg',
-										(SELECT id FROM university WHERE vk_id = '${user.universities[0].id}'),
-										(SELECT id FROM faculty WHERE vk_id = '${user.universities[0].faculty}'),
+										${university},
+										${faculty},
+										${department},
 										${user.uid},
 										NOW())`;
 				logger.debug(sql);
