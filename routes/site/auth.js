@@ -100,7 +100,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 
 		if (userId) {
 			
-			// existing user 
+			// EXISTING USER
 			auth.sessionStart(userId).then(function(token) {
 				res.cookie('AlaskaRoomAuthToken', token);
 				res.redirect(`/profile/view/${userId}`);	
@@ -112,10 +112,12 @@ router.get('/login_vk_callback', function(req, res, next) {
 		
 		} else {
 			
-			//new user
+			// NEW USER
+			
+			// optional step:
 			var promiseChain = Promise.resolve();
 
-			// get city name from vk
+			// 1. get city name from vk (optional)
 			if (user.universities.length && user.universities[0].city != '0') {	
 				var options = {
 					uri: 'https://api.vk.com/method/database.getCitiesById',
@@ -133,6 +135,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 				}));	
 			} 
 			
+			// 2. insert db (mandatory)
 			promiseChain.then(function() {
 				var sex;
 				switch (user.sex) {
@@ -204,10 +207,11 @@ router.get('/login_vk_callback', function(req, res, next) {
 				return db.queryAsync(sql);
 			
 			}).then(function(result) {
-			
+				
+				// 2.1 download and save avatar from vk (optional)
 				logger.debug(result);
 				newUserId = result.insertId;
-				auth.sessionStart(newUserId);
+				//auth.sessionStart(newUserId);
 
 				userHasPhoto = (user.photo_200 !== 'https://vk.com/images/camera_200.png') ? true : false;		
 				
