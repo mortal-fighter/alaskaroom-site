@@ -1,1 +1,0 @@
-{"faculty":1211947,"completed_chairs":1,"chairs":[]}
