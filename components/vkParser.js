@@ -8,11 +8,11 @@ const path = require('path');
 
 const connectionPromise = require('./connectionPromise.js');
 
-function parseFacultiesByUniversity(universityId) {
-	//
-}
 
-function universitiesImportMysqlFromJSON(path) {
+// -- import MYSQL-- //
+
+/* import universities */
+/*function universitiesImportMysqlFromJSON(pathToCityJsonFile) {
 
 	var db = null;
 	var univerMysql = [];
@@ -22,7 +22,7 @@ function universitiesImportMysqlFromJSON(path) {
 	connectionPromise().then(function(connection) {
 
 		db = connection
-		return fs.readFileAsync(path, {encoding: 'utf8'});
+		return fs.readFileAsync(pathToCityJsonFile, {encoding: 'utf8'});
 	
 	}).then(function(data) {
 
@@ -106,10 +106,41 @@ function universitiesImportMysqlFromJSON(path) {
 		console.log(err.stack, err.message);
 	
 	});
+}*/
+
+/* Import faculties */
+/*function facultiesImportMysqlFromJSON_All(pathToUniversityJsonFile) {
+	var db = null;
+	var universities = [];
+
+	connectionPromise().then(function(connection) {
+
+		db = connection;
+
+		return fs.readFileAsync(pathToUniversityJsonFile, {encoding: 'utf8'}); 
+
+	}).then(function(data) {
+
+		universities = JSON.parse(data).universities;
+
+		var promiseChain = Promise.resolve();
+		for (let i = 0; i < universities.length; i++) {
+			promiseChain.then(function() {
+				return new Promise(function(resolve, reject) {
+					facultiesImportMysqlFromJSON(path.normalize(`${__dirname}/../vk_data/faculty/faculty_for_${universities[i][0]}.txt`));
+					resolve();
+				});
+			});
+		}
+
+	}).catch(function(err) {
+
+		console.log(err.stack, err.message);
+
+	});
 }
 
-/**/
-function facultiesImportMysqlFromJSON(path) {
+function facultiesImportMysqlFromJSON(pathToFacultyFile) {
 	var db = null;
 	var university_id = null; // in mysql
 	var facultyMysql = [];
@@ -119,11 +150,11 @@ function facultiesImportMysqlFromJSON(path) {
 	connectionPromise().then(function(connection) {
 
 		db = connection
-		return fs.readFileAsync(path, {encoding: 'utf8'});
+		return fs.readFileAsync(pathToFacultyFile, {encoding: 'utf8'});
 	
 	}).then(function(data) {
 		
-		console.log(`START IMPORTING FILE '${path.substr(path.lastIndexOf('\\')+1)}'`);
+		console.log(`START IMPORTING FILE '${pathToFacultyFile.substr(pathToFacultyFile.lastIndexOf('\\')+1)}'`);
 
 		facultyJson = JSON.parse(data).faculties;
 		//console.log(data);
@@ -217,27 +248,28 @@ function facultiesImportMysqlFromJSON(path) {
 		console.log(`FINISH '${path.substr(path.lastIndexOf('\\')+1)}'`);
 	
 	});
-}
+}*/
 
-function facultiesImportMysqlFromJSON_All(pathToUniversitiesJsonFile) {
+/* Import departments */
+/*function importJSON_Departments(pathToFacultyJsonFile) {
 	var db = null;
-	var universities = [];
+	var faculties = [];
 
 	connectionPromise().then(function(connection) {
 
 		db = connection;
 
-		return fs.readFileAsync(pathToUniversitiesJsonFile, {encoding: 'utf8'}); 
+		return fs.readFileAsync(pathToFacultyJsonFile, {encoding: 'utf8'}); 
 
 	}).then(function(data) {
 
-		universities = JSON.parse(data).universities;
+		faculties = JSON.parse(data).faculties;
 
 		var promiseChain = Promise.resolve();
-		for (let i = 0; i < universities.length; i++) {
+		for (let i = 0; i < faculties.length; i++) {
 			promiseChain.then(function() {
 				return new Promise(function(resolve, reject) {
-					facultiesImportMysqlFromJSON(path.normalize(`${__dirname}/../vk_data/faculty/faculty_for_${universities[i][0]}.txt`));
+					departmentsImportMysqlFromJSON(path.normalize(`${__dirname}/../vk_data/department/departments_for_${faculties[i][0]}.txt`));
 					resolve();
 				});
 			});
@@ -250,8 +282,7 @@ function facultiesImportMysqlFromJSON_All(pathToUniversitiesJsonFile) {
 	});
 }
 
-/**/
-function departmentsImportMysqlFromJSON(path) {
+function departmentsImportMysqlFromJSON(pathToDepartmentFile) {
 	var db = null;
 	var faculty_id = null; // in mysql
 	var departmentMysql = [];
@@ -261,11 +292,11 @@ function departmentsImportMysqlFromJSON(path) {
 	connectionPromise().then(function(connection) {
 
 		db = connection
-		return fs.readFileAsync(path, {encoding: 'utf8'});
+		return fs.readFileAsync(pathToDepartmentFile, {encoding: 'utf8'});
 	
 	}).then(function(data) {
 		
-		console.log(`\nSTART IMPORTING DEPARTMENTS FROM FILE '${path.substr(path.lastIndexOf('\\')+1)}'`);
+		console.log(`\nSTART IMPORTING DEPARTMENTS FROM FILE '${pathToDepartmentFile.substr(pathToDepartmentFile.lastIndexOf('\\')+1)}'`);
 
 		departmentJson = JSON.parse(data).chairs;
 
@@ -354,46 +385,151 @@ function departmentsImportMysqlFromJSON(path) {
 		console.log(`FINISH '${path.substr(path.lastIndexOf('\\')+1)}'`);
 
 	})	
-}
 
-function departmentsImportMysqlFromJSON_ALL(pathToFacultiesJsonFile) {
-	var db = null;
-	var faculties = [];
+*/
 
-	connectionPromise().then(function(connection) {
+// -- make JSON -- //
 
-		db = connection;
-
-		return fs.readFileAsync(pathToFacultiesJsonFile, {encoding: 'utf8'}); 
-
-	}).then(function(data) {
-
-		faculties = JSON.parse(data).faculties;
-
-		var promiseChain = Promise.resolve();
-		for (let i = 0; i < faculties.length; i++) {
-			promiseChain.then(function() {
-				return new Promise(function(resolve, reject) {
-					departmentsImportMysqlFromJSON(path.normalize(`${__dirname}/../vk_data/department/departments_for_${faculties[i][0]}.txt`));
-					resolve();
-				});
-			});
-		}
-
-	}).catch(function(err) {
-
-		console.log(err.stack, err.message);
-
-	});
-}
-
-/**/
-function getDepartmentsFromVKByFaculty(faculty_vk_id) {
+/* DEPARTMENTS */
+function makeJSON_University(university_vk_id) {
+	console.log(`start makeJSON_University(${university_vk_id})`);
 	var FormData = require('form-data');
 	var form = new FormData();
 	
 	form.append('act', 'a_get_fac_info');
-	form.append('fac', faculty_vk_id);
+	form.append('fac', university_vk_id);
+	
+	return fetch('https://vk.com/select_ajax.php', {
+		method: "POST",
+		body: form
+	}).then(function(response) {
+		
+		if (!response.ok) {
+			throw new Error('VK_IS_UNAVAILABLE');
+		}
+
+		return response.text().then(function(result) {
+			//console.log(result);
+			var newFilePath = path.normalize(__dirname+'/../vk_data/0_departments/'+university_vk_id+'.txt');
+			return fs.writeFileAsync(newFilePath, result, {mode: 0o775});
+		}).then(function() {
+			console.log(`done makeJSON_University(${university_vk_id})`);
+		});
+
+	}).catch(function(err) {
+		console.log(`error makeJSON_University(${faculty_vk_id})`);
+		console.error(err.message, err.stack);
+
+	});
+}
+
+function makeDepartmentsFromFacultiesFile(pathToUiversityJsonFile, limit = 10, offset = 0) {
+	var db = null;
+	let faculties = [];
+
+	connectionPromise().then(function(connection) {
+		db = connection;
+		console.log(`=== Start Make Departments ${offset} .. ${limit} ===`);
+
+		var filepath = path.normalize(pathToUiversityJsonFile);
+		return fs.readFileAsync(filepath, {encoding: 'utf8'});
+	}).then(function(data) {
+		faculties = JSON.parse(data).faculties;
+		
+		var promises = [];
+
+		var start = offset;
+		var finish = Math.max(limit, faculties.length);
+
+		//console.log(faculties);
+
+		/*for (let i = start; i < finish; i++) {
+			if (!faculties[i]) {
+				console.log(`Fac ${i} has no departments`);
+			} else {
+				promises.push(makeJSON_Departments(faculties[i][0]));
+			}
+		}*/
+
+		Promise.all(promises).then(function() {
+			console.log(`=== Done Make Departments ${offset} .. ${limit} ===`);
+		});
+	}).catch(function(error) {
+		console.error(error.message, error.stack);
+	});
+}
+
+/* make faculties */
+function makeJSON_Faculties(university_vk_id) {
+	console.log(`start makeJSON_Faculties(${university_vk_id})`);
+	var FormData = require('form-data');
+	var form = new FormData();
+	
+	form.append('act', 'a_get_uni_info');
+	form.append('uni', university_vk_id);
+	
+	return fetch('https://vk.com/select_ajax.php', {
+		method: "POST",
+		body: form
+	}).then(function(response) {
+		
+		if (!response.ok) {
+			throw new Error('VK_IS_UNAVAILABLE');
+		}
+
+		return response.text().then(function(result) {
+			//console.log(result);
+			var newFilePath = path.normalize(__dirname+'/../vk_data/faculties/'+university_vk_id+'.txt');
+			return fs.writeFileAsync(newFilePath, result, {mode: 0o775});
+		}).then(function() {
+			console.log(`done makeJSON_Faculties(${university_vk_id})`);
+		});
+
+	}).catch(function(err) {
+		console.log(`error makeJSON_Faculties(${university_vk_id})`);
+		console.error(err.message, err.stack);
+	});
+}
+
+function makeFacultiesFromUniversityFile(pathToUniversitiesJsonFile, limit = 10, offset = 0) {
+	var db = null;
+	let universities = [];
+	var faculties = [];
+
+	connectionPromise().then(function(connection) {
+		db = connection;
+		console.log(`=== Start Make Faculties ${offset} .. ${limit} ===`);
+
+		var filepath = path.normalize(pathToUniversitiesJsonFile);
+		return fs.readFileAsync(filepath, {encoding: 'utf8'});
+	}).then(function(data) {
+		universities = JSON.parse(data).universities;
+		
+		var promises = [];
+		
+		var start = offset;
+		var finish = Math.max(limit, universities.length);
+
+		for (let i = start; i < finish; i++) {
+			promises.push(makeJSON_Faculties(universities[i][0]));
+		}
+
+		Promise.all(promises).then(function() {
+			console.log(`=== Done Make Faculties ${offset} .. ${limit} ===`);
+		});
+	}).catch(function(error) {
+		console.error(error.message, error.stack);
+	});
+}
+
+
+/*function makeJSON_Universities(city_vk_id) {
+	var FormData = require('form-data');
+	var form = new FormData();
+	
+	form.append('act', 'a_get_city_info');
+	form.append('city', city_vk_id);
+	form.append('fields', '8');
 	
 	fetch('https://vk.com/select_ajax.php', {
 		method: "POST",
@@ -406,7 +542,7 @@ function getDepartmentsFromVKByFaculty(faculty_vk_id) {
 
 		return response.text().then(function(result) {
 			//console.log(result);
-			var newFilePath = path.normalize(__dirname+'/../vk_data/department/departments_for_'+faculty_vk_id+'.txt');
+			var newFilePath = path.normalize(__dirname+'/../vk_data/universities/'+city_vk_id+'.txt');
 			return fs.writeFileAsync(newFilePath, result, {mode: 0o775});
 		});
 
@@ -416,61 +552,21 @@ function getDepartmentsFromVKByFaculty(faculty_vk_id) {
 
 	});
 }
+*/
 
-function getDepartmentsFromVKByFaculty_ALL(university_id) {
-	var db = null;
-	var faculties = [];
-
-	connectionPromise().then(function(connection) {
-
-		db = connection;
-
-		const filePath = path.normalize(`${__dirname}/../vk_data/faculty/faculty_for_${university_id}.txt`);
-
-		return fs.readFileAsync(filePath, {encoding: 'utf8'}); 
-
-	}).then(function(data) {
-
-		faculties = JSON.parse(data).faculties;
-
-		var promiseChain = Promise.resolve();
-		for (let i = 0; i < faculties.length; i++) {
-			promiseChain.then(function() {
-				return new Promise(function(resolve, reject) {
-					getDepartmentsFromVKByFaculty(faculties[i][0]);
-					resolve();
-				});
-			});
-		}
-
-	}).then(function() {
-
-		console.log('Done import faculties');
-
-	}).catch(function(err) {
-
-		console.log(err.stack, err.message);
-
-	});
+/**/
+function countElements(pathToJsonFile, elementName) {
+	// calculate count universities in JSON file
+	var filepath = path.normalize(pathToJsonFile);
+	var data = fs.readFileSync(filepath, {encoding: 'utf8'});
+	var elements = JSON.parse(data)[elementName];
+	return elements.length;
 }
 
-module.exports = {
-	parseAndAddCities: function() {
-		//
-	},
 
-	parseAndAddFaculties: function() {
-		//
-	},
-
-	universitiesImportMysqlFromJSON: universitiesImportMysqlFromJSON
-};
 
 /* RUN */
 
+//console.log(`count univ = ${ countElements(`${__dirname}/../vk_data/universities.txt`, 'universities') }`);
 
-// IMPORT DEPARTMENTS FOR ALL FACULTIES IN VUZ
-//getDepartmentsFromVKByFaculty_ALL(3415);
-//departmentsImportMysqlFromJSON_ALL(path.normalize(`${__dirname}/../vk_data/faculty/faculty_for_3415.txt`));
-
-
+makeDepartmentsFromFacultiesFile(path.normalize(`${__dirname}/../vk_data/faculties/1171123.txt`));
