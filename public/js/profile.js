@@ -245,7 +245,7 @@ function handlersProfileEdit() {
 			form.user.university = processInputSelect('user_university');
 			form.user.faculty = processInputSelect('user_faculty');
 			form.user.department = processInputSelect('user_department');
-			form.user.study_year = $('#user_study_year').val();
+			form.user.studyyear = processInputSelect('user_studyyear');
 			//form.user.wish_pay = $('#user_study_year').val();
 			form.priority = [];
 			$('.priority').each(function() {
@@ -584,18 +584,6 @@ function validateUserInfo() {
 	if (user_city.length > 100) {
 		alert('Поле \'Страна Вашего ВУЗа\' не может быть длиннее 100 символов');
 		$('#user_city').focus();
-		return false;
-	}
-
-	var user_study_year = $('#user_study_year').val();
-	if ( user_study_year === '' || user_study_year === ' ' ) {
-		alert('Поле \'Курс\' не может быть пустым');		
-		$('#user_study_year').focus();
-		return false;
-	}
-	if (user_study_year.length > 50) {
-		alert('Поле \'Курс\' не может быть длиннее 50 символов');
-		$('#user_study_year').focus();
 		return false;
 	}
 

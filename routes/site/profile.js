@@ -307,6 +307,7 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 	var universities = [];
 	var faculties = [];
 	var departments = [];
+	var studyYears = [];
 	var photos = [];
 	var priorities = [];
 	var userPriorities = [];
@@ -335,7 +336,8 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 						faculty_name,
 						department_id,
 						department_name,
-						user_study_year,
+						studyyear_id,
+						studyyear_name,
 						user_about,
 						user_first_name,
 						user_last_name,
@@ -398,6 +400,18 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 
 		logger.debug(result);
 		departments = result;
+
+		var sql = ` 
+			SELECT '' id, 'Не выбран' name_full 
+			UNION
+			SELECT id, name_full FROM studyyear;`;
+		logger.debug(sql);
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		logger.debug(result);
+		studyYears = result;
 
 		var sql = `	SELECT * FROM v_priority`;
 		logger.debug(sql);
@@ -526,6 +540,7 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 			universities: universities,
 			faculties: faculties,
 			departments: departments,
+			studyYears: studyYears,
 			photos: photos,
 			priorities: prioritySelect,
 			utilities: utilityObject,
@@ -687,7 +702,7 @@ router.post('/edit', function(req, res, next) {
 					university_id = ${req.body.user.university},
 					faculty_id = ${req.body.user.faculty},
 					department_id = ${req.body.user.department},
-					study_year = ${req.body.user.study_year},
+					studyyear_id = ${req.body.user.studyyear},
 					phone = ${req.body.user.phone},
 					wish_pay = ${wish_pay},
 					flat_id = ${req.body.flat.id}

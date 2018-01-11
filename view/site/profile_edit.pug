@@ -79,7 +79,7 @@ html(lang=ru)
 								else
 									option(value=faculty.id)= faculty.name_full
 					div
-						p Ваше направление/кафедра
+						p Ваша кафедра/направление
 						select#user_department.option-set(size="1")
 							for department in locals.departments					
 								if department.id == locals.data.department_id
@@ -88,7 +88,12 @@ html(lang=ru)
 									option(value=department.id)= department.name_full
 					div
 						p Ваш курс
-						input#user_study_year.option-set-small(type="text", placeholer="Ваш курс", value=locals.data.user_study_year)
+						select#user_studyyear.option-set(size="1")
+							for year in locals.studyYears					
+								if year.id == locals.data.studyyear_id
+									option(value=year.id, selected)= year.name_full
+								else
+									option(value=year.id)= year.name_full
 				div.user-setting.priorities
 					if locals.priorities
 						for priority in locals.priorities
