@@ -44,10 +44,10 @@ html(lang=ru)
 							
 							div(class=className, data-request-id=request.request_id, data-user-id=request.user_id)
 								
-								a(href='/profile/view/'+request.user_id, target="_blank", title="Просмотреть профиль "+request.first_name)
-									img(src=request.avatar, alt="User photo")
-									h3= request.first_name + ' ' + request.last_name
-								p= request.age+', '+request.university+', '+request.faculty+', '+request.study_year+' курс'
+								a(href='/profile/view/'+request.user_id, target="_blank", title="Просмотреть профиль "+request.user_first_name)
+									img(src=request.user_avatar, alt="User photo")
+									h3= request.user_first_name + ' ' + request.user_last_name
+								p= request.user_age+', '+request.university_name+', '+request.faculty_name+', '+request.user_study_year+' курс'
 								
 								if locals.type === 'sended' || locals.type === 'accepted'
 								

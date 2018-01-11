@@ -98,53 +98,53 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 		switch (req.params.type) {
 			case 'sended':
 				sql = `	SELECT 	req.id 	request_id,
-						to_user_id,
-						\`status\`,
-						\`user\`.id 	user_id,
-						first_name,
-						last_name,
-						age,
-						university,
-						faculty,
-						study_year,
-						avatar
+						req.to_user_id,
+						req.status,
+						user_id,
+						user_first_name,
+						user_last_name,
+						user_age,
+						university_name,
+						faculty_name,
+						user_study_year,
+						user_avatar
 				FROM roommate_request req
-				JOIN \`user\` ON to_user_id = \`user\`.id
+				JOIN v_user ON to_user_id = v_user.user_id
 				WHERE from_user_id = ${req.user_id}
-				  AND \`status\` <> 'accepted'`;
+				  AND req.status <> 'accepted'`;
 				break;
 			case 'incoming':
 				sql = `	SELECT 	req.id 		request_id,
-							from_user_id,
-							\`status\`,
-							\`user\`.id 	user_id,
-							first_name,
-							last_name,
-							age,
-							university,
-							faculty,
-							study_year,
-							avatar
+							req.from_user_id,
+							req.status,
+							user_id,
+							user_first_name,
+							user_last_name,
+							user_age,
+							university_name,
+							faculty_name,
+							user_study_year,
+							user_avatar
 						FROM roommate_request req
-						JOIN \`user\` ON from_user_id = \`user\`.id
+						JOIN v_user ON from_user_id = v_user.user_id
 						WHERE to_user_id = ${req.user_id};`;
 				break;
 			case 'accepted':
 				sql = `	SELECT 	req.id 	request_id,
-								to_user_id,
-								\`status\`,
-								\`user\`.id 	user_id,
-								first_name,
-								last_name,
-								age,
-								university,
-								faculty,
-								study_year,
-								avatar
+								req.to_user_id,
+								req.status,
+								user_id,
+								user_first_name,
+								user_last_name,
+								user_age,
+								university_name,
+								faculty_name,
+								user_study_year,
+								user_avatar
 						FROM roommate_request req
-						JOIN \`user\` ON to_user_id = \`user\`.id
+						JOIN v_user ON to_user_id = v_user.user_id
 						WHERE from_user_id = ${req.user_id}
-						  AND \`status\` = 'accepted'`;
+						  AND req.status = 'accepted'`;
 				break;
 			case 'complains':
 				sql = ` SELECT 1;`;
