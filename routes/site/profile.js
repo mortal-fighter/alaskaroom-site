@@ -161,11 +161,6 @@ function validateUser(user) {
 	} else if (user.city.length > 100) {
 		throw new Error(`Parameters validation error: user.city.length = ${user.city.length}.`);
 	}
-	if (!user.speciality) {
-		throw new Error(`Parameters validation error (user.speciality): '${user.speciality}'.`);
-	} else if (user.speciality.length > 150) {
-		throw new Error(`Parameters validation error: user.speciality.length = ${user.speciality.length}.`);
-	}
 	if (user.phone && !user.phone.match(/^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/)) {
 		throw new Error(`Parameters validation error (user.phone): '${user.phone}'.`);
 	}
@@ -338,7 +333,8 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 						university_name,
 						faculty_id,
 						faculty_name,
-						speciality_name,
+						department_id,
+						department_name,
 						user_study_year,
 						user_about,
 						user_first_name,
@@ -367,7 +363,10 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 			hasFlat = true;
 		}
 
-		var sql = ` SELECT id, name_short FROM university;`;
+		var sql = ` 
+			SELECT '' id, 'Не выбран' name_short 
+			UNION
+			SELECT id, name_short FROM university;`;
 		logger.debug(sql);
 		return db.queryAsync(sql);
 
@@ -376,7 +375,10 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 		logger.debug(result);
 		universities = result;
 
-		var sql = ` SELECT id, name_full FROM faculty WHERE university_id = ${data.university_id};`;
+		var sql = ` 
+			SELECT '' id, 'Не выбран' name_full 
+			UNION
+			SELECT id, name_full FROM faculty WHERE university_id = ${data.university_id};`;
 		logger.debug(sql);
 		return db.queryAsync(sql);
 
@@ -385,7 +387,10 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 		logger.debug(result);
 		faculties = result;
 
-		var sql = ` SELECT id, name_full FROM department WHERE faculty_id = ${data.faculty_id};`;
+		var sql = ` 
+			SELECT '' id, 'Не выбрана' name_full 
+			UNION
+			SELECT id, name_full FROM department WHERE faculty_id = ${data.faculty_id};`;
 		logger.debug(sql);
 		return db.queryAsync(sql);
 
@@ -549,7 +554,7 @@ router.post('/edit', function(req, res, next) {
 		
 		db = connection;
 		
-		console.log('FLAT=',req.body.flat);
+		//console.log('FLAT=',req.body.flat);
 
 		if (!req.body.flat) {
 			req.body.flat = {
@@ -558,7 +563,7 @@ router.post('/edit', function(req, res, next) {
 		}
 		var hasFlat = (req.body.flat.address) ? true : false; 		// address is primary field
 		var hasId = (req.body.flat.id !== '') ? true : false;	//
-		console.log('hasFlat, hasId', hasFlat, hasId);
+		//console.log('hasFlat, hasId', hasFlat, hasId);
 		if (hasFlat) {
 			validateFlat(req.body.flat);
 			formatObjectForSQL(req.body.flat);
@@ -681,7 +686,7 @@ router.post('/edit', function(req, res, next) {
 					city = ${req.body.user.city},
 					university_id = ${req.body.user.university},
 					faculty_id = ${req.body.user.faculty},
-					speciality = ${req.body.user.speciality},
+					department_id = ${req.body.user.department},
 					study_year = ${req.body.user.study_year},
 					phone = ${req.body.user.phone},
 					wish_pay = ${wish_pay},

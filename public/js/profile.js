@@ -95,6 +95,7 @@ function handlersProfileEdit() {
 	$("#user_phone").mask("+7(999)-999-99-99");
 
 	$('#user_university').on('change', function() {
+		console.log('universities changed');
 		disableAllControls();
 		loadFaculties(processInputSelect('user_university'));
 	});
@@ -237,7 +238,7 @@ function handlersProfileEdit() {
 			form.user.city = $('#user_city').val();
 			form.user.university = processInputSelect('user_university');
 			form.user.faculty = processInputSelect('user_faculty');
-			form.user.speciality = $('#user_speciality').val();
+			form.user.department = processInputSelect('user_department');
 			form.user.study_year = $('#user_study_year').val();
 			//form.user.wish_pay = $('#user_study_year').val();
 			form.priority = [];
@@ -296,6 +297,7 @@ function handlersProfileEdit() {
 }
 
 function loadFaculties(university_id) {
+	console.log('loadFaculties');
 	$.ajax({
 		method: 'GET',
 		url: '/profile/get_faculties/' + processInputSelect('user_university'),
@@ -309,6 +311,7 @@ function loadFaculties(university_id) {
 				}
 				
 				target.on('change', function() {
+					console.log('faculties changed');
 					//disableAllControls();
 					loadDepartments(processInputSelect('user_faculty'));
 				});
@@ -331,6 +334,7 @@ function loadFaculties(university_id) {
 }
 
 function loadDepartments(faculty_id) {
+	console.log('loadDepartments');
 	$.ajax({
 		method: 'GET',
 		url: '/profile/get_departments/' + processInputSelect('user_department'),
@@ -554,18 +558,6 @@ function validateUserInfo() {
 	if (user_city.length > 100) {
 		alert('Поле \'Страна Вашего ВУЗа\' не может быть длиннее 100 символов');
 		$('#user_city').focus();
-		return false;
-	}
-
-	var user_speciality = $('#user_speciality').val();
-	if ( user_speciality === '' || user_speciality === ' ') {
-		alert('Поле \'Специальность\' не может быть пустым');
-		$('#user_speciality').focus();
-		return false;
-	} 
-	if (user_speciality.length > 150) {
-		alert('Поле \'Специальность\' не может быть длиннее 150 символов');
-		$('#user_speciality').focus();
 		return false;
 	}
 

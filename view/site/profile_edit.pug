@@ -66,7 +66,7 @@ html(lang=ru)
 						p Название вашего ВУЗа
 						select#user_university.option-set.university(size="1")
 							for university in locals.universities					
-								if university.id === locals.data.university_id
+								if university.id == locals.data.university_id
 									option(value=university.id, selected)= university.name_short
 								else
 									option(value=university.id)= university.name_short
@@ -74,15 +74,15 @@ html(lang=ru)
 						p Ваш факультет
 						select#user_faculty.option-set(size="1")
 							for faculty in locals.faculties					
-								if faculty.id === locals.data.faculty_id
+								if faculty.id == locals.data.faculty_id
 									option(value=faculty.id, selected)= faculty.name_full
 								else
 									option(value=faculty.id)= faculty.name_full
 					div
-						p Ваш факультет
+						p Ваше направление/кафедра
 						select#user_department.option-set(size="1")
 							for department in locals.departments					
-								if department.id === locals.data.faculty_id
+								if department.id == locals.data.department_id
 									option(value=department.id, selected)= department.name_full
 								else
 									option(value=department.id)= department.name_full
