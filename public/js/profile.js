@@ -96,8 +96,14 @@ function handlersProfileEdit() {
 
 	$('#user_university').on('change', function() {
 		console.log('universities changed');
-		disableAllControls();
+		//disableAllControls();
 		loadFaculties(processInputSelect('user_university'));
+	});
+
+	$('#user_faculty').on('change', function() {
+		console.log('faculties changed');
+		//disableAllControls();
+		loadDepartments(processInputSelect('user_faculty'));
 	});
 
 	$('.room-photos > div > a').on('click', function(e) {
@@ -298,57 +304,77 @@ function handlersProfileEdit() {
 
 function loadFaculties(university_id) {
 	console.log('loadFaculties');
-	$.ajax({
-		method: 'GET',
-		url: '/profile/get_faculties/' + processInputSelect('user_university'),
-		success: function(result) {
-			if (result.status === 'ok') {
 	
-				var target = $('#user_faculty').html(''); // returns element itself
-				
-				for (var i = 0; i < result.faculties.length; i++) {
-					target.append( $('<option value="'+result.faculties[i].id+'">'+result.faculties[i].name_full+'</option>') );
-				}
-				
-				target.on('change', function() {
-					console.log('faculties changed');
-					//disableAllControls();
-					loadDepartments(processInputSelect('user_faculty'));
-				});
-				loadDepartments(processInputSelect('user_faculty'));
+	if (university_id !== '') {
 
-				// Очищаем поле "Кафедра"
-				$('#user_department').html('<option value="0">Не выбрана</option>');
-				
-			} else {
-				//console.log('Ошибка');
-				console.log('При загрузке факультетов для ВУЗА id="' + processInputSelect('user_university') + '" произошла ошибка');
+		$.ajax({
+			method: 'GET',
+			url: '/profile/get_faculties/' + processInputSelect('user_university'),
+			success: function(result) {
+				if (result.status === 'ok') {
+		
+					var target = $('#user_faculty').html(''); // returns element itself
+					
+					for (var i = 0; i < result.faculties.length; i++) {
+						target.append( $('<option value="'+result.faculties[i].id+'">'+result.faculties[i].name_full+'</option>') );
+					}
+					
+					target.on('change', function() {
+						console.log('faculties changed');
+						//disableAllControls();
+						loadDepartments(processInputSelect('user_faculty'));
+					});
+					loadDepartments(processInputSelect('user_faculty'));
+
+					// Очищаем поле "Кафедра"
+					$('#user_department').html('<option value="0">Не выбрана</option>');
+					
+				} else {
+					//console.log('Ошибка');
+					console.log('При загрузке факультетов для ВУЗА id="' + processInputSelect('user_university') + '" произошла ошибка');
+				}
+				enableAllControls();
+			},
+			error: function(error) {
+				console.log('Ошибка сетевого соединения');
+				enableAllControls();
 			}
-			enableAllControls();
-		},
-		error: function(error) {
-			console.log('Ошибка сетевого соединения');
-			enableAllControls();
-		}
-	});
+		});
+
+	} else {
+
+		$('#user_faculty').html('<option value="">Не выбран</option>');
+		loadDepartments('');
+
+	}
 }
 
 function loadDepartments(faculty_id) {
 	console.log('loadDepartments');
-	$.ajax({
-		method: 'GET',
-		url: '/profile/get_departments/' + processInputSelect('user_department'),
-		success: function(result) {
-			var target = $('#user_department').html('');
-			for (var i = 0; i < result.departments.length; i++) {
-				target.append( $('<option value="'+result.departments[i].id+'">'+result.departments[i].name_full+'</option>') );
+	console.log('faculty_id=', faculty_id);	
+	if (faculty_id !== '') {
+
+		$.ajax({
+			method: 'GET',
+			url: '/profile/get_departments/' + processInputSelect('user_faculty'),
+			success: function(result) {
+				var target = $('#user_department').html('');
+				for (var i = 0; i < result.departments.length; i++) {
+					target.append( $('<option value="'+result.departments[i].id+'">'+result.departments[i].name_full+'</option>') );
+				}
+			},
+			error: function(error) {
+				console.log('Ошибка сетевого соединения');
+				enableAllControls();
 			}
-		},
-		error: function(error) {
-			console.log('Ошибка сетевого соединения');
-			enableAllControls();
-		}
-	});
+		});
+
+	} else {
+
+		$('#user_department').html('<option value="">Не выбрана</option>');
+
+	}
+
 }
 
 function deletePhoto(photoId) {

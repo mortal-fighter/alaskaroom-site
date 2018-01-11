@@ -907,7 +907,10 @@ router.get('/get_faculties/:university_id', function(req, res, next) {
 	var db = null;
 	connectionPromise().then(function(connection) {
 		db = connection;
-		var sql = ` SELECT id, name_full FROM faculty WHERE university_id = ${req.params.university_id};`;	
+		var sql = ` 
+			SELECT '' id, 'Не выбран' name_full
+			UNION
+			SELECT id, name_full FROM faculty WHERE university_id = ${req.params.university_id};`;	
 		logger.debug(sql);
 		return db.queryAsync(sql);
 	}).then(function(result) {
@@ -928,7 +931,10 @@ router.get('/get_departments/:faculty_id', function(req, res, next) {
 	var departments = [];
 	connectionPromise().then(function(connection) {
 		db = connection;
-		var sql = ` SELECT id, name_full FROM department WHERE faculty_id = ${req.params.faculty_id};`;	
+		var sql = ` 
+			SELECT '' id, 'Не выбрана' name_full
+			UNION
+			SELECT id, name_full FROM department WHERE faculty_id = ${req.params.faculty_id};`;	
 		logger.debug(sql);
 		return db.queryAsync(sql);
 	}).then(function(result) {
