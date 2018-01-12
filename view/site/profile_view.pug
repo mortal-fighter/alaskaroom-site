@@ -17,7 +17,7 @@ html(lang=ru)
 				img(src=locals.data.user_avatar, alt="User")
 				h3= locals.data.user_name
 				p= locals.data.user_age + ' год, ' + locals.data.university_name + ', ' + locals.data.faculty_name
-				if locals.data.user_id != locals.user_id
+				if locals.data.user_id != locals.userId
 					if locals.roommate_request_status === 'pending'
 						p.roommate-status= 'Соседство: в ожидании ответа от пользователя ' + locals.data.user_first_name
 							span  &#x029D6;
@@ -42,7 +42,7 @@ html(lang=ru)
 					div.caracter
 						h4 Сколько плачу \ готов платить?
 						p= locals.data.flat_rent_pay
-				if locals.data.user_id == locals.user_id
+				if locals.data.user_id == locals.userId
 					p.edit-user Хотите отредактировать информацию о себе?
 						a#btn-edit-user-info(href="#") Нажмите тут
 			if locals.data.flat_id

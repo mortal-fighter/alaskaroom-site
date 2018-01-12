@@ -278,7 +278,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 			priorities: priorities,
 			roommate_request_status: roommate_request_status,
 			isAuthorized: req.isAuthorized,
-			user_id: req.user_id
+			userId: req.user_id
 		});
 	
 	}).catch(function(err) {

@@ -19,6 +19,16 @@ router.get('/login_soc', function(req, res, next) {
 	res.redirect(`https://oauth.vk.com/authorize?client_id=${config.vkApp.id}&display=page&redirect_uri=${config.vkApp.redirectUrl}&response_type=code&v=${config.vkApp.version}`);
 });
 
+router.get('/logout/:userId(\\d+)', function(req, res, next) {
+	auth.sessionEnd(req.params.userId).then(function() {
+		res.cookie('AlaskaRoomAuthToken', '');
+		res.redirect(`/`);	
+	}).catch(function(err) {
+		logger.error(err);
+		res.render('errors/500.pug');
+	});
+})
+
 router.get('/login_vk_callback', function(req, res, next) {
 	var db = null;
 	var access = null;

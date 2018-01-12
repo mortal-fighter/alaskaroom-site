@@ -23,6 +23,7 @@ style
 div.top
 	a.logo(href="/") AlaskaRoom
 	if locals.isAuthorized 
+		a.user-profile(href="/auth/logout/"+locals.userId) Выйти
 		a.user-profile(href="/profile/view/"+locals.userId) Профиль
 		a.mbl-viev.mbl-profile(href="/profile/view/"+locals.userId)
 			img(src="/images/usericon.png", alt="profile")
