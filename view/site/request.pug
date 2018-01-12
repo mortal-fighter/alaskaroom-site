@@ -47,7 +47,7 @@ html(lang=ru)
 								a(href='/profile/view/'+request.user_id, target="_blank", title="Просмотреть профиль "+request.user_first_name)
 									img(src=request.user_avatar, alt="User photo")
 									h3= request.user_first_name + ' ' + request.user_last_name
-								p= request.user_age+', '+request.university_name+', '+request.faculty_name+', '+request.user_study_year+' курс'
+								p= request.user_age+', '+request.university_name+', '+request.faculty_name+', '+request.studyyear_name
 								
 								if locals.type === 'sended' || locals.type === 'accepted'
 								

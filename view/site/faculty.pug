@@ -15,7 +15,7 @@ html(lang=ru)
 					span(id="countnew-university")
 				a.load-nav(href="#", type="faculty") Факультет 
 					span(id="countnew-faculty")
-				a.load-nav(href="#", type="department") Специальность
+				a.load-nav(href="#", type="department") Направление
 					span(id="countnew-department")
 				a.load-nav(href="#", type="studyyear") Курс
 					span(id="countnew-studyyear")
@@ -29,6 +29,8 @@ html(lang=ru)
 									img(src=record.user_avatar, alt="User")
 									h4= record.user_first_name + ' ' + record.user_last_name
 									p= record.user_sex.substr(0, 1).toUpperCase() + ', ' + record.user_age + ', ' +  record.university_name
+					else
+						div.no-records Никого не найдено
 				if locals.records && locals.records.length < locals.recordsCountTotal					
 					a#load-more.load-more(href="#") Загрузить больше...
 		include includes/footer.pug

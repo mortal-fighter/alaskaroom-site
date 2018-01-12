@@ -50,13 +50,6 @@ router.post('/ajax_get_people_by_type', function(req, res, next) {
 							OFFSET ${offset};`;
 					break;
 				case 'department':
-					/*sql = ` SELECT *
-							FROM USER
-							WHERE speciality = (SELECT speciality FROM USER WHERE id = ${req.user_id})); 
-							  AND user_id <> ${req.user_id}
-							ORDER BY date_register DESC
-							LIMIT ${limit}
-							OFFSET ${offset};`;*/
 					sql = ` SELECT
 								user_id, user_first_name, user_last_name, user_sex, user_age, user_avatar, university_name 
 							FROM v_user
@@ -95,7 +88,10 @@ router.post('/ajax_get_people_by_type', function(req, res, next) {
 						  AND user_id <> ${req.user_id};`;
 				break;
 			case 'department':
-				sql = ` SELECT 1;`;
+				sql = ` SELECT count(*) cnt
+						FROM v_user
+						WHERE department_id = (SELECT department_id FROM v_user WHERE user_id = ${req.user_id})
+						  AND user_id <> ${req.user_id};`;
 				break;
 			case 'studyyear':
 				sql = ` SELECT 1;`;

@@ -69,7 +69,7 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 						user_sex,
 						user_age,
 						university_name,
-						ser_avatar,
+						user_avatar,
 						flat_id
 					FROM v_user 
 					WHERE flat_id IS NULL

@@ -106,7 +106,7 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 						user_age,
 						university_name,
 						faculty_name,
-						user_study_year,
+						studyyear_name,
 						user_avatar
 				FROM roommate_request req
 				JOIN v_user ON to_user_id = v_user.user_id
@@ -123,7 +123,7 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 							user_age,
 							university_name,
 							faculty_name,
-							user_study_year,
+							studyyear_name,
 							user_avatar
 						FROM roommate_request req
 						JOIN v_user ON from_user_id = v_user.user_id
@@ -139,7 +139,7 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 								user_age,
 								university_name,
 								faculty_name,
-								user_study_year,
+								studyyear_name,
 								user_avatar
 						FROM roommate_request req
 						JOIN v_user ON to_user_id = v_user.user_id

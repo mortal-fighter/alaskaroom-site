@@ -118,7 +118,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 			var promiseChain = Promise.resolve();
 
 			// 1. get city name from vk (optional)
-			if (user.universities.length && user.universities[0].city != '0') {	
+			if (user.universities.length) {	
 				var options = {
 					uri: 'https://api.vk.com/method/database.getCitiesById',
 					qs: {
@@ -127,10 +127,10 @@ router.get('/login_vk_callback', function(req, res, next) {
 					},
 					json: true
 				};
-				logger.debug(options);
+				logger.debug('qs='+JSON.stringify(options));
 				
 				promiseChain.then(rp(options).then(function(result) {
-					logger.debug(result);
+					logger.debug('rp result='+JSON.stringify(result));
 					user.universities[0].cityName = result.response[0].name;
 				}));	
 			} 
@@ -170,14 +170,21 @@ router.get('/login_vk_callback', function(req, res, next) {
 				if (user.universities.length) {
 					university = `(SELECT id FROM university WHERE vk_id = '${user.universities[0].id}')`;
 				} else {
-					university = '0';
+					university = 'NULL';
 				}
 
 				var faculty = '';
 				if (user.universities.length && user.universities[0].faculty_name !== '') {
 					faculty = `(SELECT id FROM faculty WHERE vk_id = '${user.universities[0].faculty}')`;
 				} else {
-					faculty = '0';
+					faculty = 'NULL';
+				}
+
+				var department = '';
+				if (user.universities.length && user.universities[0].faculty_name !== '') {
+					department = `(SELECT id FROM department WHERE vk_id = '${user.universities[0].chair}')`;
+				} else {
+					department = 'NULL';
 				}
 
 				var city = '';
@@ -185,11 +192,19 @@ router.get('/login_vk_callback', function(req, res, next) {
 					city = user.universities[0].cityName;
 				}
 
-				var department = '0';
-
-				var sql = `	INSERT INTO \`user\`(	first_name, last_name, sex, age, birth_date, city, about, avatar,
-													university_id, faculty_id, department_id,
-													vk_id, date_register)
+				var sql = `	INSERT INTO \`user\`(	first_name, 
+													last_name, 
+													sex, 
+													age, 
+													birth_date, 
+													city, 
+													about, 
+													avatar,
+													university_id, 
+													faculty_id, 
+													department_id,
+													vk_id, 
+													date_register)
 							VALUES (	'${user.first_name}',
 										'${user.last_name}',
 										'${sex}',
