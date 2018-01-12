@@ -255,6 +255,7 @@ function handlersProfileEdit() {
 			var validationFailed = false;
 
 			if (hasFlat()) {
+				console.log('has flat = true');
 				if (!validateFlat()) {
 					validationFailed = true;
 					return;
@@ -281,6 +282,7 @@ function handlersProfileEdit() {
 			}
 
 			if (!validationFailed) {
+				console.log('flat validated successfully, flat = ', form.flat, ', utility =', form.utility);
 				$.ajax({
 					method: 'POST',
 					url: '/profile/edit',
@@ -289,6 +291,7 @@ function handlersProfileEdit() {
 					success: function(result) {
 						if (result.status === 'ok') {
 							alert('Информация сохранена');
+							window.location.href = '/profile/view/' + $('#user_id').val();
 						} else {
 							alert('При загрузке данных произошла ошибка');
 						}

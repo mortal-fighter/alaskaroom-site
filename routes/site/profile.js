@@ -576,16 +576,19 @@ router.post('/edit', function(req, res, next) {
 				id: ''
 			};
 		}
-		var hasFlat = (req.body.flat.address) ? true : false; 		// address is primary field
+		var flatDataExists = (req.body.flat.address) ? true : false; 		// address is primary field
 		var hasId = (req.body.flat.id !== '') ? true : false;	//
-		//console.log('hasFlat, hasId', hasFlat, hasId);
-		if (hasFlat) {
+		//console.log('flatDataExists, hasId', flatDataExists, hasId);
+		
+		if (flatDataExists) {
+			// Flat data exists
+
 			validateFlat(req.body.flat);
 			formatObjectForSQL(req.body.flat);
 			var sql;
 
 			if (hasId) {
-				// update
+				// new flat
 
 				sql = `	UPDATE flat
 						SET description = ${req.body.flat.description},
@@ -599,7 +602,7 @@ router.post('/edit', function(req, res, next) {
 						WHERE id = ${req.body.flat.id};`
 
 			} else {
-				// insert
+				// existing flat
 
 				sql = `		INSERT INTO Flat(	description,
 												address,
@@ -641,13 +644,9 @@ router.post('/edit', function(req, res, next) {
 
 				logger.debug(result);
 				
-				if (!hasId) {
-					var sql = `	DELETE FROM flat_utility WHERE flat_id = ${req.body.flat.id}`;
-					logger.debug(sql);
-					return db.queryAsync(sql);
-				} else {
-					return Promise.resolve();
-				}
+				var sql = `	DELETE FROM flat_utility WHERE flat_id = ${req.body.flat.id}`;
+				logger.debug(sql);
+				return db.queryAsync(sql);
 
 			}).then(function(result) {
 
