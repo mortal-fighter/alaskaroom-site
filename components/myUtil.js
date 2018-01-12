@@ -106,7 +106,10 @@ module.exports = {
 
 			db = connection;
 
-			var sql = `	SELECT id, name_short name FROM university;`;
+			var sql = `	
+				SELECT '' id, 'Не выбран' name
+				UNION
+				SELECT id, name_short name FROM university;`;
 			
 			return db.queryAsync(sql);
 
