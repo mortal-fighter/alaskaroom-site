@@ -4,6 +4,7 @@
 
 .user-requests .message {
     width: 100%;
+    height: auto;
     text-align: center;
     position: absolute;
     left: 0;
