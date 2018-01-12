@@ -7,6 +7,9 @@ html(lang=ru)
 			|	a.load-nav.current {
 			|		background-color: #dedede;
 			|	}
+			|	a.load-more {
+			|		display: none;
+			|	}
 	body
 		include includes/header.pug
 		div.wrp
@@ -22,15 +25,5 @@ html(lang=ru)
 			div.last-five
 				h3 Если Вы не знаете человека, который указал вашу СПЕЦИАЛЬНОСТЬ или КУРС, то отправьте жалобу с его профиля. Так мы вместе сможем бороться с мошенниками, риелторами и фейковыми пользователями.
 				div(id="content")
-					if locals.records && locals.records.length
-						for record in records
-							a(href="profile/view/" + record.user_id)
-								div.user-small
-									img(src=record.user_avatar, alt="User")
-									h4= record.user_first_name + ' ' + record.user_last_name
-									p= record.user_sex.substr(0, 1).toUpperCase() + ', ' + record.user_age + ', ' +  record.university_name
-					else
-						div.no-records Никого не найдено
-				if locals.records && locals.records.length < locals.recordsCountTotal					
-					a#load-more.load-more(href="#") Загрузить больше...
+				a#load-more.load-more(href="#") Загрузить больше...
 		include includes/footer.pug

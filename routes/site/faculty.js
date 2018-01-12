@@ -17,14 +17,12 @@ router.post('/ajax_get_people_by_type', function(req, res, next) {
 		return;
 	}
 
-	var limit = (req.body.limit) ? req.body.limit : 1;
+	var limit = (req.body.limit) ? req.body.limit : 18;
 	var offset = (req.body.offset) ? req.body.offset : 0;
 
 	connectionPromise().then(function(connection) {
 
 		db = connection;
-
-		var limit = 1;
 
 		var sql = '';
 			
@@ -60,7 +58,14 @@ router.post('/ajax_get_people_by_type', function(req, res, next) {
 							OFFSET ${offset};`;
 					break;
 				case 'studyyear':
-					sql = ` SELECT 1;`;
+					sql = ` SELECT
+								user_id, user_first_name, user_last_name, user_sex, user_age, user_avatar, university_name 
+							FROM v_user
+							WHERE studyyear_id = (SELECT studyyear_id FROM v_user WHERE user_id = ${req.user_id})
+							  AND user_id <> ${req.user_id}
+							ORDER BY user_date_register DESC
+							LIMIT ${limit}
+							OFFSET ${offset};`;
 					break;
 			}
 		
@@ -94,7 +99,10 @@ router.post('/ajax_get_people_by_type', function(req, res, next) {
 						  AND user_id <> ${req.user_id};`;
 				break;
 			case 'studyyear':
-				sql = ` SELECT 1;`;
+				sql = ` SELECT count(*) cnt
+						FROM v_user
+						WHERE studyyear_id = (SELECT studyyear_id FROM v_user WHERE user_id = ${req.user_id})
+						  AND user_id <> ${req.user_id};`;
 				break;
 		}
 
@@ -125,55 +133,17 @@ router.post('/ajax_get_people_by_type', function(req, res, next) {
 });
 
 router.get('/', function(req, res, next) {
-	var db = null;
-	var records = [];
-	var recordsCountTotal = 0;
-
+	
 	if (!req.isAuthorized) {
 		res.redirect('/?message=Пожалуйста,%20авторизуйтесь%20в%20системе');
 		return;
 	}
 
-	connectionPromise().then(function(connection) {
-
-		db = connection;
-
-		var limit = 1;
-
-		var sql = `	SELECT
-						user_id, user_first_name, user_last_name, user_sex, user_age, user_avatar, university_name 
-					FROM v_user
-					WHERE university_id = (SELECT university_id FROM v_user WHERE user_id = ${req.user_id})
-					  AND user_id <> ${req.user_id}
-					ORDER BY user_date_register DESC
-					LIMIT ${limit};`;
-		logger.debug(sql);
-
-		return db.queryAsync(sql);
-
-	}).then(function(result) {
-
-		logger.debug(result);
-		records = result;
-
-		var sql = ` SELECT count(*) cnt
-					FROM v_user
-					WHERE university_id = (SELECT university_id FROM v_user WHERE user_id = ${req.user_id})
-					  AND user_id <> ${req.user_id};`;
-
-		logger.debug(sql);
-
-		return db.queryAsync(sql);
-
-	}).then(function(result) {
-	
-		recordsCountTotal = result[0].cnt;
+	Promise.resolve().then(function() {
 
 		res.render('site/faculty.pug', {
 			isAuthorized: req.isAuthorized,
-			userId: req.user_id,
-			records: records,
-			recordsCountTotal: recordsCountTotal
+			userId: req.user_id
 		});	
 
 	}).catch(function(err) {

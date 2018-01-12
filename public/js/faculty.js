@@ -1,18 +1,22 @@
 'use strict'
 
 var countRecords = 0;
-var lastForm = null;
-let type = null;
+let type = 'university';
+var lastForm = {
+	type: type
+};
+
 
 /* HANDLERS UI CONTROLS */
 function handlersFaculty() {
 	$('a.load-nav').on('click', function() {
-		// clear current, set current
+		// clear current, set current menu item
 		$('a.load-nav').removeClass('current');
 		$(this).addClass('current');
 
-		type = $(this).attr('type');
-		
+		//save type
+		type = $(this).attr('type');	
+
 		load();
 	});
 
@@ -20,14 +24,16 @@ function handlersFaculty() {
 		e.preventDefault();
 		loadMore();
 	});
+
+	// start from here
+	load();
 }
 
 function load() {
+
 	var form = {
 		type: type
 	};
-	// Uncaught TypeError: Cannot set property 'offset' of null
-	// when data were added during initial page load
 	lastForm = form;
 
 	$.ajax({
@@ -47,9 +53,12 @@ function load() {
 				if (result.records.length === 0) {
 					content.html('<div class="no-records">Никого не найдено</div>');
 					$('#load-more').hide();
-				} else {
+				} else if (result.records.length < result.recordsCountTotal) {
 					content.html('');
 					$('#load-more').show();
+				} else {
+					content.html('');
+					$('#load-more').hide();
 				}
 
 				for (var i = 0; i < result.records.length; i++) {
@@ -87,6 +96,10 @@ function loadMore() {
 			if (result.status === 'ok') {
 				
 				countRecords += result.records.length;
+
+				if (countRecords === result.recordsCountTotal) {
+					$('#load-more').hide();
+				}
 
 				var content = $('#content');
 
