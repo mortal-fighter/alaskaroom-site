@@ -1,0 +1,53 @@
+0. Подготовка локально 
+Локально делаем архив zip с папками и файлами:
+-components
+-config
+-logs
+-public
+-routes
+-view
+favicon.ico
+index.js
+init.sh
+package.json
+
+Делаем sql-дам базы.
+P.S. База на проде будет полностью перезалита и данные прода потеряются! Что сделать чтобы этого не случилось напишу позже.
+
+1. На проде. Подготовка. 
+Останавливаем forever.
+forever stopall
+Заходим в папку пользователя user101
+cd /home/user101
+Удаляем все файлы сайта
+rm -R site
+Создаем папку site, устанавливаем ей владельца user101
+mkdir site
+chown user101 site
+
+2. Заливаем бд.
+Копируем файл дампа в папку site через WinSCP.
+Перезаливаем бд.
+mysql -u root -p < site/dump.sql
+Попросят ввести пароль.
+
+3. Копируем файлы сайта в каталог site
+Разархивируем их в текущий каталог
+unzip site/AlaskaRoom.zip
+Меняем владельца на root и устанавливаем права для всех новых файлов
+chown -R user101 site
+chmod -R 775 site
+
+4. Устанавливаем node_modules
+cd site
+npm install
+Ждем
+cd ..
+
+5. На проде меняем все данные в файле config/common.js как в файле config/common.prod.js
+
+6. Запускаем сайт через forever
+cd forever
+forever start config.json
+
+все! 
