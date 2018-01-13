@@ -1,0 +1,1 @@
+{"university":5109,"completed_faculties":1,"faculties":[["10778","Иностранных языков"]]}

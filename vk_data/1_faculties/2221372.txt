@@ -1,0 +1,1 @@
+{"faculty":2221372,"completed_chairs":1,"chairs":[["2056939","Юриспруденция"]]}

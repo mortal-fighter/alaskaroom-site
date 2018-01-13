@@ -255,7 +255,7 @@ function importDepartmentsByUniversityFile(pathToUniversityFile) {
 	var db = null;
 	var faculties = [];
 
-	connectionPromise().then(function(connection) {
+	return connectionPromise().then(function(connection) {
 
 		db = connection;
 
@@ -395,7 +395,6 @@ function importDepartmentsByFacultyFile(pathToFacultyFile) {
 
 // -- make JSON -- //
 
-/* DEPARTMENTS */
 function makeFacultiesFilesByUniversityId(university_vk_id) {
 	console.log(`makeFacultiesFilesByUniversityId(${university_vk_id})`);
 	
@@ -487,7 +486,7 @@ function makeDepartmentsFromFacultiesFile(pathToUiversityJsonFile, limit = 10, o
 }
 
 /* make faculties */
-function makeJSON_Faculties(university_vk_id) {
+/*function makeJSON_Faculties(university_vk_id) {
 	console.log(`start makeJSON_Faculties(${university_vk_id})`);
 	var FormData = require('form-data');
 	var form = new FormData();
@@ -547,7 +546,7 @@ function makeFacultiesFromUniversityFile(pathToUniversitiesJsonFile, limit = 10,
 	}).catch(function(error) {
 		console.error(error.message, error.stack);
 	});
-}
+}*/
 
 
 /*function makeJSON_Universities(city_vk_id) {
@@ -596,7 +595,36 @@ function countElements(pathToJsonFile, elementName) {
 
 //console.log(`count univ = ${ countElements(`${__dirname}/../vk_data/universities.txt`, 'universities') }`);
 
-makeFacultiesFilesByUniversityId(749);
+// Импортировать все кафедры всех факультетов университета (Место 13.01.2018)
+var universityId = 1189601;
+makeFacultiesFilesByUniversityId(universityId).then(function() {
+	return importDepartmentsByUniversityFile(`${__dirname}/../vk_data/2_universities/${universityId}.txt`);
+}).catch(function(err) {
+	console.error(err);
+});
 
-//importDepartmentsByFacultyFile(`${__dirname}/../vk_data/1_faculties/3148.txt`);
-//importDepartmentsByUniversityFile(`${__dirname}/../vk_data/2_universities/749.txt`);
+
+// Запрос
+/*var facultyId = 38883;
+var FormData = require('form-data');
+var form = new FormData();
+
+form.append('act', 'a_get_fac_info');
+form.append('fac', facultyId);
+
+return fetch('https://vk.com/select_ajax.php', {
+	method: "POST",
+	body: form
+}).then(function(response) {
+	if (!response.ok) {
+		throw new Error('VK_IS_UNAVAILABLE');
+	}
+
+	return response.text().then(function(result) {
+		console.log(result);
+	});
+
+}).catch(function(err) {
+	console.log(`error making file '${newFilename}'`);
+	console.error(err.message, err.stack);
+});*/

@@ -1,0 +1,1 @@
+{"university":1164357,"completed_faculties":1,"faculties":[]}

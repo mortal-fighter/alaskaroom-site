@@ -1,0 +1,1 @@
+{"faculty":307810,"completed_chairs":1,"chairs":[["1995824","Таможенное дело"]]}
