@@ -164,10 +164,9 @@ function validateUser(user) {
 	if (user.phone && !user.phone.match(/^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/)) {
 		throw new Error(`Parameters validation error (user.phone): '${user.phone}'.`);
 	}
-	if (user.wish_pay && !user.wish_pay.match(/^\d+$/)) {
+	if (!user.wish_pay.match(/^\d+$/)) {
 		throw new Error(`Parameters validation error (user.wish_pay): '${user.wish_pay}'.`);
 	}
-
 }
 
 router.get('/view/:userId((\\d+|me))', function(req, res, next) {
@@ -200,6 +199,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 						user_age,
 						user_about,
 						user_avatar,
+						user_wish_pay,
 						university_id,
 						university_name,	
 						faculty_id,

@@ -94,6 +94,9 @@ html(lang=ru)
 									option(value=year.id, selected)= year.name_full
 								else
 									option(value=year.id)= year.name_full
+					div
+						p Сколько готов(а) платить
+						input#user_wish_pay.option-set-small(type="text", placeholer="3000", value=locals.data.user_wish_pay)
 				div.user-setting.priorities
 					if locals.priorities
 						for priority in locals.priorities

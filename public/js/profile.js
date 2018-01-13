@@ -246,7 +246,7 @@ function handlersProfileEdit() {
 			form.user.faculty = processInputSelect('user_faculty');
 			form.user.department = processInputSelect('user_department');
 			form.user.studyyear = processInputSelect('user_studyyear');
-			//form.user.wish_pay = $('#user_study_year').val();
+			form.user.wish_pay = $('#user_wish_pay').val();
 			form.priority = [];
 			$('.priority').each(function() {
 				form.priority.push(processInputSelect(this.id));
@@ -587,6 +587,18 @@ function validateUserInfo() {
 	if (user_city.length > 100) {
 		alert('Поле \'Страна Вашего ВУЗа\' не может быть длиннее 100 символов');
 		$('#user_city').focus();
+		return false;
+	}
+
+	var user_wish_pay = $('#user_wish_pay').val();
+	if ( user_wish_pay === '' || user_wish_pay === ' ') {
+		alert('Поле \'Сколько готов(а) платить за жилье\' не может быть пустым');
+		$('#user_wish_pay').focus();
+		return false;
+	} 
+	if (!user_wish_pay.match(/^\d+$/)) {
+		alert('Поле \'Сколько готов(а) платить за жилье\' должно быть числом');
+		$('#user_wish_pay').focus();
 		return false;
 	}
 
