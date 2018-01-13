@@ -35,6 +35,24 @@ html(lang=ru)
 					h3 Обо мне
 					p= locals.data.user_about
 				div.user-caracter
+					div.caracter
+						h4 Пол
+						p= locals.data.user_sex
+					div.caracter
+						h4 Город
+						p= locals.data.user_city
+					div.caracter
+						h4 ВУЗ
+						p= locals.data.university_name
+					div.caracter
+						h4 Факультет
+						p= locals.data.faculty_name
+					div.caracter
+						h4 Кафедра/Направление
+						p= locals.data.department_name
+					div.caracter
+						h4 Курс
+						p= locals.data.studyyear_name
 					for priority in locals.priorities 
 						div.caracter
 							h4= priority.priority_name_full
