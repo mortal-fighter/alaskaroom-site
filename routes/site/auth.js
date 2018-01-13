@@ -128,7 +128,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 			var promiseChain = Promise.resolve();
 
 			// 1. get city name from vk (optional)
-			if (user.universities.length) {	
+			if (user.universities.length && user.universities[0].city !== 0) {	
 				var options = {
 					uri: 'https://api.vk.com/method/database.getCitiesById',
 					qs: {
@@ -137,16 +137,18 @@ router.get('/login_vk_callback', function(req, res, next) {
 					},
 					json: true
 				};
-				logger.debug('qs='+JSON.stringify(options));
+				logger.debug('city qs='+JSON.stringify(options));
 				
-				promiseChain.then(rp(options).then(function(result) {
-					logger.debug('rp result='+JSON.stringify(result));
+				promiseChain = promiseChain.then(rp(options).then(function(result) {
+					logger.debug('city result='+JSON.stringify(result));
 					user.universities[0].cityName = result.response[0].name;
 				}));	
-			} 
+			} else {
+				logger.debug(`Can't define user city (no university or 'city' field = 0)`);
+			}
 			
 			// 2. insert db (mandatory)
-			promiseChain.then(function() {
+			promiseChain = promiseChain.then(function() {
 				var sex;
 				switch (user.sex) {
 					case 1:
@@ -244,7 +246,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 				if (userHasPhoto) {
 					
 					// create user folder, download photo from vk, save it and update mysql
-					promiseChain.then(function() {
+					promiseChain = promiseChain.then(function() {
 						fs.mkdirSync(path.normalize(__dirname + '/../../public/images/uploads/user_'+newUserId), 0o755);
 					}).then(function() {
 						var ext = user.photo_200.substr(user.photo_200.lastIndexOf('.') + 1);
@@ -263,18 +265,13 @@ router.get('/login_vk_callback', function(req, res, next) {
 						var sql = `UPDATE \`user\` SET avatar = '${avatarHref}' WHERE id = ${newUserId};`;
 						logger.debug(sql);
 						return db.queryAsync(sql);
+					}).catch(function(err) {
+						logger.error(err.message+' '+err.stack);
 					});
 				}
 				return promiseChain;
 			
 			}).then(function(result) {
-				/*todo: fix sessions duplicate
-				
-					[2017-12-20 11:54:25.487] [DEBUG] [default] -   INSERT INTO Session(token, user_id)
-			                                                        VALUES ('6WSrrtUEwEGy8nn76L5hAD8VWqt5IiDQ', 25);
-					[2017-12-20 11:54:25.490] [DEBUG] [default] -   INSERT INTO Session(token, user_id)
-					                                                        VALUES ('cQGhDKdL72rjd40ZFy3mdQgGlGdZT4AZ', 25);
-				*/
 				auth.sessionStart(newUserId).then(function(token) {
 					res.cookie('AlaskaRoomAuthToken', token);
 					res.redirect(`/profile/edit/${newUserId}`);	

@@ -686,6 +686,7 @@ router.post('/edit', function(req, res, next) {
 		var age = now.diff(bdate, 'years');
 		var wish_pay = (req.body.user.wish_pay) ? req.body.user.wish_pay : 'NULL';
 		var about = (req.body.user.about) ? req.body.user.about : '\'\'';
+		var flat_id = (req.body.flat.id.length) ? req.body.flat.id : 'NULL';
 
 		var sql =
 			`	UPDATE \`user\`
@@ -704,7 +705,7 @@ router.post('/edit', function(req, res, next) {
 					studyyear_id = ${req.body.user.studyyear},
 					phone = ${req.body.user.phone},
 					wish_pay = ${wish_pay},
-					flat_id = ${req.body.flat.id}
+					flat_id = ${flat_id}
 				WHERE id = ${req.body.user.id};`;
 		logger.debug(sql);
 		return db.queryAsync(sql);
