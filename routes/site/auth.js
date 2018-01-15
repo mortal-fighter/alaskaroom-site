@@ -139,10 +139,12 @@ router.get('/login_vk_callback', function(req, res, next) {
 				};
 				logger.debug('city qs='+JSON.stringify(options));
 				
-				promiseChain = promiseChain.then(rp(options).then(function(result) {
+				promiseChain = promiseChain.then(function() {
+					return rp(options);
+				}).then(function(result) {
 					logger.debug('city result='+JSON.stringify(result));
 					user.universities[0].cityName = result.response[0].name;
-				}));	
+				});	
 			} else {
 				logger.debug(`Can't define user city (no university or 'city' field = 0)`);
 			}
@@ -186,14 +188,14 @@ router.get('/login_vk_callback', function(req, res, next) {
 				}
 
 				var faculty = '';
-				if (user.universities.length && user.universities[0].faculty_name !== '') {
+				if (user.universities.length && user.universities[0].faculty) {
 					faculty = `(SELECT id FROM faculty WHERE vk_id = '${user.universities[0].faculty}')`;
 				} else {
 					faculty = 'NULL';
 				}
 
 				var department = '';
-				if (user.universities.length && user.universities[0].faculty_name !== '') {
+				if (user.universities.length && user.universities[0].chair) {
 					department = `(SELECT id FROM department WHERE vk_id = '${user.universities[0].chair}')`;
 				} else {
 					department = 'NULL';
