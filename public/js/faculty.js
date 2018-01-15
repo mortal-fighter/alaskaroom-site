@@ -1,22 +1,24 @@
 'use strict'
 
-var countRecords = 0;
-let type = 'university';
-var lastForm = {
-	type: type
+// wil use this 'eventData' to retrive 'type' from 'on click' handlers
+var eventData = {
+	type: 'university'
 };
-
+var countRecords = 0;
+var lastForm = {
+	type: eventData.type
+};
 
 /* HANDLERS UI CONTROLS */
 function handlersFaculty() {
-	$('a.load-nav').on('click', function() {
+	
+	$('a.load-nav').on('click', eventData, function(event) {
 		// clear current, set current menu item
 		$('a.load-nav').removeClass('current');
 		$(this).addClass('current');
 
 		//save type
-		type = $(this).attr('type');	
-
+		event.data.type = $(this).attr('type');	
 		load();
 	});
 
@@ -32,7 +34,7 @@ function handlersFaculty() {
 function load() {
 
 	var form = {
-		type: type
+		type: eventData.type
 	};
 	lastForm = form;
 
