@@ -28,7 +28,7 @@ function handlersProfileView() {
 		});
 	});
 
-	$('#request-complain').on('click', function() {
+	$('#request-complain').on('click', function(e) {
 		e.preventDefault();
 		
 		$.ajax({
@@ -95,13 +95,13 @@ function handlersProfileEdit() {
 	$("#user_phone").mask("+7(999)-999-99-99");
 
 	$('#user_university').on('change', function() {
-		console.log('universities changed');
+		//console.log('universities changed');
 		//disableAllControls();
 		loadFaculties(processInputSelect('user_university'));
 	});
 
 	$('#user_faculty').on('change', function() {
-		console.log('faculties changed');
+		//console.log('faculties changed');
 		//disableAllControls();
 		loadDepartments(processInputSelect('user_faculty'));
 	});
@@ -466,7 +466,7 @@ function doCrop(result) {
 function complainForm(html) {
 	
 	$('.popup-content.complain-form').html(html);
-
+	
 	$('#btn-send-complain').on('click', function(e) {
 			
 		e.preventDefault();
@@ -506,6 +506,8 @@ function complainForm(html) {
 			}
 		});
 	});
+
+	showPopup();
 }
 
 /* VALIDATION */
