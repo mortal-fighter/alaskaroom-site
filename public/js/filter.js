@@ -3,12 +3,14 @@
 var countRecords = 0;
 var lastForm = null;
 var type = null;
+var isMobile = false;
 
 /* HANDLERS UI CONTROLS */
 function handlersFilter() {
 	/*$('.room-list, .user-list').on('click', function() {
 		window.location.href='/profile/view/'+$(this).attr('data-user-id');
 	});*/
+	isMobile = ( $('.main-filter').css('display') === 'none' ) ? true : false;
 
 	$('.prime-filter, .lower-filter').on('change', function() {
 		search();
@@ -42,8 +44,17 @@ function handlersFilter() {
 		})
 	});
 
+	$('.mbl-filter').on('click', function() {
+		$('.listing').hide();
+		$('.main-filter').show();
+	});
+
 	$('#btn-find').on('click', function(e) {
 		e.preventDefault();
+		if (isMobile) {
+			$('.main-filter').hide();
+			$('.listing').show();	
+		}
 		search();
 	});
 

@@ -57,6 +57,8 @@ html(lang=ru)
 						a.find-filter(id="btn-find", href="#") Найти
 				if locals.records
 					div.listing
+						div.mbl-view.clear-view
+							input.mbl-filter(type="button", value="Фильтр румейтов")
 						div(id="listing-content")
 							for record in records
 								if record.flat_id
