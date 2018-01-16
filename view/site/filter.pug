@@ -55,40 +55,9 @@ html(lang=ru)
 										else
 											option(value=option.id)= option.name
 						a.find-filter(id="btn-find", href="#") Найти
-				if locals.records
-					div.listing
-						div.mbl-view.clear-view
-							input.mbl-filter(type="button", value="Фильтр румейтов")
-						div(id="listing-content")
-							for record in records
-								if record.flat_id
-									a(href="/profile/view/"+record.user_id)
-										div.room-list(data-user-id=record.user_id)
-											img(src=record.flat_first_photo, alt="Room")
-											h5=record.flat_rent_pay
-												span  рублей
-											h4 
-												span= record.user_city+',' 
-												span= record.flat_address
-											p Сосед: 
-												span= record.user_sex+', '
-												span= record.user_age+', '
-												span= record.university_name
-								else
-									a(href="/profile/view/"+record.user_id)
-										div.user-list(data-user-id=record.user_id)
-											img(src=record.user_avatar, alt="User")
-											h4= record.user_name
-											p Ваш сосед: 
-												span= record.user_sex+', '
-												span= record.user_age+', '
-												span= record.university_name
-						img#progress
-						a#load-more.load-more(href="#") Загрузить больше...
-				else
-					div.listing
-						div(id="listing-content")
-							div.nobody Никого не найдено
-						img#progress
-
+				div.listing
+					div.mbl-view.clear-view
+						input.mbl-filter(type="button", value="Фильтр румейтов")
+					div(id="listing-content")
+					a#load-more.load-more(href="#") Загрузить больше...
 		include includes/footer.pug

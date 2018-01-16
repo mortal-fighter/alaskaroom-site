@@ -1,8 +1,13 @@
 'use strict'
 
+/*var eventData = {
+	type: null,
+	countRecords: 0,
+	lastForm: null
+};*/
+var type = null;
 var countRecords = 0;
 var lastForm = null;
-var type = null;
 var isMobile = false;
 
 /* HANDLERS UI CONTROLS */
@@ -62,6 +67,8 @@ function handlersFilter() {
 		e.preventDefault();
 		loadMore();
 	});
+
+	search();
 }
 
 function search() {
@@ -99,9 +106,10 @@ function search() {
 				if (result.records.length === 0) {
 					listing.html('<div class="no-records">Поиск не дал результатов</div>');	
 					$('#load-more').hide();
-				} else {
-					listing.html('');
+				} else if (result.records.length < result.recordsCountTotal ) {
 					$('#load-more').show();
+				} else {
+					$('#load-more').hide();
 				}
 
 				for (var i = 0; i < result.records.length; i++) {
@@ -161,8 +169,12 @@ function loadMore() {
 				
 				countRecords += result.records.length;
 
+				if (countRecords == result.recordsCountTotal) {
+					$('#load-more').hide();
+				}
+
 				var listing = $('#listing-content');
-				
+
 				for (var i = 0; i < result.records.length; i++) {
 					var record = result.records[i];
 					var newItem = null;

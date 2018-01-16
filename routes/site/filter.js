@@ -32,6 +32,7 @@ router.get('/get_faculties_by_university_id/:universityId(-?\\d+)', function(req
 router.get('/:type(\\S+)?', function(req, res, next) {
 	var db = null;
 	var records = [];
+	var recordsCountTotal = 0;
 	var priorities = [];
 	var universities = [];
 
@@ -43,52 +44,12 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 	}
 
 	connectionPromise().then(function(connection) {
-	
+
 		db = connection;
-		var sql;
-
-		if (req.params.type === 'find-flat') {
-			sql = ` SELECT
-						user_id,
-						user_sex,
-						user_age,
-						university_name,
-						user_city,
-						flat_address,
-						flat_rent_pay,
-						flat_id,
-						flat_first_photo
-					FROM v_user
-					WHERE flat_id IS NOT NULL
-					LIMIT 15`;
-		} else {
-			sql = `	SELECT 
-						user_id,
-						user_first_name,
-						user_last_name,
-						user_sex,
-						user_age,
-						university_name,
-						user_avatar,
-						flat_id
-					FROM v_user 
-					WHERE flat_id IS NULL
-					LIMIT 15`;
-		}
-
-		logger.debug(sql);
-		return db.queryAsync(sql);
-	
-	}).then(function(result) {
-		
-		logger.debug(result);
-		records = result;
-
 		return util.generatePrioritySelects(req, { fill: false });
 
 	}).then(function(result) {
 
-		//logger.debug('priorities='+JSON.stringify(result));
 		priorities = result;
 
 		return util.generateUniversitySelect({ default: 0 });
@@ -101,7 +62,6 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 		res.render('site/filter.pug', {
 			message: '',
 			messageType: '',
-			records: records,
 			priorities: priorities,
 			universities: universities,
 			type: req.params.type,
@@ -120,6 +80,8 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 router.post('/ajax', function(req, res, next) {
 	var db = null;
 	var records = null;
+	var recordsCountTotal = 0;
+	var sqlCount = '';
 
 	connectionPromise().then(function(connection) {
 	
@@ -128,7 +90,7 @@ router.post('/ajax', function(req, res, next) {
 
 		var priority_list;
 		var priority_count;
-		var limit = (req.body.limit) ? req.body.limit : 15;
+		var limit = (req.body.limit) ? req.body.limit : 1; //15
 		var offset = (req.body.offset) ? req.body.offset : 0;
 
 		if (req.body.priorities) {
@@ -194,6 +156,49 @@ router.post('/ajax', function(req, res, next) {
 			sql+=`
 					LIMIT ${limit}
 					OFFSET ${offset};`;
+
+			// ------
+
+			sqlCount = ` 
+					SELECT count(*) cnt
+					FROM v_user
+					JOIN (
+						/*выбрать пользователей у которых совпадают приоритеры с заданными*/
+						SELECT user_id, COUNT(priority_option_id) cnt_priority
+						FROM user_priority_option\n`;
+			
+			if (priority_count > 0) {
+				sqlCount+= `	WHERE priority_option_id IN (${priority_list})`;
+			}
+			
+			sqlCount+= `		GROUP BY user_id
+						HAVING cnt_priority >= ${priority_count}
+					) matched ON v_user.user_id = matched.user_id 
+					WHERE 1=1
+					  /* выбрать только тех, у кого есть квартира */
+					  AND flat_id IS NOT NULL`;
+			
+			if (req.body.user_sex !== '') {
+				sqlCount+= ` 
+					  AND v_user.user_sex = '${req.body.user_sex}'`;
+			}
+			
+			if (req.body.user_age_range !== '') {
+				var age_from = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[1];
+				var age_to = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[2];
+				sqlCount+= ` 
+					  AND v_user.user_age >= ${age_from} AND v_user.user_age <= ${age_to}`;
+			}
+
+			if (req.body.university_id != 0) {
+				sqlCount+= `
+					  AND v_user.university_id = ${req.body.university_id}`;
+			}
+
+			if (req.body.faculty_id != 0) {
+				sqlCount+= ` 
+					  AND v_user.faculty_id = ${req.body.faculty_id}`;
+			}	
 		
 		} else {
 		
@@ -244,19 +249,68 @@ router.post('/ajax', function(req, res, next) {
 			}
 			sql+=`	LIMIT ${limit}
 					OFFSET ${offset};`;
+			
+			// -----
+
+			sqlCount = `	SELECT count(*) cnt
+					FROM v_user 
+					/* кроме тех, у кого не совпадают приоритеры*/
+					JOIN (
+						/*выбрать пользователей у которых совпадают приоритеры с заданными*/
+						SELECT user_id, COUNT(priority_option_id) cnt_priority
+						FROM user_priority_option\n`;
+		
+			if (priority_count > 0) {
+				sqlCount+= `	WHERE priority_option_id IN (${priority_list})`;
+			}
+		
+			sqlCount+= `		GROUP BY user_id
+						HAVING cnt_priority >= ${priority_count}
+					) matched ON v_user.user_id = matched.user_id
+					/* кроме тех, у кого есть квартира */
+					WHERE flat_id IS NULL`;
+			if (req.body.user_sex !== '') {
+				sqlCount+= ` 
+					  AND v_user.user_sex = '${req.body.user_sex}'`;
+			}
+			
+			if (req.body.user_age_range !== '') {
+				var age_from = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[1];
+				var age_to = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[2];
+				sqlCount+= ` 
+					  AND v_user.user_age >= ${age_from} AND v_user.user_age <= ${age_to}`;
+			}
+
+			if (req.body.university_id != 0) {
+				sqlCount+= `
+					  AND v_user.university_id = ${req.body.university_id}`;
+			}
+
+			if (req.body.faculty_id != 0) {
+				sqlCount+= ` 
+					  AND v_user.faculty_id = ${req.body.faculty_id}`;
+			}
+
 		}
 
 		logger.debug(sql);
+		logger.debug(sqlCount);
+
 		return db.queryAsync(sql);
 	
+	}).then(function(result) {
+
+		records = result;
+		return db.queryAsync(sqlCount);
+
 	}).then(function(result) {	
 		
-		//logger.debug('result');
-		records = result;
+		recordsCountTotal = result[0].cnt;
 
 		res.json({
 			status: 'ok',
-			records: records
+			records: records,
+			recordsCountTotal: recordsCountTotal
 		});
 	
 	}).catch(function(err) {
