@@ -548,7 +548,6 @@ ol, ul {
 	height: auto;
 	margin: 10px;
 	float: left;
-	overflow: hidden;
 }
 
 .user-list {
