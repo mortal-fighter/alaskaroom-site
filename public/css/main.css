@@ -380,7 +380,7 @@ ol, ul {
 	background-color: rgb(0, 136, 204);
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
-    font-size: 17px;
+    font-size: 14px;
     margin: 10px 10px;
 	padding: 10px;
 	float: left;
@@ -426,9 +426,11 @@ ol, ul {
 .top-nav a.nav-button:active,
 .top-nav a.nav-button:visited {
 	color: #fff;
+	width: 82%;
     padding: 8px 25px;
     border: 1px solid #fff;
-    margin: 7px;
+    margin: 0 auto;
+	margin-top: -3px;
     font-weight: 400;
     letter-spacing: 0.4px;
 }
@@ -1261,12 +1263,14 @@ ol, ul {
 }
 
 .respond-line a {
+	width: 25%;
 	text-decoration: none;
     color: #888888;
     background-color: #f4f4f4;
     padding: 13px;
     overflow: hidden;
-    font-size: 14px;
+    font-size: 12px;
+	text-align: center;
     float: left;
 }
 
@@ -1339,7 +1343,7 @@ ol, ul {
 
 .in-pos {
 	display: block;
-	width: 83%;
+	width: 80%;
 	margin: 10px auto;
 	text-align: center;
 	text-decoration: none;
@@ -1404,7 +1408,7 @@ ol, ul {
 
 /*Стили для мобильной версии*/
 
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+@media only screen and (min-device-width : 481px) and (max-device-width : 720px) {
 
 .top {
 	height: 79px;
@@ -1435,6 +1439,107 @@ ol, ul {
 
 .top-nav a:hover {
 	border-bottom: 2px solid #f3f3f3;
+}
+
+
+/*Промо страница*/
+
+.cover h2 {
+	line-height: 25px;
+	margin: 40px 0;
+	margin-bottom: 5px;
+}
+
+.cover h2 span {
+	font-size: 25px !important;
+}
+
+.cover div {
+	width: 27%;
+}
+
+.cover div h3 {
+	font-size: 14px;
+	margin: 15px auto;
+}
+
+.cover-info {
+	width: 98%;
+}
+
+.cover-info div {
+	width: 43%;
+	margin: 10px 5px 10px 15px;
+	float: left;
+}
+
+.cover-info div p {
+	font-size: 12px;
+	font-weight: 400;
+	padding: 4px 7px;
+	margin-right: 7px;
+}
+.cover-info div h2 {
+	font-size: 12px;
+	font-weight: 400;
+	margin-top: 3px;
+}
+
+.cover-info div h3 {
+	font-size: 11px;
+	line-height: 15px;
+	font-weight: 300;
+	margin-left: 7px;
+}
+
+.roommate-cover {
+	margin: 10px auto;
+}
+
+.roommate-cover h3 {
+	font-size: 24px;
+	line-height: 25px;
+	margin: 20px auto;
+}
+
+.roommate-cover h2 {
+	width: 90%;
+	font-size: 14px;
+	line-height: 15px;
+}
+
+.room-ex {
+	width: 90%;
+}
+
+.uni-cover h3 {
+	font-size: 24px;
+	line-height: 25px;
+}
+
+.uni-cover h4 {
+	width: 90%;
+}
+
+.uni-cover p {
+	width: 37%;
+}
+
+.register {
+	margin-top: 10px;
+}
+
+.action {
+	margin-bottom: 5px;
+}
+
+.action h3 {
+	font-size: 21px;
+	margin-top: 20px;
+}
+
+.action h2 {
+	width: 90%;
 }
 
 .mbl-view {
@@ -1533,6 +1638,422 @@ ol, ul {
 
 .room-list img {
 	width: 100%;
+}
+
+#flake {
+	display: none;
+}
+
+/*Стили для страницы профиля после входа на сайт*/
+
+.roommate-header {
+	width: 88%;
+	float: none;
+}
+
+.profile-user {
+	width: 88%;
+	margin: 5px auto;
+	float: none;
+}
+
+.profile-param {
+	width: 96%;
+	float: none;
+}
+
+.caracter {
+	width: 45%;
+}
+
+.caracter h4 {
+	font-size: 12px;
+}
+
+/*Заполенение профайла пользователя*/
+
+.user-setting div {
+	width: 98%;
+	height: auto;
+}
+
+.option-set-small {
+	width: 92%;
+}
+
+/*Стили профиля другого пользователя*/
+
+.room-header {
+	width: 87%;
+}
+
+.room-post {
+	width: 87%;
+	float: none;
+}
+
+.room-main h3 {
+	font-size: 16px;
+}
+
+.room-param {
+	width: 38%;
+	height: 110px;
+	margin: 8px;
+	float: left;
+}
+
+.room-param p {
+	margin: 10px 5px;
+	font-size: 12px;
+}
+
+/*Стили для страницы откликов*/
+
+.user-requests div {
+	width: 44%;
+}
+
+.user-requests p {
+	font-size: 11px;
+}
+
+.in-wait {
+	width: 90%;
+	padding: 5px;
+	font-size: 13px;
+	font-weight: 400;
+}
+
+/*Стили для страницы Факультета*/
+
+.user-small {
+	width: 44%;
+}
+
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+.top {
+	height: 79px;
+}
+
+.logo {
+	font-size: 19px;
+	margin-left: 15px;
+}
+
+.top-nav {
+	clear: both;
+	width: 99%;
+	height: 41px;
+	color: #f3f3f3;
+}
+
+.top-nav a {
+	width: 32%;
+	text-align: center;
+	margin: 0;
+	padding: 10px 0px;
+	font-size: 12px;
+	padding-bottom: 5px;
+	text-transform: uppercase;
+	font-weight: 500;
+}
+
+.top-nav a:hover {
+	border-bottom: 2px solid #f3f3f3;
+}
+
+
+/*Промо страница*/
+
+.cover h2 {
+	line-height: 25px;
+	margin: 40px 0;
+	margin-bottom: 5px;
+}
+
+.cover h2 span {
+	font-size: 25px !important;
+}
+
+.cover div {
+	width: 27%;
+}
+
+.cover div h3 {
+	font-size: 14px;
+	margin: 15px auto;
+}
+
+.cover-info {
+	width: 98%;
+}
+
+.cover-info div {
+	width: 43%;
+	margin: 10px 5px 10px 15px;
+	float: left;
+}
+
+.cover-info div p {
+	font-size: 12px;
+	font-weight: 400;
+	padding: 4px 7px;
+	margin-right: 7px;
+}
+.cover-info div h2 {
+	font-size: 12px;
+	font-weight: 400;
+	margin-top: 3px;
+}
+
+.cover-info div h3 {
+	font-size: 11px;
+	line-height: 15px;
+	font-weight: 300;
+	margin-left: 7px;
+}
+
+.roommate-cover {
+	margin: 10px auto;
+}
+
+.roommate-cover h3 {
+	font-size: 24px;
+	line-height: 25px;
+	margin: 20px auto;
+}
+
+.roommate-cover h2 {
+	width: 90%;
+	font-size: 14px;
+	line-height: 15px;
+}
+
+.room-ex {
+	width: 90%;
+}
+
+.uni-cover h3 {
+	font-size: 24px;
+	line-height: 25px;
+}
+
+.uni-cover h4 {
+	width: 90%;
+}
+
+.uni-cover p {
+	width: 37%;
+}
+
+.register {
+	margin-top: 10px;
+}
+
+.action {
+	margin-bottom: 5px;
+}
+
+.action h3 {
+	font-size: 21px;
+	margin-top: 20px;
+}
+
+.action h2 {
+	width: 90%;
+}
+
+.mbl-view {
+	display: block !important;
+}
+
+.clear-view {
+	display: block;
+	width: 96%;
+	height: auto;
+	overflow: hidden;
+	margin: 10px auto;
+	clear: both;
+}
+
+.mbl-filter {
+	display: block;
+	width: 96%;
+	height: 40px;
+	overflow: hidden;
+	margin: 5px;
+    margin-right: 5px;
+	margin-right: 0;
+	border: 2px solid #aeaeae;
+	color: #aeaeae;
+	outline: none;
+	background-color: transparent;
+	float: left;
+	cursor: pointer;
+	font-weight: 600;
+	text-transform: uppercase;
+	font-size: 12px;
+}
+
+.user-profile {
+	display: none !important;
+}
+
+.mbl-profile {
+	display: block !important;
+	float: right;
+}
+
+.mbl-profile img{
+	display: block;
+	width: 25px;
+	height: 25px;
+	float: right;
+	padding: 10px 15px;
+}
+
+/*Стили для главной с фильтрами - мобильная*/
+
+.main-page {
+	margin: 0 auto;
+}
+
+.main-filter {
+	display: none;
+	width: 94%;
+}
+
+.listing {
+	width: 100%;
+	margin: 10px auto;
+	float: none;
+}
+
+.user-list {
+	width: 47%;
+	margin: 10px 4px;
+	background-color: white;
+	border-radius: 2px;
+	padding-bottom: 2px;
+}
+
+.user-list img {
+	width:100%;
+}
+
+.room-list {
+	width: 90%;
+	margin: 15px auto;
+	float: none;
+	height: auto;
+	background-color: white;
+	border-radius: 2px;
+	padding-bottom: 2px;
+	clear: both;
+}
+
+.load-more {
+	float: none;
+	margin-bottom: 10px;
+}
+
+.room-list img {
+	width: 100%;
+}
+
+#flake {
+	display: none;
+}
+
+/*Стили для страницы профиля после входа на сайт*/
+
+.roommate-header {
+	width: 88%;
+	float: none;
+}
+
+.profile-user {
+	width: 88%;
+	margin: 5px auto;
+	float: none;
+}
+
+.profile-param {
+	width: 96%;
+	float: none;
+}
+
+.caracter {
+	width: 45%;
+}
+
+.caracter h4 {
+	font-size: 12px;
+}
+
+/*Заполенение профайла пользователя*/
+
+.user-setting div {
+	width: 98%;
+	height: auto;
+}
+
+.option-set-small {
+	width: 92%;
+}
+
+/*Стили профиля другого пользователя*/
+
+.room-header {
+	width: 87%;
+}
+
+.room-post {
+	width: 87%;
+	float: none;
+}
+
+.room-main h3 {
+	font-size: 16px;
+}
+
+.room-param {
+	width: 38%;
+	height: 110px;
+	margin: 8px;
+	float: left;
+}
+
+.room-param p {
+	margin: 10px 5px;
+	font-size: 12px;
+}
+
+/*Стили для страницы откликов*/
+
+.user-requests div {
+	width: 44%;
+}
+
+.user-requests p {
+	font-size: 11px;
+}
+
+.in-wait {
+	width: 90%;
+	padding: 5px;
+	font-size: 13px;
+	font-weight: 400;
+}
+
+/*Стили для страницы Факультета*/
+
+.user-small {
+	width: 44%;
 }
 
 }
