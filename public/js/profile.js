@@ -728,11 +728,13 @@ function disableAllControls() {
 }
 
 $(document).ready(function() {
+	
 	if (window.location.href.lastIndexOf('view') !== -1) {
 		handlersProfileView();	
 	} else if (window.location.href.lastIndexOf('edit') !== -1) {
 		handlersProfileEdit();
 	}
 	
+	showAllMessages();
 });
 

@@ -186,6 +186,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 	var priorities = [];
 	var photos = [];
 	var roommate_request_status = null;
+	var messages = [];
 
 	connectionPromise().then(function(connection) {
 		
@@ -202,6 +203,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 						user_about,
 						user_avatar,
 						user_wish_pay,
+						user_is_activated,
 						university_id,
 						university_name,
 						department_name,	
@@ -276,13 +278,21 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 			roommate_request_status = result[0].status;
 		}
 
+		if (req.user_id == data.user_id && data.user_is_activated == 0) {
+			messages.push({
+				type: 'warn',
+				body: 'Каждый наш пользователь должен заполнить и сохнанить анкету, что начать использование сайта'
+			});
+		}
+
 		res.render('site/profile_view.pug', {
 			data: data,
 			photos: photos,
 			priorities: priorities,
 			roommate_request_status: roommate_request_status,
 			isAuthorized: req.isAuthorized,
-			userId: req.user_id
+			userId: req.user_id,
+			messages: messages
 		});
 	
 	}).catch(function(err) {
@@ -334,6 +344,7 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 						user_phone,
 						user_email,
 						user_city,
+						user_is_activated,
 						university_id,
 						university_name,
 						faculty_id,
@@ -538,6 +549,11 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 			}
 		}
 
+		var message = null;
+		if (req.user_id != data.user_id && data.user_is_activated == 0) {
+			message = 'Каждый наш пользователь должен заполнить и сохнанить анкету, что начать использование сайта';
+		}
+
 		res.render('site/profile_edit.pug', {
 			user_id: req.params.userId,
 			data: data,
@@ -549,7 +565,8 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 			priorities: prioritySelect,
 			utilities: utilityObject,
 			isAuthorized: req.isAuthorized,
-			userId: req.user_id
+			userId: req.user_id,
+			message: message
 		});
 	
 	}).catch(function(err) {
@@ -709,7 +726,8 @@ router.post('/edit', function(req, res, next) {
 					studyyear_id = ${req.body.user.studyyear},
 					phone = ${req.body.user.phone},
 					wish_pay = ${wish_pay},
-					flat_id = ${flat_id}
+					flat_id = ${flat_id},
+					is_activated = 1
 				WHERE id = ${req.body.user.id};`;
 		logger.debug(sql);
 		return db.queryAsync(sql);

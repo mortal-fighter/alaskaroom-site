@@ -9,7 +9,27 @@ function handlersHeader() {
 	});
 }
 
-/* MESSAGE POPUP */
+/* message */
+function newMessage(message) {
+	var newElem = $('<div class="top-message"></div>')
+		.append('<div class="content">' + message + '</div>')
+		.append( $('<a class="close">x</a>').on('click', function(e) {
+			e.preventDefault();
+			$(this).parent().fadeOut(200);
+		}) )
+		.prependTo($('.wrp'))
+		.fadeIn(200);
+
+}
+function showAllMessages() {
+	$('.top-message > .close').on('click', function(e) {
+		e.preventDefault();
+		$(this).parent().fadeOut(200);
+	});
+	$('.top-message').fadeIn(200);
+}
+
+/* POPUP */
 function closePopup() {
 	$('body').removeClass('stop-scrolling');
 	$('#popup-window').fadeOut(200);

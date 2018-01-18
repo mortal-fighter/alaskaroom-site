@@ -470,6 +470,37 @@ ol, ul {
 	margin: 0px auto;
 }
 
+.top-message {
+	clear: both;
+	margin: 10px;
+	margin-bottom: 0;
+	padding: 7px 11px;
+	background: lightgray;
+	border: 1px solid #999;
+	border-radius: 7px;
+	position: relative;
+	text-align: center;
+	color: #555;
+	font-size: 14px;
+	display: none;
+}
+
+.top-message > a.close {
+	position: absolute;
+	right: 3px;
+	top: 3px;
+	height: 20px;
+	width: 20px;
+	border-radius: 20px;
+	border: 1px solid #aaa;
+	text-align: center;
+	line-height: 1.4em;
+	cursor: pointer;
+	color: #fff;
+	background: #aaa;
+	background: linear-gradient(to bottom, #aaa 0%, #ccc 100%);
+}
+
 /*Стили для главной страницы с фильтрами*/
 
 .main-page {

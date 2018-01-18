@@ -11,6 +11,7 @@ html(lang=ru)
 	body
 		include includes/header.pug
 		div.wrp
+			include includes/messages.pug
 			div.roommate-header
 				h6 О румейте
 			div.profile-user
@@ -108,9 +109,12 @@ html(lang=ru)
 						p Удобства
 						foreach util in locals.data.flat_utils
 							h4= util.name
+		
 		include includes/footer.pug
+
 		input(type="hidden", id="user_id", value=locals.data.user_id)
 		input(type="hidden", id="user_first_name", value=locals.data.user_first_name)
+		
 		link(href="/css/message_popup.css", type="text/css", rel="stylesheet")
 		div#popup-window
 			div.popup-layout
