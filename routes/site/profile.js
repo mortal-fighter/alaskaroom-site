@@ -549,11 +549,6 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 			}
 		}
 
-		var message = null;
-		if (req.user_id != data.user_id && data.user_is_activated == 0) {
-			message = 'Каждый наш пользователь должен заполнить и сохнанить анкету, что начать использование сайта';
-		}
-
 		res.render('site/profile_edit.pug', {
 			user_id: req.params.userId,
 			data: data,
@@ -565,8 +560,7 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 			priorities: prioritySelect,
 			utilities: utilityObject,
 			isAuthorized: req.isAuthorized,
-			userId: req.user_id,
-			message: message
+			userId: req.user_id
 		});
 	
 	}).catch(function(err) {
