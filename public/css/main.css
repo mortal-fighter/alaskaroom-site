@@ -386,6 +386,17 @@ ol, ul {
 	float: left;
 }
 
+.btn-enter-site-big {
+	display: block;
+	width: 40%;
+	margin: 0 auto;
+	background: orange;
+	color: #fff;
+	text-decoration: none;
+	padding: 20px 20px;
+	font-size: 17px;
+}
+
 
 /* Хедер */
 
@@ -410,6 +421,16 @@ ol, ul {
 	float: left;
     font-size: 21px;
     margin: 13px 25px;
+    position: relative;
+}
+
+.logo:after {
+	content: 'бета-версия';
+	font: 12px Arial, sans-serif;
+	color: orange;
+	position: absolute;
+	right: 0;
+	bottom: -10px;
 }
 
 .top-nav {
