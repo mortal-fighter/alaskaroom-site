@@ -583,17 +583,15 @@ router.post('/edit', function(req, res, next) {
 	connectionPromise().then(function(connection) {
 		
 		db = connection;
-		
-		//console.log('FLAT=',req.body.flat);
 
 		if (!req.body.flat) {
 			req.body.flat = {
 				id: ''
 			};
 		}
+
 		var flatDataExists = (req.body.flat.address) ? true : false; 		// address is primary field
 		var hasId = (req.body.flat.id !== '') ? true : false;	//
-		//console.log('flatDataExists, hasId', flatDataExists, hasId);
 		
 		if (flatDataExists) {
 			// Flat data exists
@@ -643,7 +641,7 @@ router.post('/edit', function(req, res, next) {
 			return db.queryAsync(sql).then(function(result) {
 
 				logger.debug(result);
-				
+
 				if (!hasId) {
 					req.body.flat.id = result.insertId;
 				}
@@ -701,7 +699,7 @@ router.post('/edit', function(req, res, next) {
 		var age = now.diff(bdate, 'years');
 		var wish_pay = (req.body.user.wish_pay) ? req.body.user.wish_pay : 'NULL';
 		var about = (req.body.user.about) ? req.body.user.about : '\'\'';
-		var flat_id = (req.body.flat.id.length) ? req.body.flat.id : 'NULL';
+		var flat_id = (req.body.flat.id !== '') ? req.body.flat.id : 'NULL';
 
 		var sql =
 			`	UPDATE \`user\`
