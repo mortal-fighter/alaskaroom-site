@@ -219,7 +219,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 						flat_rent_pay,
 						flat_total_pay,
 						DATE_FORMAT(flat_enter_date, '%d.%m') flat_enter_date
-					FROM v_user
+					FROM v_user_all
 					WHERE user_id = ${req.params.userId};`;
 		logger.debug(sql);
 		return db.queryAsync(sql);
@@ -367,7 +367,7 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 						flat_rent_pay,
 						flat_total_pay,
 						DATE_FORMAT(flat_enter_date, '%d.%m.%Y')	flat_enter_date
-					FROM v_user
+					FROM v_user_all
 					WHERE user_id = ${req.params.userId};`;
 		logger.debug(sql);
 		return db.queryAsync(sql);
