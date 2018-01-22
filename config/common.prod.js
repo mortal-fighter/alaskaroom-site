@@ -23,12 +23,12 @@ module.exports = {
 		version: 5.69
 	},
 	mailer: { 
-		smtpConfig: {
-			service: "gmail",
-			auth: {
-				user: 'mortal.fighter.89@gmail.com',
-				pass: 'CucumbeR_7386px'
-			}
+		host: 'smtp.yandex.ru',
+		port: 465,
+		secure: true, // true for 465, false for other ports 587
+		auth: {
+			user: 'info@alaskaroom.ru',
+			pass: '19882010'
 		}
 	}
 };

@@ -19,17 +19,19 @@ html(lang=ru)
 				h3= locals.data.user_name
 				p= locals.data.user_age + ' год, ' + locals.data.university_name + ', ' + locals.data.faculty_name
 				if locals.data.user_id != locals.userId
-					if locals.roommate_request_status === 'pending'
+					if locals.status_sended === 'pending'
 						p.roommate-status= 'Соседство: в ожидании ответа от пользователя ' + locals.data.user_first_name
 							span  &#x029D6;
-					else if locals.roommate_request_status === 'accepted'
-						p.roommate-status= 'Соседство: согласен(а)'
+					else if locals.status_sended === 'accepted'
+						p.roommate-status= 'Соседство: пользователь ' + locals.data.user_first_name + ' согласен'
 							span  &check;
-					else if locals.roommate_request_status === 'declined'
+					else if locals.status_sended === 'declined'
 						p.roommate-status= 'Соседство: пользователь ' + locals.data.user_first_name + ' отказался от соседства'
 							span  &cross;
-					else
+					else if !locals.status_incoming
 						input#request-roommate.request-info(type="button", value="Предложить соседство")
+					else if locals.status_incoming
+						p.roommate-status= 'Соседство: пользователь ' + locals.data.user_first_name + ' отправил Вам заявку на соседство'
 					input#request-complain.complain(type="button", value="Жалоба на румейта")
 			div.profile-param
 				div.user-desc

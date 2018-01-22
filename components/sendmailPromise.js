@@ -7,19 +7,14 @@ const transporter = nodemailer.createTransport(config.mailer.smtpConfig);
 /* example options */
 /* 
 const mailOptions = {
-	from: 'Сайт Академии',
-	to: 'academy.optimus@yandex.ru',
-	subject: `Вопрос от посетителя ${req.body.userName}`,
+	from: config.mailer.smtpConfig.auth.user,
+	to: 'kirillmybox@rambler.ru',
+	subject: `Заголовок письма`,
 	text: `
-		Вопрос от посетителя ${req.body.userName} (${req.body.userEmail}).
-		Текст вопроса: 
-
-		${req.body.userMessage}
+		Да прибудет с Вами Сила!
 	`,
 	html: `
-		<p>Вопрос от посетителя <b>${req.body.userName}</b> (<b>${req.body.userEmail}</b>).</p>
-		<p>Текст вопроса:</p> 
-		<p>${req.body.userMessage}</p>
+		<p>Да прибудет с Вами Сила!</p>
 	`
 };
 */

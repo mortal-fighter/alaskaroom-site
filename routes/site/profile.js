@@ -185,7 +185,8 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 	var data = null;
 	var priorities = [];
 	var photos = [];
-	var roommate_request_status = null;
+	var status_sended = null;
+	var status_incoming = null;
 	var messages = [];
 
 	connectionPromise().then(function(connection) {
@@ -238,7 +239,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 	}).then(function(result) {
 			
 		logger.debug(result);
-		priorities = result;		
+		priorities = result;
 		
 		if (data.flat_id) {
 			return Promise.resolve().then(function() {	
@@ -258,10 +259,14 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 	
 	}).then(function() {
 		if (req.params.userId != req.user_id) {
-			var sql = `	SELECT status 
-						FROM roommate_request 
-						WHERE from_user_id = ${req.user_id}
-						  AND to_user_id = ${req.params.userId};`
+			var sql = `	SELECT (SELECT status
+							FROM roommate_request 
+							WHERE from_user_id = ${req.user_id}
+						  	  AND to_user_id = ${req.params.userId}) status_sended,
+							(SELECT status
+							FROM roommate_request 
+							WHERE from_user_id = ${req.params.userId}
+						  	  AND to_user_id = ${req.user_id}) status_incoming;`
 			logger.debug(sql);
 			return db.queryAsync(sql);
 		} else {
@@ -272,10 +277,8 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 		
 		if (result) {
 			logger.debug(result);
-		}
-
-		if (result && result.length) {
-			roommate_request_status = result[0].status;
+			status_sended = result[0].status_sended;
+			status_incoming = result[0].status_incoming;
 		}
 
 		if (req.user_id == data.user_id && data.user_is_activated == 0) {
@@ -289,7 +292,8 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 			data: data,
 			photos: photos,
 			priorities: priorities,
-			roommate_request_status: roommate_request_status,
+			status_sended: status_sended,
+			status_incoming: status_incoming,
 			isAuthorized: req.isAuthorized,
 			userId: req.user_id,
 			messages: messages

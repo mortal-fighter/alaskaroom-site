@@ -53,7 +53,7 @@ function handlersRequest() {
 					parent.find('p').remove();
 					parent.find('.in-pos, .in-neg, .in-com').remove();
 					parent.append($('<p class="got-number">Вы можете связаться с румейтом по телефону: ' + result.phone + '</p>'));
-					parent.append($('<a class="in-pos">Одобрено</a>'));
+					parent.append($('<a class="in-pos" style="border-style: dashed;">Вы одобрили</a>'));
 				} else {
 					alert('При одобрении заявки произошла ошибка');
 				}
@@ -81,7 +81,7 @@ function handlersRequest() {
 				if (result.status === 'ok') {	
 					parent.find('p').remove();
 					parent.find('.in-pos, .in-neg, .in-com').remove();
-					parent.append($('<a class="in-neg">Отклонено</a>'));
+					parent.append($('<a class="in-neg" style="border-style: dashed;">Вы отклонили</a>'));
 				} else {
 					alert('При отклонении заявки произошла ошибка');
 				}

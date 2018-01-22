@@ -5,6 +5,8 @@ const Promise = require('bluebird');
 const logger = require('log4js').getLogger();
 
 const connectionPromise = require('../../components/connectionPromise.js');
+const sendmailPromise = require('../../components/sendmailPromise.js');
+const config = require('../../config/common.js');
 
 router.get('/get_count_:type(\\S+)', function(req, res, next) {
 		var db = null;
@@ -124,7 +126,8 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 							university_name,
 							faculty_name,
 							studyyear_name,
-							user_avatar
+							user_avatar,
+							user_phone
 						FROM roommate_request req
 						JOIN v_user ON from_user_id = v_user.user_id
 						WHERE to_user_id = ${req.user_id};`;
@@ -140,7 +143,8 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 								university_name,
 								faculty_name,
 								studyyear_name,
-								user_avatar
+								user_avatar,
+								user_phone
 						FROM roommate_request req
 						JOIN v_user ON to_user_id = v_user.user_id
 						WHERE from_user_id = ${req.user_id}
@@ -189,6 +193,8 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 
 router.post('/invite', function(req, res, next) {
 	var db = null;
+	var from = null;
+	var to = null;
 	
 	if (!req.isAuthorized) {
 		res.redirect('/?message=Пожалуйста,%20авторизуйтесь%20в%20системе');
@@ -237,6 +243,61 @@ router.post('/invite', function(req, res, next) {
 			status: 'ok'
 		});
 	
+	}).then(function() {
+
+		var sql = `	SELECT 
+						user_id, 
+						user_first_name,
+						user_last_name
+					FROM v_user
+					WHERE user_id = ${req.user_id};`;
+
+		logger.debug(sql);
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		logger.debug(result);
+		from = result[0];
+
+		var sql = `	SELECT 
+						user_first_name,
+						user_email
+					FROM v_user
+					WHERE user_id = ${req.body.user_id};`;
+
+		logger.debug(sql);
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		logger.debug(result);
+		to = result[0];
+
+		const options = {
+			from: config.mailer.smtpConfig.auth.user,
+			to: to.user_email,
+			subject: `${from.user_first_name + ' ' + from.user_last_name} предложил Вам соседство`,
+			text: `
+				Здравствуйте, ${to.user_first_name}! 
+				Пользователь ${from.user_first_name + ' ' + from.user_last_name} отправил Вам заявку на соседство. Вы можете ответить ему на странице Отклики -> Полученные.
+				
+				--------
+				С уважением, 
+				команда Alaskaroom.ru
+			`,
+			html: `
+				<p>Здравствуйте, ${to.user_first_name}!</p> 
+				<p>Пользователь <a href='http://alaskaroom.ru/profile/view/${from.user_id}'>${from.user_first_name + ' ' + from.user_last_name}</a> отправил Вам заявку на соседство. Вы можете ответить ему на странице <a href='http://alaskaroom.ru/requests/incoming'>Полученные отклики</a>.</p>
+				<br>
+				--------<br>
+				С уважением,<br> 
+				команда Alaskaroom.ru<br>
+			`
+		};
+
+		return sendmailPromise(options);
+
 	}).catch(function(err) {
 		
 		logger.error(err.message + '\n' + err.stack);
@@ -249,7 +310,9 @@ router.post('/invite', function(req, res, next) {
 
 router.post('/accept', function(req, res, next) {
 	var db = null;
-	
+	var from = null;
+	var to = null;
+
 	if (!req.isAuthorized) {
 		res.redirect('/?message=Пожалуйста,%20авторизуйтесь%20в%20системе');
 		return;
@@ -269,9 +332,13 @@ router.post('/accept', function(req, res, next) {
 		
 		logger.debug(result);
 
-		var sql = `	SELECT phone
-					FROM \`user\`
-					JOIN roommate_request req ON \`user\`.id = from_user_id
+		var sql = `	SELECT 
+						user_id, 
+						user_phone,
+						user_first_name,
+						user_last_name
+					FROM v_user
+					JOIN roommate_request req ON v_user.user_id = from_user_id
 					WHERE req.id = ${req.body.requestId};`;
 
 		logger.debug(sql);
@@ -280,11 +347,56 @@ router.post('/accept', function(req, res, next) {
 	}).then(function(result) {
 
 		logger.debug(result);
+		from = result[0];
 		res.json({
 			status: 'ok',
-			phone: result[0].phone
+			phone: result[0].user_phone
 		});
 	
+	}).then(function() {
+
+		var sql = `	SELECT 
+						user_id, 
+						user_first_name,
+						user_last_name,
+						user_email,
+						user_phone
+					FROM v_user
+					JOIN roommate_request req ON v_user.user_id = to_user_id
+					WHERE req.id = ${req.body.requestId};`;
+
+		logger.debug(sql);
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		logger.debug(result);
+		to = result[0];
+
+		const options = {
+			from: config.mailer.smtpConfig.auth.user,
+			to: to.user_email,
+			subject: `${to.user_first_name + ' ' + to.user_last_name} принял Вашу заявку`,
+			text: `
+				Здравствуйте, ${from.user_first_name}! 
+				Пользователь ${to.user_first_name + ' ' + to.user_last_name} принял Вашу заявку на соседство. Теперь Вы можете связаться с ним, позвонив ему по телефону ${to.user_phone}.
+				
+				--------
+				С уважением, 
+				команда Alaskaroom.ru
+			`,
+			html: `
+				<p>Здравствуйте, ${from.user_first_name}!</p> 
+				<p>Пользователь <a href='http://alaskaroom.ru/profile/view/${to.user_id}'>${to.user_first_name + ' ' + to.user_last_name}</a> принял Вашу заявку на соседство. Теперь Вы можете связаться с ним, позвонив ему по телефону ${to.user_phone}.</p>
+				<br>
+				--------<br>
+				С уважением,<br> 
+				команда Alaskaroom.ru<br>
+			`
+		};
+
+		return sendmailPromise(options);
+
 	}).catch(function(err) {
 		
 		logger.error(err.message + '\n' + err.stack);

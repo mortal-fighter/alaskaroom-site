@@ -44,12 +44,15 @@ html(lang=ru)
 							
 							div(class=className, data-request-id=request.request_id, data-user-id=request.user_id)
 								
-								a(href='/profile/view/'+request.user_id, target="_blank", title="Просмотреть профиль "+request.user_first_name)
+								a(href='/profile/view/'+request.user_id, title="Просмотреть профиль "+request.user_first_name)
 									img(src=request.user_avatar, alt="User photo")
 									h3= request.user_first_name + ' ' + request.user_last_name
-								p= request.user_age+', '+request.university_name+', '+request.faculty_name+', '+request.studyyear_name
+								if request.status === 'accepted'
+									p.got-number= 'Вы можете связаться с румейтом по телефону: ' + request.user_phone
+								else
+									p= request.user_age+', '+request.university_name+', '+request.faculty_name+', '+request.studyyear_name
 								
-								if locals.type === 'sended' || locals.type === 'accepted'
+								if locals.type === 'sended'
 								
 									if request.status === 'pending'
 										a.in-wait В ожидании ответа
@@ -64,9 +67,9 @@ html(lang=ru)
 										a.btn-request-accept.in-pos(href="#") Одобрить
 										a.btn-request-decline.in-neg(href="#") Отклонить
 									else if request.status === 'accepted'
-										a.in-pos Одобрено
+										a.in-pos(style="border-style: dashed;") Вы одобрили
 									else if request.status === 'declined'
-										a.in-neg Отклонено
+										a.in-neg(style="border-style: dashed;") Вы отклонили
 
 									a.btn-complain.in-com(href="#") Пожаловаться
 
