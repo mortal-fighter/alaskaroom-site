@@ -50,7 +50,18 @@ html(lang=ru)
 								if request.status === 'accepted'
 									p.got-number= 'Вы можете связаться с румейтом по телефону: ' + request.user_phone
 								else
-									p= request.user_age+', '+request.university_name+', '+request.faculty_name+', '+request.studyyear_name
+									- 
+										var caption = request.user_age;
+										if (request.university_name) {
+											caption += ', ' + request.university_name;
+										}
+										if (request.faculty_name) {
+											caption += ', ' + request.faculty_name;
+										}
+										if (request.studyyear_name) {
+											caption += ', ' + request.studyyear_name;
+										}
+									p= caption
 								
 								if locals.type === 'sended'
 								

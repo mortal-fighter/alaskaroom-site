@@ -621,7 +621,7 @@ router.post('/edit', function(req, res, next) {
 			} else {
 				// existing flat
 
-				sql = `		INSERT INTO Flat(	description,
+				sql = `		INSERT INTO flat(	description,
 												address,
 												square,
 												room_num,
@@ -838,7 +838,7 @@ router.post('/upload_photos', uploader.array('uploads'), function(req, res, next
 		return Promise.all(promises);
 	
 	}).then(function(dimensionsArray) {
-		var sql = `	INSERT INTO Photo(	src_small, 
+		var sql = `	INSERT INTO photo(	src_small, 
 										src_orig, 
 										filename_small,
 										filename_orig,
