@@ -1,6 +1,6 @@
 /*
 SQLyog Community v12.2.4 (64 bit)
-MySQL - 5.5.25 : Database - onemarkt_alaskaroom
+MySQL - 5.7.20-0ubuntu0.16.04.1 : Database - onemarkt_alaskaroom
 *********************************************************************
 */
 
@@ -28,57 +28,25 @@ CREATE TABLE `access_token` (
   `date_created` datetime NOT NULL,
   `vk_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=177 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=207 DEFAULT CHARSET=utf8;
 
 /*Data for the table `access_token` */
 
 insert  into `access_token`(`id`,`access_token`,`expires_in`,`user_id`,`date_created`,`vk_id`) values 
-(131,'88b4a1df3ffdee73c92f970f1d4701f1d3536fa02dba70ec39',86399,NULL,'2017-12-23 23:12:34',16718732),
-(132,'d8f6372112645688d1e3d8663058b2032d804717ffde504892',86399,NULL,'2017-12-25 14:54:35',16718732),
-(133,'fb551488f20f5c755a9b7a1470c2a6f383bbd4ba6d49a5f179',86399,NULL,'2017-12-25 18:53:39',16718732),
-(134,'5bbd07ef35583021155c94831f6fb5b3b8aeea4268af41420e',86400,NULL,'2017-12-26 18:33:46',16718732),
-(135,'5b16c76bf19b074d27a684d845e94cd69fc1a6cf4f69609298',86400,NULL,'2017-12-26 21:54:01',16718732),
-(136,'07275091eca46ba7c57aa5736864b34b61b9bfae032813be7c',86399,NULL,'2017-12-27 07:11:00',16718732),
-(137,'7e290f9ecab0eaec30b313f7663be21a7aae46d90eca61745e',86399,NULL,'2017-12-27 08:28:27',16718732),
-(138,'1f0966ff42a95f1ad62e58cc0e3d929fafd9fc754d6e31d84f',86399,NULL,'2017-12-27 13:51:32',16718732),
-(139,'5ba3dec11ec15121f1a5109a5b1699969609cbcf3599912725',86400,NULL,'2017-12-27 23:44:43',16718732),
-(140,'90190127dcc5c659f284ddef1f31448cc0c19199d3e308a8ca',86399,NULL,'2017-12-31 00:51:49',462993092),
-(141,'064fe98b979586b3e76f47ded015d3f2a3135c60bb29886440',86399,NULL,'2018-01-03 15:45:48',16718732),
-(142,'ac5510fb8e151c0dccd5d1bee51faa51b2fe7a7d4e6f95d87d',86399,NULL,'2018-01-03 21:13:20',16718732),
-(143,'c6687d96c49db68e9a8889c4caa008d9575367cd82c8af5b21',86399,NULL,'2018-01-04 15:24:01',16718732),
-(144,'42d7a42c5c4f7f2017828190ffeef81539f23ddfe040ca98e3',86399,NULL,'2018-01-08 14:25:43',16718732),
-(145,'0e5e02e789d83bd2eab889a2ecccda8d321a3bd657dd6c0de8',86400,NULL,'2018-01-08 17:17:00',16718732),
-(146,'2c8fae503f558017e8b666e17b026049f3c5d3e172b92622e4',86399,NULL,'2018-01-09 12:12:30',16718732),
-(147,'87af63da1592079e5d0f4404ea2cf6df323f1dae41bc6b339d',86400,NULL,'2018-01-09 16:09:25',16718732),
-(148,'990304ea74e8158bfc44b1df45976430d8bd1e31bd3f8a5a60',86399,NULL,'2018-01-09 16:59:31',462993092),
-(149,'5d02c0867c2b4cec8e4f724ad0d0174843357dc5b3a3fe6e97',86400,NULL,'2018-01-09 17:00:01',462993092),
-(150,'944eee3fb6af1019ec2b63317cdaf9c496603dd2d6264cb84a',86400,NULL,'2018-01-09 17:01:33',462993092),
-(151,'112adeb45b0708681bda20fab784bd97ab6c75ce40bbd62994',86399,NULL,'2018-01-09 17:11:26',462993092),
-(152,'92845c7184fdd69d2cc08e8cec1ee6019ce2c931b75f1ef4d1',86400,NULL,'2018-01-09 18:18:09',16718732),
-(153,'2d967f0398db18e18447b997fbcfcdb1dfa92b499813e69f19',86399,NULL,'2018-01-10 11:59:31',16718732),
-(154,'67259b69d2bad3e934a68915a895cb876e131f39e94b1a60bf',86400,NULL,'2018-01-10 14:16:21',16718732),
-(155,'ac65c053a678af1253a0ae008aff16e3d72f15d7a647d1425f',86399,NULL,'2018-01-10 18:19:09',16718732),
-(156,'9ed26ca194a6885e562e6d3452398f978c370c8f5ab096b2df',86399,NULL,'2018-01-11 14:51:41',16718732),
-(157,'993e1a76e2b55fa7f3541b689a37ff1aac9037654e8199dddf',86399,NULL,'2018-01-11 21:08:13',16718732),
-(158,'6c36ce04481d015d0db110a7fd07951a73d05d936eef55d19d',86399,NULL,'2018-01-12 11:53:38',16718732),
-(159,'ce8599fb18f138c40d2e4e426f96cc5d595eca990f93a125d82abc36ead8dd0f0f86180278ed2f02c8f69',86399,NULL,'2018-01-12 17:36:04',16718732),
-(160,'3aeaea52a121b667abcd86c0e8261e55f13a23a805e59f008909e24769354312c7dd94276e333dda54f33',86400,NULL,'2018-01-12 17:44:11',16718732),
-(161,'94febb972867c17558336427f04e32960238469149888ded7f99b852fb666b89e7f1170bae0ddfc6ce39f',86399,NULL,'2018-01-12 17:44:31',16718732),
-(162,'118f5e8812b0f5dcfef66d52fa22e4b888235953d24e3448f61c9110627c89e66c3c7836a29b4737867a0',86400,NULL,'2018-01-13 21:56:41',462993092),
-(163,'88903f187dccc35da71ee5767eadc142312cbeff99f6773711656ac60f4827af8ccf014d7e023325b66ee',86400,NULL,'2018-01-13 22:18:18',16718732),
-(164,'b09eaf34badc704974912b48560b864f58dc80a06618f5298b4b33c509bc0d46a24f68e7b13847cab6f25',86400,NULL,'2018-01-13 22:19:23',16718732),
-(165,'b669f5e5911e17a80e6e6620a729c9ebe1a5aa5dbcba3988e16389b3cb6ca62fd151f4b8bffa693bc3495',86400,NULL,'2018-01-13 22:20:31',462993092),
-(166,'ea4a1e84c045e51abcd02fc70fca39c783f739cde434b8133a7a989a0571bf9b8d620bccc976dfdca85f1',86400,NULL,'2018-01-13 22:24:02',16718732),
-(167,'5911976735e3e118d50cf88ad6a58c919314eef330fae7c1583ed8027d861aa0422c396774e0f39f71a12',86400,NULL,'2018-01-13 22:57:53',462993092),
-(168,'ccccd336628ef49c804607ba9028ea33a4dbcc39842e41a0847ace28867345602e60f9d228e73fe11ec36',86399,NULL,'2018-01-15 13:56:39',16718732),
-(169,'2031a3fcfd8b02a3bf06ee9ff4581bee092acaf59045a9d793a38f076f9818913f43e6ad2c80e9311647b',86399,NULL,'2018-01-16 20:58:29',16718732),
-(170,'dcc0fe56de16c97cbc501a586c3b2daad5d300922211a47fc6d6a94ee0e585f8827b0c593e0b3cbe51e09',86400,NULL,'2018-01-16 23:29:00',16718732),
-(171,'16ec7b857f243439a62bbd4177810a4caabb5c8af87dea93a24b208c13355cf9fcc0922b12e3ef8b4b6b8',86399,NULL,'2018-01-16 23:41:36',16718732),
-(172,'796fd1e860129014e9d010b038d79310e7d2199ff02be16b74ccba32d033b0ee8dc3e80fd88fe95dc412b',86400,NULL,'2018-01-16 23:52:14',462993092),
-(173,'9bbd48e7ee0c20ec1ff2e731d041048c0c2d301c6509029ba031f401ef67b425a919ca67c49825f1dfb5f',86399,NULL,'2018-01-17 23:07:49',16718732),
-(174,'7640fd913d10bc49f426e11abcbd48c2a394694f877c7415406b173bb380ad22d25935fd25c9abef40f09',86400,NULL,'2018-01-17 23:38:39',462993092),
-(175,'bad9854284aa55312f37c9f7d032ada16277aecbf2e524a5aa67d140987bdc2a52dc2a62c5cf9458c0de3',86400,NULL,'2018-01-18 20:03:32',16718732),
-(176,'b3fe35ae7f723ae0e7b3b9b4d804b974310c28f03860008477e481bc30607428e6873094cbe71c4d64fe0',86400,NULL,'2018-01-18 20:03:57',16718732);
+(193,'091bcd2e40c865f5cd963c17c9e5d23bcb4ac83a9204ea282c1b1342360e81ac79514438af92e2bb8dade',86400,NULL,'2018-01-25 03:51:26',8432339),
+(194,'b28ecd647d7a3408777ca02acceb666abec0a284bebe968967aa974284e930712a1edd6d6ecc7aa648103',86399,NULL,'2018-01-25 04:09:24',16718732),
+(195,'de43327dcbbcde7eb2418b47c5be319424bf5a8ae8954386016d619bddcff7163e37a672fc2412c9272ce',86400,NULL,'2018-01-25 04:27:45',16718732),
+(196,'b9264dc60238dceee7c6ca4f9d8395868b21a817b52cfc79a2616b545370fb71aa9c95bb31210edee8161',86399,NULL,'2018-01-25 04:40:04',124382982),
+(197,'ee955d279e240b58bc0f0d43bb53fbec1d160fc26084d0ff13d3d09748aea08472dd2d85b46e6d38da5cc',86400,NULL,'2018-01-25 04:51:50',8432339),
+(198,'05d6c787f1da6bfd6c7cc1cbb4ef9fb9838ffea1089bc046b6acad003ca7f52ee23b412333d34a715abe8',86400,NULL,'2018-01-25 05:19:43',34812297),
+(199,'dd52007e3e8b75178968e68e54ec2305302e64ed237e98d4bf0ef4ffe11971d7fad71ab3a72de9d0678a9',86399,NULL,'2018-01-25 05:22:43',34812297),
+(200,'0188e5e38dd5c47e4696e7c526c3a58c3af8cea40aea4cbf01822268246591f64da3330696fdf80cd0297',86400,NULL,'2018-01-25 05:39:58',134627420),
+(201,'21e34a96e410a2361d876f7f867b9ac269f8595b445eda02aad382bb919fc1b2b465eeb87d211ad81da64',86400,NULL,'2018-01-25 06:02:04',134627420),
+(202,'b29281bfe901fa90d5df087788d5322d7eb5cc041172efd096a268e1f9976102dd2e6fa6eeb50f5aa9193',86400,NULL,'2018-01-25 16:07:31',16718732),
+(203,'94c9832d11e827cab969c75cc3a5a53371249ab4ae51e2f7d13e490dba9b78347ccf8ab6ea2e55bde21c4',86398,NULL,'2018-01-27 11:15:25',16718732),
+(204,'b6e649574d7214317a5f167acbfc51edff6046b3cb03ecbf43e331940ab5e586ea1b71c209e9d9051f128',86400,NULL,'2018-01-28 06:50:26',16718732),
+(205,'8d51399b966cad9c75e9e9327e82e525290fb24b9ae6ae56deb27ce2bfaca56bfd39c11698e5df623328e',86400,NULL,'2018-01-28 08:25:02',16718732),
+(206,'0921cfef4f65e9e6512a77a9b26ef4b66ba46a1026b236e45905f68915ccc7d8635fc47c7f0809e2fc788',86400,NULL,'2018-01-29 02:55:44',16718732);
 
 /*Table structure for table `complain` */
 
@@ -103,7 +71,7 @@ DROP TABLE IF EXISTS `department`;
 CREATE TABLE `department` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name_full` varchar(500) NOT NULL,
-  `name_short` varchar(100) DEFAULT NULL,
+  `name_short` varchar(200) DEFAULT NULL,
   `faculty_id` int(11) NOT NULL,
   `vk_id` int(11) NOT NULL,
   `is_demo` tinyint(1) NOT NULL DEFAULT '0',
@@ -1411,8 +1379,6 @@ CREATE TABLE `faculty` (
 /*Data for the table `faculty` */
 
 insert  into `faculty`(`id`,`name_full`,`name_short`,`vk_id`,`university_id`,`is_demo`) values 
-(-2,'Факультет захвата Железного трона','',-2,-2,1),
-(-1,'Факультет прикладных наук','',-1,-1,1),
 (81,'Автоматизации и информатики (до 2008)','',2196,2,0),
 (82,'Конструкторский (до 2008)','',3147,2,0),
 (83,'Международный','',3148,2,0),
@@ -1737,7 +1703,7 @@ CREATE TABLE `flat` (
   `enter_date` date NOT NULL,
   `is_demo` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
 
 /*Data for the table `flat` */
 
@@ -1748,9 +1714,10 @@ insert  into `flat`(`id`,`description`,`address`,`square`,`room_num`,`traffic`,`
 (31,'описание','адрес','56 кв. м.',3,'94, 96',3000,6000,'2017-12-09',1),
 (32,'описание','адрес','56кв.м.',3,'94, 96',3000,6000,'2017-12-09',1),
 (33,'описание','адрес','56 кв. м.',3,'94, 96',3000,6000,'2017-12-09',1),
-(34,'самая уютная квартира на свете','адрес','25 кв',1,'94, 96 автобус',3000,6000,'2020-12-20',1),
 (35,'описание вартиры','адрес квартиры','2222',1,'нет',111,111,'2017-12-20',0),
-(36,'новая квартира, очень очень хорошая','ааааа','40м2',2,'нет',2000,4000,'2018-01-20',0);
+(36,'описание','адрес','40м2',3,'94,96',3000,6000,'2018-01-29',0),
+(37,'Это пример объявления о поиске румейта. Вы можете создать свое в Настройках профиля, нажав кнопку \"Рассказать про квартиру и условия\". Все объявления проходят проверку. ','г. Ростов-на-Дону','56',2,'56',5000,10000,'2018-01-31',0),
+(38,'Это пример объявления о поиске румейта. Вы можете создать свое в Настройках профиля, нажав кнопку \"Рассказать про квартиру и условия\". Все объявления проходят проверку. ','г.Ростов-на-Дону','31',2,'32',10000,15000,'2018-01-31',0);
 
 /*Table structure for table `flat_utility` */
 
@@ -1761,14 +1728,20 @@ CREATE TABLE `flat_utility` (
   `flat_id` int(11) NOT NULL,
   `utility_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=135 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 /*Data for the table `flat_utility` */
 
 insert  into `flat_utility`(`id`,`flat_id`,`utility_id`) values 
-(132,36,3),
-(133,34,1),
-(134,34,3);
+(2,37,2),
+(3,37,3),
+(4,37,5),
+(5,38,1),
+(6,38,2),
+(7,38,3),
+(8,38,4),
+(9,38,5),
+(14,36,1);
 
 /*Table structure for table `photo` */
 
@@ -1789,7 +1762,7 @@ CREATE TABLE `photo` (
   `date_updated` datetime NOT NULL,
   `temporary_user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
 
 /*Data for the table `photo` */
 
@@ -1802,7 +1775,15 @@ insert  into `photo`(`id`,`src_small`,`src_orig`,`filename_small`,`filename_orig
 (23,'/images/uploads/user_27/1513773343164.jpg','/images/uploads/user_27/1513773343164.jpg','1513773343164.jpg','1513773343164.jpg',1000,749,1000,749,NULL,'2017-12-20 15:35:43','2017-12-20 15:35:43',NULL),
 (24,'/images/uploads/user_27/1513773683124.jpg','/images/uploads/user_27/1513773683124.jpg','1513773683124.jpg','1513773683124.jpg',3264,1836,3264,1836,NULL,'2017-12-20 15:41:23','2017-12-20 15:41:23',NULL),
 (25,'/images/uploads/user_27/1513773879384.jpg','/images/uploads/user_27/1513773879384.jpg','1513773879384.jpg','1513773879384.jpg',1365,2048,1365,2048,NULL,'2017-12-20 15:44:39','2017-12-20 15:44:39',NULL),
-(26,'/images/uploads/user_21/1516136024521.jpg','/images/uploads/user_21/1516136024521.jpg','1516136024521.jpg','1516136024521.jpg',680,450,680,450,36,'2018-01-16 23:53:44','2018-01-16 23:53:44',NULL);
+(26,'/images/uploads/user_19/1516872593160.jpg','/images/uploads/user_19/1516872593160.jpg','1516872593160.jpg','1516872593160.jpg',680,450,680,450,36,'2018-01-25 04:29:53','2018-01-25 04:29:53',NULL),
+(28,'/images/uploads/user_28/1516873001300.jpg','/images/uploads/user_28/1516873001300.jpg','1516873001300.jpg','1516873001300.jpg',733,550,733,550,37,'2018-01-25 04:36:41','2018-01-25 04:36:41',NULL),
+(29,'/images/uploads/user_28/1516873006368.jpg','/images/uploads/user_28/1516873006368.jpg','1516873006368.jpg','1516873006368.jpg',733,550,733,550,37,'2018-01-25 04:36:46','2018-01-25 04:36:46',NULL),
+(30,'/images/uploads/user_28/1516873010916.jpg','/images/uploads/user_28/1516873010916.jpg','1516873010916.jpg','1516873010916.jpg',733,550,733,550,37,'2018-01-25 04:36:51','2018-01-25 04:36:51',NULL),
+(31,'/images/uploads/user_28/1516873014221.jpg','/images/uploads/user_28/1516873014221.jpg','1516873014221.jpg','1516873014221.jpg',733,550,733,550,37,'2018-01-25 04:36:54','2018-01-25 04:36:54',NULL),
+(32,'/images/uploads/user_24/1516873277394.jpg','/images/uploads/user_24/1516873277394.jpg','1516873277394.jpg','1516873277394.jpg',733,550,733,550,38,'2018-01-25 04:41:17','2018-01-25 04:41:17',NULL),
+(33,'/images/uploads/user_24/1516873279855.jpg','/images/uploads/user_24/1516873279855.jpg','1516873279855.jpg','1516873279855.jpg',733,550,733,550,38,'2018-01-25 04:41:19','2018-01-25 04:41:19',NULL),
+(34,'/images/uploads/user_24/1516873282638.jpg','/images/uploads/user_24/1516873282638.jpg','1516873282638.jpg','1516873282638.jpg',412,550,412,550,38,'2018-01-25 04:41:22','2018-01-25 04:41:22',NULL),
+(35,'/images/uploads/user_24/1516873286583.jpg','/images/uploads/user_24/1516873286583.jpg','1516873286583.jpg','1516873286583.jpg',732,550,732,550,38,'2018-01-25 04:41:26','2018-01-25 04:41:26',NULL);
 
 /*Table structure for table `post` */
 
@@ -1909,16 +1890,18 @@ CREATE TABLE `roommate_request` (
   `date_created` datetime NOT NULL,
   `date_updated` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 /*Data for the table `roommate_request` */
 
 insert  into `roommate_request`(`id`,`from_user_id`,`to_user_id`,`status`,`is_viewed`,`date_created`,`date_updated`) values 
-(1,19,1,'pending',0,'2017-12-14 16:02:35','2017-12-14 16:02:40'),
 (2,2,19,'declined',0,'2017-12-14 16:02:56','2017-12-14 16:02:59'),
 (3,19,27,'accepted',0,'2018-01-03 21:35:07','2018-01-03 21:35:07'),
-(4,21,2,'pending',0,'2018-01-14 00:05:23','2018-01-14 00:05:23'),
-(5,19,2,'pending',0,'2018-01-15 23:54:22','2018-01-15 23:54:22');
+(4,20,1,'pending',0,'2018-01-13 05:01:08','2018-01-13 05:01:08'),
+(5,24,1,'pending',0,'2018-01-15 05:48:21','2018-01-15 05:48:21'),
+(6,24,19,'pending',0,'2018-01-15 05:55:46','2018-01-15 05:55:46'),
+(8,19,1,'pending',0,'2018-01-23 05:38:11','2018-01-23 05:38:11'),
+(9,19,28,'accepted',0,'2018-01-25 04:46:27','2018-01-25 04:46:27');
 
 /*Table structure for table `session` */
 
@@ -1933,23 +1916,30 @@ CREATE TABLE `session` (
 /*Data for the table `session` */
 
 insert  into `session`(`token`,`user_id`) values 
-('4aV4K4XtxL3K8mRxVIOAVZkfvITR74cG',19),
-('AOIs2fEUEQCzPIZWFhR3s9ObdlUYYfvY',21),
-('Bmmj1tsDoC90AuJH5OuMwRD33TKC7jVZ',28),
-('BTwgu4BzYRo5h4RALDZrHoToOhMWjoaP',21),
-('EDOxNRRszytgPuX7jHV6lkGUIBDcELI7',19),
-('G6PcdcErcqwgbuG4v8sxdnA7JwWlEIiN',19),
-('I8uXz1JwzHYkQtaWdL6Jp8W9kUXZ92c2',19),
+('0zF4WPuIkeJcmQdgbri5XpTs9TXoS225',19),
+('3741ONBwwoAIPp4NHDiHN1pCInladsb1',28),
+('4O8lxLUSmMzN20UqmJIofsUMSCBv3qi7',19),
+('509iB9oO4MDo1Vr8p3LG9LWFYx64xCtn',24),
+('a5xc4ACdikp2g7gW5e5KgawdMGH23L2c',24),
+('BFx2uxrDq4sEzuBKklkTDLZfTUbDRUIF',24),
+('cXoND18GnvKcc4hZ33zRJ1RIFUAmPP7q',19),
+('H0fBf58fThLyLtccRMBbP673e1jqwCLW',27),
+('hIdb94xveRgshfnWjFGg43ceJVoQ9KOg',24),
 ('is5Ri8Dyrh4bzlEKkjEqemMAbaxRSz4M',29),
-('iZOzdcofrZKl6fvLvvTHGqPrTUA3dZpI',28),
-('j6S9W6FucdYu9hhkUnhzZblRGS1yXmSb',19),
-('OR6bcb5IfbjlTPKcWvN45BVm0VtI60wn',21),
-('qE7zUJ44uQSRVl1sQzglmQkFA8WGG39M',20),
-('Qjxc3J8g1Cdm44QJBGWwsrvZ8VtX9817',19),
-('rRacGJLfC2s8SZy8SByfLjExdLoQwanI',19),
+('IU0SyZyxnOQXOTRTE4fJeAQSf1qkT7XF',19),
+('jhHAoqG9d7Yg4wumCcmP7kbxiard6FbJ',25),
+('LEo4XPN2U8HALCyRqgGeTKzz8W3gSewH',19),
+('o7Uw7KGxfZddMp9XVcjVgnPpbE6KMK4L',29),
+('oDp69mByVhoEDZ9iVChc7WhApteGnapX',30),
+('OQb2Ow6eyC07IwSAsSKyBX354Z10Q8NN',27),
+('SmIC1oOGsBnqgPYazpcBcgX7okZrYRVj',24),
+('ST8LcCPHPRu9p4kRJSk0pGyXSw7a45Ka',30),
+('ucvxDyH2sLXO7bezZFGSicRYruA7rrId',26),
 ('VOxEXZKZNQEEkgA16hu2Dui4hyWGQuQd',27),
+('X34G1QRLZS0SIF3j6MYWANHvIYvaPPNn',19),
 ('X73uDxnRb80tfZgUPD2j7R6dwFhwDmsv',29),
-('zDHgUReNY2iNhpaAKrlIi5GmrYIVpUFe',21);
+('zAn4fPhf73P8zkekCW93J0ySVfu9XVN2',29),
+('ZIg9S6v4HSOAbMpx3vNfqBrbXHV2LXoj',19);
 
 /*Table structure for table `studyyear` */
 
@@ -1990,8 +1980,6 @@ CREATE TABLE `university` (
 /*Data for the table `university` */
 
 insert  into `university`(`id`,`name_full`,`name_short`,`vk_id`,`is_demo`) values 
-(-2,NULL,'Институт благородных Кхалиси',-2,1),
-(-1,NULL,'Университет Винтерфелла для бастардов',-1,1),
 (1,'','ЮФУ (бывш. РГУ)',3415,0),
 (2,NULL,'ДГТУ (бывш. РИСХМ)',749,0),
 (3,NULL,'ИЭиМ ДГТУ (бывш. РГАСХМ)',750,0),
@@ -2086,16 +2074,21 @@ CREATE TABLE `user` (
   `is_demo` tinyint(1) NOT NULL DEFAULT '0',
   `is_activated` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
 
 /*Data for the table `user` */
 
 insert  into `user`(`id`,`first_name`,`last_name`,`birth_date`,`age`,`about`,`phone`,`email`,`avatar`,`sex`,`wish_pay`,`city`,`date_register`,`register_from_vk`,`password`,`login`,`vk_id`,`flat_id`,`char_activity`,`char_habbits`,`char_pets`,`char_age`,`char_car`,`char_university`,`complains_available`,`university_id`,`faculty_id`,`department_id`,`studyyear_id`,`is_demo`,`is_activated`) values 
-(1,'Джон','Сноу','1995-12-10 00:00:00',22,'Джон Сноу (урождённый Эйгон Таргариен) — сын Рейгара Таргариена и Лианны Старк, наследник Железного трона. Считается внебрачным сыном лорда Винтерфелла Эддарда Старка.','+7(999)-999-99-99','johnsnow@gameofthrones.com','/images/john_snow.jpg','мужской',5000,'Винтерфелл','2017-11-12 06:00:57',0,'john','john',0,21,NULL,NULL,NULL,'18-25',NULL,NULL,1,-1,-1,NULL,'2',1,1),
-(2,'Дейнерис','Таргариен','1995-06-15 00:00:00',22,'Дейнерис Таргариен — дочь «Безумного короля» Эйриса II и королевы Рейлы, свергнутых с железного трона во время восстания Роберта. Младшая сестра Рейгара и Визериса Таргариенов.','+7(333)-333-33-33','daenerys@gameofthrones.com','/images/daenerys.png','женский',10000,'Пентос','2017-11-12 06:20:04',0,'daenerys','daenerys',0,NULL,NULL,NULL,NULL,'18-25',NULL,NULL,1,-2,-2,NULL,'2',1,1),
-(19,'Кирилл','Владыкин','1989-06-28 00:00:00',28,'Одинокий мужчина ну в пооолном расцвете сил','+7(111)-111-11-11','kirillmybox@rambler.ru','/images/uploads/user_19/1513848006547.png','мужской',3000,'Ростов-на-Дону','2017-12-02 20:30:47',1,NULL,NULL,16718732,34,NULL,NULL,NULL,NULL,NULL,NULL,8,1,130,23,'2М',1,1),
-(21,'Ольга','Владыкина','1995-02-01 00:00:00',22,'тралала','+7(111)-111-11-11','test@mail.ru','/images/uploads/user_21/avatar_1515871231806.jpg','женский',3500,'Ростов-на-Дону','2018-01-13 22:20:31',NULL,NULL,NULL,462993092,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2,10,120,669,'2',0,1),
-(25,'Екатерина','Иванова','1990-07-30 00:00:00',27,'',NULL,NULL,'/images/photo.jpg','женский',3000,'undefined','2018-01-15 12:50:30',NULL,NULL,NULL,124382982,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2,10,121,NULL,NULL,0,1);
+(1,'Джон','Сноу','1995-12-10 00:00:00',22,'Джон Сноу (урождённый Эйгон Таргариен) — сын Рейгара Таргариена и Лианны Старк, наследник Железного трона. Считается внебрачным сыном лорда Винтерфелла Эддарда Старка.','+7(999)-999-99-99','kirillmybox@rambler.ru','/images/john_snow.jpg','мужской',5000,'Винтерфелл','2017-11-12 06:00:57',0,'john','john',0,21,NULL,NULL,NULL,'18-25',NULL,NULL,1,-1,-1,NULL,'2',1,0),
+(2,'Дейнерис','Таргариен','1995-06-15 00:00:00',22,'Дейнерис Таргариен — дочь «Безумного короля» Эйриса II и королевы Рейлы, свергнутых с железного трона во время восстания Роберта. Младшая сестра Рейгара и Визериса Таргариенов.','+7(333)-333-33-33','daenerys@gameofthrones.com','/images/daenerys.png','женский',10000,'Пентос','2017-11-12 06:20:04',0,'daenerys','daenerys',0,NULL,NULL,NULL,NULL,'18-25',NULL,NULL,1,-2,-2,NULL,'2',1,0),
+(19,'Кирилл','Владыкин','1989-06-28 00:00:00',28,'Это пример объявления о поиске румейта. Вы можете создать свое в Настройках профиля, нажав кнопку \"Рассказать про квартиру и условия\". Все объявления проходят проверку.','+7(111)-111-11-11','kirillmybox@rambler.ru','/images/uploads/user_19/1513848006547.png','мужской',3000,'Ростов-на-Дону','2017-12-02 20:30:47',1,NULL,NULL,16718732,36,NULL,NULL,NULL,NULL,NULL,NULL,8,1,130,29,'2М',0,1),
+(24,'Екатерина','Иванова','1990-07-30 00:00:00',27,NULL,'+7(000)-000-00-00','zaevlad@mail.ru','/images/uploads/user_24/avatar_1516010171014.jpg','женский',8000,'Ростов-на-Дону','2018-01-15 04:56:11',NULL,NULL,NULL,124382982,38,NULL,NULL,NULL,NULL,NULL,NULL,2,10,121,NULL,NULL,0,1),
+(25,'Виктор','Семенчук','1985-07-07 00:00:00',32,'',NULL,NULL,'/images/uploads/user_25/avatar_1516010215805.jpg','мужской',3000,'Ростов-на-Дону','2018-01-15 04:56:55',NULL,NULL,NULL,274733083,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2,2,89,NULL,NULL,0,0),
+(26,'Kristina','Danielyan','1950-07-04 00:00:00',67,'',NULL,NULL,'/images/uploads/user_26/avatar_1516016651423.jpg','женский',3000,'','2018-01-15 06:44:11',NULL,NULL,NULL,269300349,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2,NULL,NULL,NULL,NULL,0,0),
+(27,'Сергей','Евдокимов','1998-07-02 00:00:00',19,'',NULL,NULL,'/images/photo.jpg','мужской',3000,'','2018-01-16 03:42:19',NULL,NULL,NULL,265659628,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2,NULL,NULL,NULL,NULL,0,0),
+(28,'Влад','Заев','1988-09-16 00:00:00',29,NULL,'+7(000)-000-00-00','zaevlad@mail.ru','/images/photo.jpg','мужской',5000,'Ростов-на-Дону','2018-01-25 03:51:26',NULL,NULL,NULL,8432339,37,NULL,NULL,NULL,NULL,NULL,NULL,2,10,120,668,NULL,0,1),
+(29,'Софья','Хопёрская','1995-02-21 00:00:00',22,'Да, с ночью я воистину знаком.\n       Я под дождем из города ушел,\n       Оставив позади последний дом.\n\n       Навстречу мне в потемках сторож брел.\n       Чтоб ничего не объяснять ему,\n       Я взгляд нарочно в сторону отвел.\n\n       Внезапно, сам не знаю почему,\n       Мне показалось, будто мне кричат\n       Из города. Я вслушался во тьму.\n\n       Но нет, никто не звал меня назад.\n       Зато вверху расплывчатым пятном\n       Небесный засветился циферблат -\n\n       Ни зол, ни добр в мерцании своем.\n       Да, с ночью я воистину знаком.\n',NULL,NULL,'/images/photo.jpg','женский',3000,'','2018-01-25 05:19:43',NULL,NULL,NULL,34812297,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2,2,NULL,NULL,NULL,0,0),
+(30,'Роман','Ориненко','1999-03-14 00:00:00',18,NULL,'+7(908)-171-60-27','roman.orinenko@mail.ru','/images/photo.jpg','мужской',7000,'Ростов На Дону ','2018-01-25 05:39:58',NULL,NULL,NULL,134627420,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2,15,128,794,'2',0,1);
 
 /*Table structure for table `user_complains` */
 
@@ -2116,7 +2109,8 @@ CREATE TABLE `user_complains` (
 /*Data for the table `user_complains` */
 
 insert  into `user_complains`(`id`,`from_user_id`,`to_user_id`,`complain_id`,`comment`,`date_created`,`is_processed`,`date_processed`) values 
-(3,19,2,1,'111','2018-01-15 23:54:19',0,NULL);
+(2,19,2,2,'qwdfghj','2018-01-11 23:02:04',0,NULL),
+(3,19,24,2,'не студент и вообще утка','2018-01-15 16:02:39',0,NULL);
 
 /*Table structure for table `user_priority_option` */
 
@@ -2129,7 +2123,7 @@ CREATE TABLE `user_priority_option` (
   PRIMARY KEY (`id`),
   KEY `user_fk` (`user_id`),
   KEY `character_value_fk` (`priority_option_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=907 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=925 DEFAULT CHARSET=utf8;
 
 /*Data for the table `user_priority_option` */
 
@@ -2146,18 +2140,30 @@ insert  into `user_priority_option`(`id`,`user_id`,`priority_option_id`) values
 (868,2,19),
 (869,2,24),
 (870,2,27),
-(895,21,9),
-(896,21,13),
-(897,21,15),
-(898,21,17),
-(899,21,24),
-(900,21,27),
-(901,19,8),
-(902,19,11),
-(903,19,15),
-(904,19,18),
-(905,19,24),
-(906,19,28);
+(877,28,9),
+(878,28,13),
+(879,28,14),
+(880,28,18),
+(881,28,24),
+(882,28,27),
+(883,24,8),
+(884,24,10),
+(885,24,16),
+(886,24,19),
+(887,24,24),
+(888,24,28),
+(901,30,7),
+(902,30,10),
+(903,30,14),
+(904,30,17),
+(905,30,24),
+(906,30,28),
+(919,19,8),
+(920,19,11),
+(921,19,15),
+(922,19,18),
+(923,19,24),
+(924,19,28);
 
 /*Table structure for table `utility` */
 
@@ -2234,6 +2240,48 @@ DROP TABLE IF EXISTS `v_user`;
  `user_city` varchar(100) ,
  `user_wish_pay` int(11) ,
  `user_date_register` datetime ,
+ `university_id` int(11) ,
+ `university_name` varchar(100) ,
+ `faculty_id` int(11) ,
+ `faculty_name` varchar(200) ,
+ `department_id` int(11) ,
+ `department_name` varchar(500) ,
+ `studyyear_id` varchar(2) ,
+ `studyyear_name` varchar(100) ,
+ `flat_id` int(11) ,
+ `flat_description` varchar(200) ,
+ `flat_square` varchar(50) ,
+ `flat_traffic` varchar(300) ,
+ `flat_address` varchar(200) ,
+ `flat_room_num` int(11) ,
+ `flat_rent_pay` int(11) ,
+ `flat_total_pay` int(11) ,
+ `flat_first_photo` varchar(200) ,
+ `flat_enter_date` varchar(10) 
+)*/;
+
+/*Table structure for table `v_user_all` */
+
+DROP TABLE IF EXISTS `v_user_all`;
+
+/*!50001 DROP VIEW IF EXISTS `v_user_all` */;
+/*!50001 DROP TABLE IF EXISTS `v_user_all` */;
+
+/*!50001 CREATE TABLE  `v_user_all`(
+ `user_id` int(11) ,
+ `user_first_name` varchar(100) ,
+ `user_last_name` varchar(100) ,
+ `user_age` int(11) ,
+ `user_sex` enum('мужской','женский','не важно') ,
+ `user_birth_date` varchar(10) ,
+ `user_about` text ,
+ `user_avatar` varchar(200) ,
+ `user_name` varchar(201) ,
+ `user_phone` varchar(50) ,
+ `user_email` varchar(100) ,
+ `user_city` varchar(100) ,
+ `user_wish_pay` int(11) ,
+ `user_date_register` datetime ,
  `user_is_activated` tinyint(1) ,
  `university_id` int(11) ,
  `university_name` varchar(100) ,
@@ -2289,7 +2337,14 @@ DROP TABLE IF EXISTS `v_user_priority`;
 /*!50001 DROP TABLE IF EXISTS `v_user` */;
 /*!50001 DROP VIEW IF EXISTS `v_user` */;
 
-/*!50001 CREATE ALGORITHM=TEMPTABLE DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_user` AS (select `user`.`id` AS `user_id`,`user`.`first_name` AS `user_first_name`,`user`.`last_name` AS `user_last_name`,`user`.`age` AS `user_age`,`user`.`sex` AS `user_sex`,date_format(`user`.`birth_date`,'%d.%m.%Y') AS `user_birth_date`,`user`.`about` AS `user_about`,`user`.`avatar` AS `user_avatar`,concat(`user`.`first_name`,' ',`user`.`last_name`) AS `user_name`,`user`.`phone` AS `user_phone`,`user`.`email` AS `user_email`,`user`.`city` AS `user_city`,`user`.`wish_pay` AS `user_wish_pay`,`user`.`date_register` AS `user_date_register`,`user`.`is_activated` AS `user_is_activated`,`university`.`id` AS `university_id`,`university`.`name_short` AS `university_name`,`faculty`.`id` AS `faculty_id`,`faculty`.`name_full` AS `faculty_name`,`department`.`id` AS `department_id`,`department`.`name_full` AS `department_name`,`studyyear`.`id` AS `studyyear_id`,`studyyear`.`name_short` AS `studyyear_name`,`user`.`flat_id` AS `flat_id`,`flat`.`description` AS `flat_description`,`flat`.`square` AS `flat_square`,`flat`.`traffic` AS `flat_traffic`,`flat`.`address` AS `flat_address`,`flat`.`room_num` AS `flat_room_num`,`flat`.`rent_pay` AS `flat_rent_pay`,`flat`.`total_pay` AS `flat_total_pay`,(select `photo`.`src_small` from `photo` where (`photo`.`flat_id` = `flat`.`id`) limit 1) AS `flat_first_photo`,date_format(`flat`.`enter_date`,'%d.%m.%Y') AS `flat_enter_date` from (((((`user` left join `flat` on((`user`.`flat_id` = `flat`.`id`))) left join `university` on((`university`.`id` = `user`.`university_id`))) left join `faculty` on((`faculty`.`id` = `user`.`faculty_id`))) left join `department` on((`department`.`id` = `user`.`department_id`))) left join `studyyear` on((`studyyear`.`id` = `user`.`studyyear_id`)))) */;
+/*!50001 CREATE ALGORITHM=TEMPTABLE DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_user` AS (select `user`.`id` AS `user_id`,`user`.`first_name` AS `user_first_name`,`user`.`last_name` AS `user_last_name`,`user`.`age` AS `user_age`,`user`.`sex` AS `user_sex`,date_format(`user`.`birth_date`,'%d.%m.%Y') AS `user_birth_date`,`user`.`about` AS `user_about`,`user`.`avatar` AS `user_avatar`,concat(`user`.`first_name`,' ',`user`.`last_name`) AS `user_name`,`user`.`phone` AS `user_phone`,`user`.`email` AS `user_email`,`user`.`city` AS `user_city`,`user`.`wish_pay` AS `user_wish_pay`,`user`.`date_register` AS `user_date_register`,`university`.`id` AS `university_id`,`university`.`name_short` AS `university_name`,`faculty`.`id` AS `faculty_id`,`faculty`.`name_full` AS `faculty_name`,`department`.`id` AS `department_id`,`department`.`name_full` AS `department_name`,`studyyear`.`id` AS `studyyear_id`,`studyyear`.`name_short` AS `studyyear_name`,`user`.`flat_id` AS `flat_id`,`flat`.`description` AS `flat_description`,`flat`.`square` AS `flat_square`,`flat`.`traffic` AS `flat_traffic`,`flat`.`address` AS `flat_address`,`flat`.`room_num` AS `flat_room_num`,`flat`.`rent_pay` AS `flat_rent_pay`,`flat`.`total_pay` AS `flat_total_pay`,(select `photo`.`src_small` from `photo` where (`photo`.`flat_id` = `flat`.`id`) limit 1) AS `flat_first_photo`,date_format(`flat`.`enter_date`,'%d.%m.%Y') AS `flat_enter_date` from (((((`user` left join `flat` on((`user`.`flat_id` = `flat`.`id`))) left join `university` on((`university`.`id` = `user`.`university_id`))) left join `faculty` on((`faculty`.`id` = `user`.`faculty_id`))) left join `department` on((`department`.`id` = `user`.`department_id`))) left join `studyyear` on((`studyyear`.`id` = `user`.`studyyear_id`))) where (`user`.`is_activated` = TRUE)) */;
+
+/*View structure for view v_user_all */
+
+/*!50001 DROP TABLE IF EXISTS `v_user_all` */;
+/*!50001 DROP VIEW IF EXISTS `v_user_all` */;
+
+/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`user101`@`%` SQL SECURITY DEFINER VIEW `v_user_all` AS (select `user`.`id` AS `user_id`,`user`.`first_name` AS `user_first_name`,`user`.`last_name` AS `user_last_name`,`user`.`age` AS `user_age`,`user`.`sex` AS `user_sex`,date_format(`user`.`birth_date`,'%d.%m.%Y') AS `user_birth_date`,`user`.`about` AS `user_about`,`user`.`avatar` AS `user_avatar`,concat(`user`.`first_name`,' ',`user`.`last_name`) AS `user_name`,`user`.`phone` AS `user_phone`,`user`.`email` AS `user_email`,`user`.`city` AS `user_city`,`user`.`wish_pay` AS `user_wish_pay`,`user`.`date_register` AS `user_date_register`,`user`.`is_activated` AS `user_is_activated`,`university`.`id` AS `university_id`,`university`.`name_short` AS `university_name`,`faculty`.`id` AS `faculty_id`,`faculty`.`name_full` AS `faculty_name`,`department`.`id` AS `department_id`,`department`.`name_full` AS `department_name`,`studyyear`.`id` AS `studyyear_id`,`studyyear`.`name_short` AS `studyyear_name`,`user`.`flat_id` AS `flat_id`,`flat`.`description` AS `flat_description`,`flat`.`square` AS `flat_square`,`flat`.`traffic` AS `flat_traffic`,`flat`.`address` AS `flat_address`,`flat`.`room_num` AS `flat_room_num`,`flat`.`rent_pay` AS `flat_rent_pay`,`flat`.`total_pay` AS `flat_total_pay`,(select `photo`.`src_small` from `photo` where (`photo`.`flat_id` = `flat`.`id`) limit 1) AS `flat_first_photo`,date_format(`flat`.`enter_date`,'%d.%m.%Y') AS `flat_enter_date` from (((((`user` left join `flat` on((`user`.`flat_id` = `flat`.`id`))) left join `university` on((`university`.`id` = `user`.`university_id`))) left join `faculty` on((`faculty`.`id` = `user`.`faculty_id`))) left join `department` on((`department`.`id` = `user`.`department_id`))) left join `studyyear` on((`studyyear`.`id` = `user`.`studyyear_id`)))) */;
 
 /*View structure for view v_user_priority */
 
