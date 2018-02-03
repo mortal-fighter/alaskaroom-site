@@ -113,8 +113,43 @@ function closeAuthPopup() {
 	$('.auth-popup').fadeOut(200);
 }
 
+function indicatorNewRequests() {
+	function inner() {
+		//console.log('window.location.href=', window.location.href);
+		if (window.location.href.match(/alaskaroom\.ru\/?$/) || window.location.href.match(/localhost\/?$/) ) {
+			if (interval1) clearInterval(interval1);
+			return;
+		} 
+		
+		$.ajax({
+			method: 'post',
+			url: '/requests/has_new_requests',
+			success: function(result) {
+				if (result.status === 'ok') {
+					if (result.countIncoming > 0 || result.countAccepted > 0) {
+						$('#indicatorNewRequests').show();
+					} else {
+						$('#indicatorNewRequests').hide();
+					}
+				} else {
+					console.log('indicatorNewRequests: Не удалось получить данные о новых заявках');
+				}
+			},
+			error: function(error) {
+				console.log('indicatorNewRequests: Ошибка сетевого соединения');
+			}
+		});
+	}
+
+	inner();
+	var interval1 = setInterval(function() {
+		inner();
+	}, 1000 * 60);
+}
+
 $(document).ready(function() {
 	initAuthPopup();
 	initPopup();
 	handlersHeader();
+	indicatorNewRequests();
 });

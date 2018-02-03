@@ -6,6 +6,7 @@ const logger = require('log4js').getLogger();
 
 const connectionPromise = require('../../components/connectionPromise.js');
 const sendmailPromise = require('../../components/sendmailPromise.js');
+const util = require('../../components/myUtil.js');
 const config = require('../../config/common.js');
 
 router.get('/get_count_:type(\\S+)', function(req, res, next) {
@@ -53,6 +54,96 @@ router.get('/get_count_:type(\\S+)', function(req, res, next) {
 		});
 });
 
+router.post('/has_new_requests', function(req, res, next) {
+
+	var countIncoming = 0;
+	var countAccepted = 0;
+	var db = null;
+
+	if (!req.isAuthorized) {
+		res.redirect('/?message=Пожалуйста,%20авторизуйтесь%20в%20системе');
+		return;
+	}
+	
+	connectionPromise().then(function(connection) {
+
+		db = connection;
+
+		var sql = ` SELECT count(*) cnt FROM roommate_request WHERE is_viewed = 0 AND to_user_id = ${req.user_id};`;
+		//logger.debug(sql);
+
+		return connection.queryAsync(sql);
+
+	}).then(function(result) {
+
+		//logger.debug(result);
+		countIncoming = result[0].cnt;	
+
+		var sql = ` SELECT count(*) cnt FROM roommate_request WHERE is_viewed = 0 AND from_user_id = ${req.user_id} AND status = 'accepted';`;
+		//logger.debug(sql);
+
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		//logger.debug(result);
+		countAccepted = result[0].cnt;	
+
+		res.json({
+			status: 'ok',
+			countIncoming: countIncoming,
+			countAccepted: countAccepted
+		});
+
+	}).catch(function(err) {
+	
+		logger.error(err.message + '\n' + err.stack);
+		res.json({
+			status: 'not ok'
+		});
+	
+	});
+});
+
+router.post('/requests_seen', function(req, res, next) {
+
+	if (!req.isAuthorized) {
+		res.redirect('/?message=Пожалуйста,%20авторизуйтесь%20в%20системе');
+		return;
+	}
+
+	if (req.body.type !== 'incoming' && req.body.type !== 'accepted') {
+		throw new Error(`Parameters validation error: req.body.type = '${req.body.type}'`);
+	}
+
+	connectionPromise().then(function(connection) {
+
+		var sql = '';
+		if (req.body.type === 'incoming') {
+			sql = ` UPDATE roommate_request SET is_viewed = 1 WHERE to_user_id = ${req.user_id} AND is_viewed = 0;`;
+		} else {
+			sql = ` UPDATE roommate_request SET is_viewed = 1 WHERE from_user_id = ${req.user_id} AND status = 'accepted' AND is_viewed = 0;`;
+		}
+		logger.debug(sql);
+		return connection.queryAsync(sql);
+
+	}).then(function(result) {
+
+		logger.debug(result);
+		res.json({
+			status: 'ok'
+		});
+
+	}).catch(function(err) {
+
+		logger.error(err.message + '\n' + err.stack);
+		res.json({
+			status: 'not ok'
+		});
+
+	});
+});
+
 router.get('/ajax_get_form_complain', function(req, res, next) {
 	var db = null;
 
@@ -83,7 +174,7 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 	var complainReasons = [];
 
 	if (!req.params.type) {
-		req.params.type = 'sended';
+		req.params.type = 'incoming';
 	}
 
 	if (!req.isAuthorized) {
@@ -153,6 +244,8 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 			case 'complains':
 				sql = ` SELECT 1;`;
 				break;
+			default:
+				throw new Error(`Parameters validation error: req.params.type='${req.params.type}' is inconsistent;`);
 		}
 		
 		logger.debug(sql);
@@ -185,8 +278,12 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 	}).catch(function(err) {
 		
 		logger.error(err.message + '\n' + err.stack);
-		res.render('errors/500.pug');
-
+		
+		if (err.message.match(/^Parameters validation error:/)) {
+			res.render('errors/404.pug');	
+		} else {
+			res.render('errors/500.pug');
+		}
 	});
 
 });
@@ -204,6 +301,9 @@ router.post('/invite', function(req, res, next) {
 	connectionPromise().then(function(connection) {
 	
 		db = connection;
+		
+		util.formatObjectForSQL(req.body);
+
 		var sql = ` SELECT COUNT(*) cnt
 					FROM roommate_request 
 					WHERE from_user_id = ${req.user_id}
@@ -321,6 +421,23 @@ router.post('/accept', function(req, res, next) {
 	connectionPromise().then(function(connection) {
 	
 		db = connection;
+		util.formatObjectForSQL(req.body);
+
+		var sql = ` SELECT to_user_id
+					FROM roommate_request
+					WHERE id = ${req.body.requestId};`;
+
+		logger.debug(sql);
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		logger.debug(result);
+
+		if (result[0].to_user_id !== req.user_id) {
+			throw new Error(`Trying to accept request ('friend request') which is not belong to user. Request_id = ${req.body.requestId}, user_id = ${req.user_id}.`);
+		}
+
 		var sql = ` UPDATE roommate_request
 					SET \`status\` = 'accepted'	
 					WHERE id = ${req.body.requestId};`;
@@ -418,6 +535,24 @@ router.post('/decline', function(req, res, next) {
 	connectionPromise().then(function(connection) {
 	
 		db = connection;
+
+		util.formatObjectForSQL(req.body);
+
+		var sql = ` SELECT to_user_id
+					FROM roommate_request
+					WHERE id = ${req.body.requestId};`;
+
+		logger.debug(sql);
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		logger.debug(result);
+
+		if (result[0].to_user_id !== req.user_id) {
+			throw new Error(`Trying to decline request ('friend request') which is not belong to user. Request_id = ${req.body.requestId}, user_id = ${req.user_id}.`);
+		}
+
 		var sql = ` UPDATE roommate_request
 					SET \`status\` = 'declined'	
 					WHERE id = ${req.body.requestId};`;
@@ -455,6 +590,9 @@ router.post('/complain', function(req, res, next) {
 	connectionPromise().then(function(connection) {
 	
 		db = connection;
+
+		util.formatObjectForSQL(req.body);
+
 		var sql = ` 
 			SELECT 
 				complains_available,
@@ -505,7 +643,7 @@ router.post('/complain', function(req, res, next) {
 						${req.user_id},
 						${req.body.user_id},
 						${req.body.complain_id},
-						'${req.body.complain_comment}',
+						${req.body.complain_comment},
 						NOW());`;
 		
 		logger.debug(sql);

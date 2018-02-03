@@ -173,7 +173,22 @@ function processInputSelect(id, isSkipDefault) {
 	});
 	return result;
 }
+function requestsSeen() {
+	var type = $('.respond-line .current').attr('href').match(/^\/requests\/(\S+)$/)[1];
+	console.log('type=', type); 
+	if (type !== 'accepted' && type !== 'incoming') {
+		return;
+	}
+	$.ajax({
+		method: 'post',
+		url: '/requests/requests_seen',
+		data: {
+			type: type
+		}
+	});
+}
 
 $(document).ready(function() {
 	handlersRequest();
+	requestsSeen();
 });

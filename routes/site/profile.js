@@ -85,9 +85,10 @@ function formatObjectForSQL(object) {
 				object[key] = 'NULL';	
 			} 
 
-			//escaping all, except 'NULL', into single quotes, preparing it for sql query
+			//1. surround all, except 'NULL', with single quotes, preparing it for sql query
+			//2. escape single quote inside text
 			if (object[key] !== 'NULL') {
-				object[key] = '\'' + object[key] + '\'';
+				object[key] = '\'' + object[key].replace(/\'/g, '\\\'') + '\'';
 			}
 		
 		}

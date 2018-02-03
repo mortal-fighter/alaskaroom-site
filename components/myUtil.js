@@ -166,5 +166,34 @@ module.exports = {
 			logger.error(err.message+err.stack);
 
 		});
+	},
+
+	formatObjectForSQL: function(object) {
+	// The following processes data, received from the form into sql query values
+	for (var key in object) {
+		if (object.hasOwnProperty(key)) {
+			//convert 'true'/'false' into 1/0 (checkbox values in mind...)
+			switch (object[key]) {
+				case 'true':
+					object[key] = 1;
+					break;
+				case 'false':
+					object[key] = 0;
+					break;
+			}
+
+			//convert blank strings into 'NULL's
+			if (object[key].length === 0) {
+				object[key] = 'NULL';	
+			} 
+
+			//1. surround all, except 'NULL', with single quotes, preparing it for sql query
+			//2. escape single quote inside text
+			if (object[key] !== 'NULL') {
+				object[key] = '\'' + object[key].replace(/\'/g, '\\\'') + '\'';
+			}
+		
+		}
 	}
+}
 };

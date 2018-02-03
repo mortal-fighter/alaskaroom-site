@@ -94,7 +94,7 @@ ol, ul {
 	display: block;
     text-align: center;
     margin: 80px 0px;
-	margin-bottom: 50px;
+	margin-bottom: 10px;
     color: #787878;
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
@@ -107,6 +107,20 @@ ol, ul {
 	color: #5cb0da;
 	font-weight: 500;
 	font-size: 53px !important;
+}
+
+.cover h2 span .colored {
+	color: lightcoral;
+}
+
+.cover h3 {
+    font-size: 30px;
+    font-family: 'Roboto', sans-serif;
+    text-align: center;
+    color: #5cb0da;
+    font-weight: 300;
+    margin: 10px 20px;
+    margin-bottom: 50px;
 }
 
 .cover div {
@@ -478,6 +492,17 @@ ol, ul {
 
 .top-nav a:hover {
 	border-bottom: 2px solid #fff;
+}
+
+#indicatorNewRequests {
+    display: none;
+    float: right;
+    margin-left: 3px;
+    margin-top: 5px;
+    width: 6px;
+    height: 6px;
+    background: lightcoral;
+    border-radius: 10px;
 }
 
 .wrp {
@@ -1508,6 +1533,10 @@ ol, ul {
 	font-size: 25px !important;
 }
 
+.cover h3 {
+	font-size: 16px !important;
+}
+
 .cover div {
 	width: 27%;
 }
@@ -1840,6 +1869,10 @@ ol, ul {
 
 .cover h2 span {
 	font-size: 25px !important;
+}
+
+.cover h3 {
+	font-size: 16px !important;
 }
 
 .cover div {

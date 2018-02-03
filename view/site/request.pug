@@ -8,17 +8,17 @@ html(lang=ru)
 		include includes/header.pug
 		div.wrp
 			div.respond-line
-				if (locals.type === 'sended')
-					a.current(href="/requests") Отправленные 
-				else
-					a(href="/requests") Отправленные 
-				
 				if (locals.type === 'incoming') 
 					a.current(href="/requests/incoming") Полученные 
 						span#count-incoming
 				else
 					a(href="/requests/incoming") Полученные 
 						span#count-incoming
+
+				if (locals.type === 'sended')
+					a.current(href="/requests/sended") Отправленные 
+				else
+					a(href="/requests/sended") Отправленные 
 
 				if (locals.type === 'accepted')
 					a.current(href="/requests/accepted") Одобренные 
