@@ -904,7 +904,7 @@ router.delete('/delete_photo', function(req, res, next) {
 	connectionPromise().then(function(connection) {
 		
 		db = connection;
-		var sql = ` SELECT filename_orig FROM photo WHERE id = ${req.body.photo_id};`;
+		var sql = ` SELECT filename_orig FROM photo WHERE id = '${req.body.photo_id.replace(/\'/g, '\\\'')}';`;
 		logger.debug(sql);
 		return db.queryAsync(sql);
 	
@@ -916,7 +916,7 @@ router.delete('/delete_photo', function(req, res, next) {
 	}).then(function() {
 		
 		logger.debug(`Unlink file success`);
-		var sql = `	DELETE FROM photo WHERE id = ${req.body.photo_id};`;
+		var sql = `	DELETE FROM photo WHERE id = '${req.body.photo_id.replace(/\'/g, '\\\'')}';`;
 		logger.debug(sql);
 		return db.queryAsync(sql);
 	
@@ -937,7 +937,7 @@ router.delete('/delete_photo', function(req, res, next) {
 	});
 });
 
-router.get('/get_faculties/:university_id', function(req, res, next) {
+router.get('/get_faculties/:university_id(\\d+)', function(req, res, next) {
 	var db = null;
 	connectionPromise().then(function(connection) {
 		db = connection;
@@ -960,7 +960,7 @@ router.get('/get_faculties/:university_id', function(req, res, next) {
 	});
 });
 
-router.get('/get_departments/:faculty_id', function(req, res, next) {
+router.get('/get_departments/:faculty_id(\\d+)', function(req, res, next) {
 	var db = null;
 	var departments = [];
 	connectionPromise().then(function(connection) {

@@ -83,7 +83,8 @@ router.get('/login_vk_callback', function(req, res, next) {
 			qs: {
 				access_token: access.access_token,
 				user_ids: access.user_id,
-				fields: 'about,contacts,personal,bdate,sex,universities,photo_200'
+				fields: 'about,contacts,personal,bdate,sex,universities,photo_200',
+				v: 5.71
 			},
 			json: true
 		};
@@ -95,7 +96,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 		logger.debug(JSON.stringify(result));
 		user = result.response[0];
 		
-		var sql = `SELECT id FROM \`user\` WHERE vk_id = ${user.uid};`;
+		var sql = `SELECT id FROM \`user\` WHERE vk_id = ${user.id};`; //uid
 
 		logger.debug(sql);
 		return db.queryAsync(sql);
@@ -133,7 +134,8 @@ router.get('/login_vk_callback', function(req, res, next) {
 					uri: 'https://api.vk.com/method/database.getCitiesById',
 					qs: {
 						access_token: access.access_token,
-						city_ids: user.universities[0].city
+						city_ids: user.universities[0].city,
+						v: 5.71
 					},
 					json: true
 				};
@@ -232,7 +234,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 										${university},
 										${faculty},
 										${department},
-										${user.uid},
+										${user.id},
 										NOW())`;
 				logger.debug(sql);
 				return db.queryAsync(sql);

@@ -28,7 +28,7 @@ router.get('/', function(req, res, next) {
 					FROM v_user
 					WHERE flat_id IS NOT NULL
 					ORDER BY user_date_register DESC
-					LIMIT 6`;
+					LIMIT 3`;
 
 		logger.debug(sql);
 		return db.queryAsync(sql);

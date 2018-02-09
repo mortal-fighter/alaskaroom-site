@@ -77,6 +77,29 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 	});
 });
 
+function validateSearchParameters(obj) {
+	if ( obj.limit && !obj.limit.match(/^\d+$/) ) {
+		throw new Error(`Parameters validation error: req.body.limit = '${obj.limit}' is not a valid number `);
+	}
+	if ( obj.offset && !obj.offset.match(/^\d+$/) ) {
+		throw new Error(`Parameters validation error: req.body.offset = '${obj.offset}' is not a valid number `);
+	}
+	if (obj.priorities) {
+		var valid = true;
+		for (var i = 0; i < obj.priorities.length; i++) {
+			if (!obj.priorities[i].match(/^\d+$/)) {
+				throw new Error(`Parameters validation error: req.body.priorities = '${JSON.stringify(obj.priorities)}' is not a valid number array `);
+			}
+		}
+	}
+	if (obj.user_sex !== '' && obj.user_sex !== 'мужской' && obj.user_sex !== 'женский' && obj.user_sex !== 'не важно') {
+		throw new Error(`Parameters validation error: req.body.user_sex = '${obj.user_sex}' is invalid `);
+	}
+	if (obj.user_age_range !== '' && !obj.user_age_range.match(/^(\d+)-(\d+)$/)) {
+		throw new Error(`Parameters validation error: req.body.user_age_range = '${obj.user_age_range}' is invalid `);
+	}
+}
+
 router.post('/ajax', function(req, res, next) {
 	var db = null;
 	var records = null;
@@ -86,6 +109,9 @@ router.post('/ajax', function(req, res, next) {
 	connectionPromise().then(function(connection) {
 	
 		db = connection;
+			
+		validateSearchParameters(req.body);
+
 		var sql;
 
 		var priority_list;
@@ -98,7 +124,7 @@ router.post('/ajax', function(req, res, next) {
 			priority_count = req.body.priorities.length;
 		} else {
 			priority_list = '';
-			priority_count = 0
+			priority_count = 0;
 		}
 
 		if (req.body.type === 'find-flat') {
@@ -192,12 +218,12 @@ router.post('/ajax', function(req, res, next) {
 
 			if (req.body.university_id != 0) {
 				sqlCount+= `
-					  AND v_user.university_id = ${req.body.university_id}`;
+					  AND v_user.university_id = '${req.body.university_id.replace(/\'/g, '\\\'')}'`;
 			}
 
 			if (req.body.faculty_id != 0) {
 				sqlCount+= ` 
-					  AND v_user.faculty_id = ${req.body.faculty_id}`;
+					  AND v_user.faculty_id = '${req.body.faculty_id.replace(/\'/g, '\\\'')}'`;
 			}	
 		
 		} else {
@@ -240,12 +266,12 @@ router.post('/ajax', function(req, res, next) {
 
 			if (req.body.university_id != 0) {
 				sql+= `
-					  AND v_user.university_id = ${req.body.university_id}`;
+					  AND v_user.university_id = ${req.body.university_id.replace(/\'/g, '\\\'')}`;
 			}
 
 			if (req.body.faculty_id != 0) {
 				sql+= ` 
-					  AND v_user.faculty_id = ${req.body.faculty_id}`;
+					  AND v_user.faculty_id = ${req.body.faculty_id.replace(/\'/g, '\\\'')}`;
 			}
 			sql+=`	LIMIT ${limit}
 					OFFSET ${offset};`;
@@ -283,12 +309,12 @@ router.post('/ajax', function(req, res, next) {
 
 			if (req.body.university_id != 0) {
 				sqlCount+= `
-					  AND v_user.university_id = ${req.body.university_id}`;
+					  AND v_user.university_id = ${req.body.university_id.replace(/\'/g, '\\\'')}`;
 			}
 
 			if (req.body.faculty_id != 0) {
 				sqlCount+= ` 
-					  AND v_user.faculty_id = ${req.body.faculty_id}`;
+					  AND v_user.faculty_id = ${req.body.faculty_id.replace(/\'/g, '\\\'')}`;
 			}
 
 		}
