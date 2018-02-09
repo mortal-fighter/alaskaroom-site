@@ -6,9 +6,6 @@ const logger = require('log4js').getLogger();
 const auth = require('../../components/auth.js');
 
 router.use(function(req, res, next) {
-	if (req.originalUrl !== '/favicon.ico') {
-		req.id = globalRequestCounter++;
-	}
 	// urls which are allowed with no authorization
 	if (
 		// '/favicon.ico'
