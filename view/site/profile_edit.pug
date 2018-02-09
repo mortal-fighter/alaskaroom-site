@@ -116,7 +116,7 @@ html(lang=ru)
 					p.add-room У вас есть квартира и вы ищите соседа?
 						a#btn-showflat(href="#") Рассказать про квартиру и условия
 			-
-				var flatDisplay = (locals.data.flat_id) ? 'display:block' : 'display:none'
+				var flatDisplay = (locals.data.flat_id || locals.showFlatAnyway) ? 'display:block' : 'display:none'
 			div.room-info.roommate-header(style=flatDisplay)
 				h6 Описание квартиры
 			div.room-info.room-photos(style=flatDisplay)
@@ -158,7 +158,7 @@ html(lang=ru)
 									input(type="checkbox", value=utility.id, checked)
 								else
 									input(type="checkbox", value=utility.id)
-			input#btn-saveall.final-ad(type="button", value="Сохранить объявление")
+			input#btn-saveall.final-ad(type="button", value="Сохранить анкету")
 		include includes/footer.pug
 		div#popup-window
 			div.popup-layout
@@ -167,6 +167,8 @@ html(lang=ru)
 						div.popup-close закрыть
 					div.popup-content.form-crop-avatar
 						h3.title Выберите область для аватарки
-						div
-							img#avatar-cropper
-						a.find-filter(id="btn-crop", href="#") Сохранить
+						div#cropper-container
+							img#avatar-cropper(style="max-width: 100%; max-height: 300px;")
+						div#preview
+						a.find-filter(id="btn-crop", href="#", style="display: none") Обрезать
+						a.find-filter(id="btn-upload", href="#", style="display: none") Сохранить

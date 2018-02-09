@@ -191,6 +191,8 @@ ol, ul {
 	overflow: hidden;
 }
 
+
+
 .action {
 	display: block;
 	width: 100%;
@@ -409,6 +411,133 @@ ol, ul {
 	text-decoration: none;
 	padding: 20px 20px;
 	font-size: 17px;
+}
+
+.weoffer {
+	display: block;
+	width: 100%;
+	height: auto;
+	margin: 10px auto;
+	overflow: hidden;
+}
+
+.offer1 {
+	display: block;
+	width: 30%;
+	height: 330px;
+	border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+	margin: 10px;
+	overflow: hidden;
+	float: left;
+}
+
+.offer1 div {
+	display: block;
+	width: 100%;
+	height: 120px;
+	margin: 0;
+	overflow: hidden;
+}
+
+.offer1 div img {
+	display: block;
+	width: 100%;
+	margin-top: -40px;
+}
+
+.offer1 h3 {
+	color: #333;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 17px;
+    margin: 25px auto;
+	margin-top: 40px;
+    text-align: center;
+}
+
+.offer1 p {
+	width: 85%;
+    line-height: 18px;
+    color: #6d6d6d;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.promo-btn {
+	display: block;
+	width: 65%;
+	height: 40px;
+	margin: 10px auto;
+	text-align: center;
+	border: none;
+	background-color: #5cb0da;
+	cursor: pointer;
+	outline: none;
+	color: white;
+	font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+	border-radius: 3px;
+	text-transform: uppercase;
+}
+
+.promo-btn:hover {
+	background-color: #326b88;
+	color: white;
+}
+
+.alaska-features {
+	display: block;
+	width: 100%;
+	height: auto;
+	margin: 20px auto;
+	overflow: hidden;
+}
+
+.alaska-features h2 {
+	color: #555;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 30px;
+    margin: 25px auto;
+	margin-top: 40px;
+    text-align: center;
+}
+
+.alaska-features div {
+	display: block;
+	width: 30%;
+	height: 150px;
+	border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+	margin: 10px;
+	overflow: hidden;
+	float: left;
+}
+
+.alaska-features div h3 {
+	color: #5cb0da;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 17px;
+    margin: 15px auto;
+    text-align: center;
+	text-transform: uppercase;
+}
+
+.alaska-features div p {
+	width: 85%;
+    line-height: 18px;
+    color: #6d6d6d;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    margin: 20px auto;
+    text-align: center;
 }
 
 

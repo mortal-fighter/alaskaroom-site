@@ -62,8 +62,12 @@ function handlersHomepage() {
 
 	});
 
-	$('#btn-enter-site, #enter-site-2').on('click', function() {
+	$('#btn-enter-site, #btn-enter-site-3').on('click', function() {
 		window.location.href='/auth/login_soc';
+	});
+
+	$(' #btn-enter-site-2').on('click', function() {
+		window.location.href='/auth/login_soc/show_flat_area';
 	});
 
 }

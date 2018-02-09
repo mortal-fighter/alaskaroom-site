@@ -15,8 +15,25 @@ const config = require('../../config/common.js');
 const connectionPromise = require('../../components/connectionPromise.js');
 const auth = require('../../components/auth.js');
 
-router.get('/login_soc', function(req, res, next) {
-	res.redirect(`https://oauth.vk.com/authorize?client_id=${config.vkApp.id}&display=page&redirect_uri=${config.vkApp.redirectUrl}&response_type=code&v=${config.vkApp.version}`);
+router.get('/login_soc/:postaction(\\S+)?', function(req, res, next) {
+	Promise.resolve().then(function() {
+		var redirectUrl = config.vkApp.redirectUrl;
+	
+		if (req.params.postaction && req.params.postaction === 'show_flat_area') {
+			redirectUrl = config.vkApp.redirectUrlShowFlatArea;
+		} else if (req.params.postaction) {
+			throw new Error(`Parameters validation error: postcation = '${req.params.postaction}' is not valid`);
+		}
+	
+		res.redirect(`https://oauth.vk.com/authorize?client_id=${config.vkApp.id}&display=page&redirect_uri=${redirectUrl}&response_type=code&v=${config.vkApp.version}`);
+
+	}).catch(function(err) {
+
+		logger.error(err.message + ' ' + err.stack);
+		res.render('errors/404.pug');
+
+	});
+	
 });
 
 router.get('/logout/:userId(\\d+)', function(req, res, next) {
@@ -29,7 +46,7 @@ router.get('/logout/:userId(\\d+)', function(req, res, next) {
 	});
 })
 
-router.get('/login_vk_callback', function(req, res, next) {
+router.get('/login_vk_callback/:postaction(\\S+)?', function(req, res, next) {
 	var db = null;
 	var access = null;
 	var user = null;
@@ -43,14 +60,24 @@ router.get('/login_vk_callback', function(req, res, next) {
 
 	Promise.resolve().then(function() {
 		
+		if (req.params.postaction && req.params.postaction !== 'show_flat_area') {
+			throw new Error(`Parameters validation error: postcation = '${req.params.postaction}' is not valid`);
+		}
+
 		logger.debug(req.query.code);
+		
+		var redirectUrl = config.vkApp.redirectUrl;
+		if (req.params.postaction && req.params.postaction === 'show_flat_area') {
+			redirectUrl = config.vkApp.redirectUrlShowFlatArea;
+		}
+
 		var options = {
 			uri: 'https://oauth.vk.com/access_token',
 			qs: {
 				client_id: config.vkApp.id,
 				code: req.query.code,
 				client_secret: config.vkApp.clientSecret,
-				redirect_uri: config.vkApp.redirectUrl
+				redirect_uri: redirectUrl
 			},
 			json: true
 		};
@@ -96,7 +123,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 		logger.debug(JSON.stringify(result));
 		user = result.response[0];
 		
-		var sql = `SELECT id FROM \`user\` WHERE vk_id = ${user.id};`; //uid
+		var sql = `SELECT id FROM \`user\` WHERE vk_id = ${user.id};`;
 
 		logger.debug(sql);
 		return db.queryAsync(sql);
@@ -280,7 +307,11 @@ router.get('/login_vk_callback', function(req, res, next) {
 			}).then(function(result) {
 				auth.sessionStart(newUserId).then(function(token) {
 					res.cookie('AlaskaRoomAuthToken', token);
-					res.redirect(`/profile/edit/${newUserId}`);	
+					if (req.params.postaction && req.params.postaction === 'show_flat_area') {
+						res.redirect(`/profile/edit/${newUserId}/show_flat_area`);
+					} else {
+						res.redirect(`/profile/edit/${newUserId}`);
+					}
 				}).catch(function(err) {
 					logger.error(err);
 					res.render('errors/500.pug');

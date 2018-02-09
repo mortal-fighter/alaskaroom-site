@@ -20,7 +20,8 @@ module.exports = {
 		name: 'localhost',
 		clientSecret: '9W8DQ2D3r97l3hWNoAfY',
 		redirectUrl: 'http://localhost/auth/login_vk_callback',
-		version: 5.69
+		redirectUrlShowFlatArea: 'http://localhost/auth/login_vk_callback/show_flat_area',
+		version: 5.71
 	},
 	mailer: { 
 		smtpConfig: {

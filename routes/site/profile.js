@@ -308,7 +308,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 	});
 });
 
-router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
+router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, next) {
 	var db = null;
 	
 	if (req.params.userId === 'me') {
@@ -320,6 +320,10 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 	} else if (req.user_id != req.params.userId) {
 		res.render('errors/403.pug');
 		return;
+	}
+
+	if (req.params.postaction && req.params.postaction !== 'show_flat_area') {
+		throw new Error(`Parameters validation error: req.params.postaction = '${req.params.postaction}' is invalid`);
 	}
 
 	var data = null;
@@ -335,6 +339,7 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 	var flatUtilities = [];
 	var utilityObject = [];
 	var hasFlat = false;
+	var messages = [];
 	
 	connectionPromise().then(function(connection) {
 		
@@ -554,6 +559,13 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 			}
 		}
 
+		/*if (req.user_id == data.user_id && data.user_is_activated == 0) {
+			messages.push({
+				type: 'warn',
+				body: 'Каждый наш пользователь должен заполнить и сохнанить анкету, что начать использование сайта'
+			});
+		}*/
+
 		res.render('site/profile_edit.pug', {
 			user_id: req.params.userId,
 			data: data,
@@ -564,12 +576,19 @@ router.get('/edit/:userId((\\d+|me))', function(req, res, next) {
 			photos: photos,
 			priorities: prioritySelect,
 			utilities: utilityObject,
+			showFlatAnyway: (req.params.postaction && req.params.postaction === 'show_flat_area') ? true : false,
 			isAuthorized: req.isAuthorized,
-			userId: req.user_id
+			userId: req.user_id,
+			messages: messages
 		});
 	
 	}).catch(function(err) {
 		
+		if (err.message.match(/^Parameters validation error/)) {
+			logger.debug(err.message, err.stack);
+			res.render('errors/404.pug');
+		}
+
 		logger.error(err.message, err.stack);
 		res.render('errors/500.pug');
 	
