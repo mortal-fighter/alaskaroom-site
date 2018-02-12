@@ -125,7 +125,80 @@ function handlersProfileEdit() {
 			return;
 		}
 
-		if (this.files[0].size > 10485760 / 2) {
+		//alert('avatar changed');
+
+		$('#popup-window').show();
+
+		var image = document.getElementById('avatar-cropper');
+		image.onload = function() {
+			//alert('image loaded');
+			let croppedCanvas = null;
+			var cropper = new Cropper(image, {
+				aspectRatio: 1 / 1,
+				viewMode: 1,
+				ready: function() {
+					$('#btn-crop').show();
+					$('#btn-crop').on('click', function(e) {
+						e.preventDefault();
+						//console.log('click. cropper=', cropper);
+						croppedCanvas = cropper.getCroppedCanvas({
+							width: 200,
+							height: 200,
+							minWidth: 200,
+							minHeight: 200,
+							maxWidth: 4096,
+							maxHeight: 4096,
+							imageSmoothingEnabled: true,
+							imageSmoothingQuality: 'high'
+						});
+						$('#cropper-container').hide();
+						$('#preview').append(croppedCanvas).show();
+						$('#btn-crop').hide();
+						$('#btn-upload').show();
+					});
+					$('#btn-upload').on('click', function(e) {
+						e.preventDefault();
+						console.log('cropped canvas=', croppedCanvas);
+						croppedCanvas.toBlob(function(blob) {
+							var formData = new FormData();
+							formData.append('upload', blob, 'upload.jpg');
+							formData.append('user_id', $('#user_id').val());
+
+							$.ajax({
+								url: '/profile/upload_avatar',
+								type: 'POST',
+								data: formData,
+								processData: false,
+								contentType: false,
+								success: function(result) {
+									switch (result.status) {
+										case 'ok': 
+											$('#user_avatar_1').attr('src', result.user_avatar);
+											$('#popup-window').hide();
+											break;
+										case 'not ok':
+											alert('Произошла ошибка при загрузке фотографии');
+											break; 
+									}
+								},
+								error: function() {
+									console.log('Ошибка интернет-соединения');
+								}
+							});
+						}, 'image/jpeg', 0.9);
+					})
+				},
+				cropend: function() {
+					console.log(this);
+				}
+			});
+
+		}
+		image.src = window.URL.createObjectURL(this.files[0]);
+
+
+		
+		/*if (this.files[0].size > 10485760 / 2) {
 			alert('Размер загружаемой фотографии не должен превышать 5 мб');
 			return;
 		};
@@ -154,7 +227,7 @@ function handlersProfileEdit() {
 			error: function() {
 				console.log('Ошибка интернет-соединения');
 			}
-		});
+		});*/
 	});
 
 	$('#btn-photo-add').on('click', function() {
