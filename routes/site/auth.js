@@ -192,20 +192,7 @@ router.get('/login_vk_callback/:postaction(\\S+)?', function(req, res, next) {
 						sex = 'не важно';
 				}
 
-				var hasBirthYear = false;
-				var dateFormat = '%e.%c';
 
-				if (user.bdate.match(/^\d+\.\d+\.\d+$/)) {
-					hasBirthYear = true;
-					dateFormat = '%e.%c.%Y';			
-				}		
-
-				var age = 0;
-				if (hasBirthYear) {
-					var now = moment();
-					var bdate = moment(user.bdate, 'D.M.YYYY');
-					age = now.diff(bdate, 'years');
-				}
 
 				var about = (user.about) ? user.about : '';
 
@@ -235,6 +222,29 @@ router.get('/login_vk_callback/:postaction(\\S+)?', function(req, res, next) {
 					city = user.universities[0].cityName;
 				}
 
+				var hasBirthDate = (user.bdate) ? true : false;
+				var hasBirthYear = false;
+				var dateFormat = '%e.%c';
+				var age = null;
+				var birthDate = null;
+
+				if (hasBirthDate) {
+					if (user.bdate.match(/^\d+\.\d+\.\d+$/)) {
+						hasBirthYear = true;
+						dateFormat = '%e.%c.%Y';
+					}
+					birthDate = `STR_TO_DATE('${user.bdate}', '${dateFormat}')`;
+				} else {
+					age = 'NULL';
+					birthDate =	'NULL';					
+				}
+				
+				if (hasBirthYear) {
+					var now = moment();
+					var bdate = moment(user.bdate, 'D.M.YYYY');
+					age = "'" + now.diff(bdate, 'years') + "'";
+				}
+				
 				var sql = `	INSERT INTO \`user\`(	first_name, 
 													last_name, 
 													sex, 
@@ -252,8 +262,8 @@ router.get('/login_vk_callback/:postaction(\\S+)?', function(req, res, next) {
 							VALUES (	'${user.first_name.replace(/\'/g, '\\\'')}',
 										'${user.last_name.replace(/\'/g, '\\\'')}',
 										'${sex}',
-										'${age}',
-										STR_TO_DATE('${user.bdate}', '${dateFormat}'),
+										${age},
+										${birthDate},
 										'${city.replace(/\'/g, '\\\'')}',
 										'${about.replace(/\'/g, '\\\'')}',
 										'/images/photo.jpg',

@@ -28,7 +28,15 @@ html(lang=ru)
 					input#user_avatar_2(type="file", accept=".jpg, .png, .gif")
 					div#upload-icon
 				h3= locals.data.user_name
-				p= locals.data.user_age + ' год, ' + locals.data.university_name + ', ' + locals.data.faculty_name
+				-
+					var caption = locals.data.user_age + ' год';
+					if (locals.data.university_name) {
+						caption += ', ' + locals.data.university_name;
+					}
+					if (locals.data.faculty_name) {
+						caption += ', ' + locals.data.faculty_name;
+					}
+				p= caption
 			div.profile-param
 				div.user-desc
 					h3 Обо мне
