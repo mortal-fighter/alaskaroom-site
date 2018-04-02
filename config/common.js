@@ -1,7 +1,10 @@
+const HOST = 'localhost';
+const PORT = 80;
+
 module.exports = {
 	app: {
 		mode: 'development',
-		port: 80,
+		port: PORT,
 		emailAdmin: 'kirillmybox@rambler.ru',
 		secret: 'холоднаяводабрррр!'
 	},
@@ -19,7 +22,7 @@ module.exports = {
 		id: 5763848,
 		name: 'localhost',
 		clientSecret: '9W8DQ2D3r97l3hWNoAfY',
-		redirectUrl: 'http://localhost/auth/login_vk_callback',
+		redirectUrl: 'http://' + HOST + ':' + PORT + '/auth/login_vk_callback',
 		redirectUrlShowFlatArea: 'http://localhost/auth/login_vk_callback/show_flat_area',
 		version: 5.71
 	},

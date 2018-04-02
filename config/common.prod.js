@@ -1,7 +1,7 @@
 module.exports = {
 	app: {
 		mode: 'development',
-		port: 80,
+		port: 7777,
 		emailAdmin: 'kirillmybox@rambler.ru',
 		secret: 'холоднаяводабрррр!'
 	},

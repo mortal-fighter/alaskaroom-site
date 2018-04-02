@@ -29,8 +29,10 @@ app.use(cookieParser());
 app.use(compression());
 
 
-app.use(express.static('public'));
-app.set('views', './view/');
+if (config.app.mode === 'development') {
+	app.use(express.static('public'));
+}
+app.set('views', __dirname + '/view/');
 app.set('view engine', 'pug');
 
 app.use('/api', require('./routes/api'));
