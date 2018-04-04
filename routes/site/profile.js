@@ -99,7 +99,7 @@ function validateFlat(flat) {
 	if (flat.id && !flat.id.match(/^\d+$/)) {
 		throw new Error(`Parameters validation error (flat.id): '${flat.id}'.`);
 	}
-	if (flat.description && flat.description.length > 200) {
+	if (flat.description && flat.description.length > 3000) {
 		throw new Error(`Parameters validation error: flat.description.length = ${flat.description.length}.`);
 	}
 	if (!flat.address) {

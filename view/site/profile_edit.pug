@@ -44,13 +44,13 @@ html(lang=ru)
 				div.user-setting.info
 					input(type="hidden", id="user_id", value=locals.data.user_id)
 					div
-						p Ваше имя
+						p Ваше имя*
 						input#user_first_name.option-set-small(type="text", placeholer="Ваше имя", value=locals.data.user_first_name)
 					div
-						p Ваша фамилия
+						p Ваша фамилия*
 						input#user_last_name.option-set-small(type="text", placeholer="Ваша фамилия", value=locals.data.user_last_name)
 					div
-						p Ваш пол
+						p Ваш пол*
 						select#user_sex.option-set
 							if locals.data.user_sex === 'мужской'
 								option(id='женский') женский
@@ -59,16 +59,16 @@ html(lang=ru)
 								option(id='женский', selected) женский
 								option(id='мужской') мужской
 					div
-						p Дата Вашего рождения
+						p Дата Вашего рождения*
 						input#user_birth_date.option-set-small(type="text", placeholer="Дата Вашего рождения", value=locals.data.user_birth_date)
 					div
-						p Номер Вашего мобильного
+						p Номер Вашего мобильного*
 						input#user_phone.option-set-small(type="text", placeholer="Номер Вашего мобильного", value=locals.data.user_phone)
 					div
-						p Ваш email
+						p Ваш email*
 						input#user_email.option-set-small(type="text", placeholer="Ваш email", value=locals.data.user_email)
 					div
-						p Город вашего ВУЗа
+						p Город вашего ВУЗа*
 						input#user_city.option-set-small(type="text", placeholer="Город вашего ВУЗа", value=locals.data.user_city)
 					div
 						p Название вашего ВУЗа
@@ -103,8 +103,9 @@ html(lang=ru)
 								else
 									option(value=year.id)= year.name_full
 					div
-						p Сколько готов(а) платить
+						p Сколько готов(а) платить*
 						input#user_wish_pay.option-set-small(type="text", placeholer="3000", value=locals.data.user_wish_pay)
+					div.sub-comment Поля, отмеченные символом * обязательны для заполнения
 				div.user-setting.priorities
 					if locals.priorities
 						for priority in locals.priorities
@@ -145,19 +146,20 @@ html(lang=ru)
 					else
 						input#flat_id(type="hidden", value="")
 				div.user-setting
-					input#flat_address.option-set-big(type="text", placeholder="Адрес квартиры", value=locals.data.flat_address)
+					input#flat_address.option-set-big(type="text", placeholder="Адрес квартиры*", value=locals.data.flat_address)
 					div
-						input#flat_square.option-set-small(type="text", placeholder="Площадь квартиры", value=locals.data.flat_square)
+						input#flat_square.option-set-small(type="text", placeholder="Площадь квартиры*", value=locals.data.flat_square)
 					div
-						input#flat_room_num.option-set-small(type="text", placeholder="Количество комнат", value=locals.data.flat_room_num)
+						input#flat_room_num.option-set-small(type="text", placeholder="Количество комнат*", value=locals.data.flat_room_num)
 					div
-						input#flat_traffic.option-set-small(type="text", placeholder="Ближайший транспорт", value=locals.data.flat_traffic)
+						input#flat_traffic.option-set-small(type="text", placeholder="Ближайший транспорт*", value=locals.data.flat_traffic)
 					div
-						input#flat_total_pay.option-set-small(type="text", placeholder="Общая аренда, руб", value=locals.data.flat_total_pay)
+						input#flat_total_pay.option-set-small(type="text", placeholder="Общая аренда*, руб", value=locals.data.flat_total_pay)
 					div
-						input#flat_rent_pay.option-set-small(type="text", placeholder="Плата для соседа, руб", value=locals.data.flat_rent_pay)
+						input#flat_rent_pay.option-set-small(type="text", placeholder="Плата для соседа*, руб", value=locals.data.flat_rent_pay)
 					div
-						input#flat_enter_date.option-set-small(type="text", placeholder="Дата въезда", value=locals.data.flat_enter_date)
+						input#flat_enter_date.option-set-small(type="text", placeholder="Дата въезда*", value=locals.data.flat_enter_date)
+					div.sub-comment Поля, отмеченные символом * обязательны для заполнения
 				div#utility.user-setting
 					if locals.utilities
 						for utility in locals.utilities
@@ -174,7 +176,7 @@ html(lang=ru)
 					div.popup-header
 						div.popup-close закрыть
 					div.popup-content.form-crop-avatar
-						h3.title Выберите область для аватарки
+						h3.title.centered-margined Выберите область для аватарки
 						div#cropper-container
 							img#avatar-cropper(style="max-width: 100%; max-height: 300px;")
 						div#preview

@@ -1,5 +1,7 @@
 'use strict';
 
+var countFlatPhotos = 0;
+
 /* HANDLERS UI CONTROLS */
 function handlersProfileView() {
 
@@ -71,6 +73,8 @@ function handlersProfileView() {
 
 function handlersProfileEdit() {
 
+	countFlatPhotos = $('.room-photos > div[id]').length;
+
 	$('#user_birth_date').datepicker({
 		dayNames: [ "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье" ],
 		dayNamesShort: [ "Пон", "Вто", "Сре", "Чет", "Пят", "Суб", "Вос" ],
@@ -131,7 +135,6 @@ function handlersProfileEdit() {
 
 		var image = document.getElementById('avatar-cropper');
 		image.onload = function() {
-			//alert('image loaded');
 			let croppedCanvas = null;
 			var cropper = new Cropper(image, {
 				aspectRatio: 1 / 1,
@@ -140,7 +143,6 @@ function handlersProfileEdit() {
 					$('#btn-crop').show();
 					$('#btn-crop').on('click', function(e) {
 						e.preventDefault();
-						//console.log('click. cropper=', cropper);
 						croppedCanvas = cropper.getCroppedCanvas({
 							width: 200,
 							height: 200,
@@ -158,7 +160,7 @@ function handlersProfileEdit() {
 					});
 					$('#btn-upload').on('click', function(e) {
 						e.preventDefault();
-						console.log('cropped canvas=', croppedCanvas);
+						//console.log('cropped canvas=', croppedCanvas);
 						croppedCanvas.toBlob(function(blob) {
 							var formData = new FormData();
 							formData.append('upload', blob, 'upload.jpg');
@@ -195,39 +197,6 @@ function handlersProfileEdit() {
 
 		}
 		image.src = window.URL.createObjectURL(this.files[0]);
-
-
-		
-		/*if (this.files[0].size > 10485760 / 2) {
-			alert('Размер загружаемой фотографии не должен превышать 5 мб');
-			return;
-		};
-
-		var formData = new FormData();
-		formData.append('upload', this.files[0], this.files[0].name);
-		formData.append('user_id', $('#user_id').val());
-
-		$.ajax({
-			url: '/profile/upload_avatar',
-			type: 'POST',
-			data: formData,
-			processData: false,
-			contentType: false,
-			success: function(result) {
-				switch (result.status) {
-					case 'ok': 
-						$('#user_avatar_1').attr('src', result.user_avatar);
-						//doCrop(result);
-						break;
-					case 'not ok':
-						alert('Произошла ошибка при загрузке фотографии');
-						break; 
-				}
-			},
-			error: function() {
-				console.log('Ошибка интернет-соединения');
-			}
-		});*/
 	});
 
 	$('#btn-photo-add').on('click', function() {
@@ -287,7 +256,7 @@ function handlersProfileEdit() {
 						}
 						
 						$('#btn-photo-add').parent().before(elems);
-
+						countFlatPhotos += result.newPhotos.length;
 						break;
 					case 'not ok':
 						alert('Ошибка при загрузке фото');
@@ -379,7 +348,7 @@ function handlersProfileEdit() {
 }
 
 function loadFaculties(university_id) {
-	console.log('loadFaculties');
+	//console.log('loadFaculties');
 	
 	if (university_id !== '') {
 
@@ -426,8 +395,8 @@ function loadFaculties(university_id) {
 }
 
 function loadDepartments(faculty_id) {
-	console.log('loadDepartments');
-	console.log('faculty_id=', faculty_id);	
+	//console.log('loadDepartments');
+	//console.log('faculty_id=', faculty_id);	
 	if (faculty_id !== '') {
 
 		$.ajax({
@@ -465,6 +434,7 @@ function deletePhoto(photoId) {
 			switch (result.status) {
 				case 'ok': 
 					$('#flat-photo-'+ident).remove();
+					countFlatPhotos--;
 					break;
 				case 'not ok':
 					alert('Ошибка при удалении фото');
@@ -508,7 +478,7 @@ function doCrop(result) {
 		cropper.getCroppedCanvas().toBlob(function (blob) {
 			var formData = new FormData();
 
-			console.log("blob=", blob);
+			//console.log("blob=", blob);
 			formData.append('upload', blob, 'upload');
 			formData.append('user_id', $('#user_id').val());
 
@@ -681,10 +651,16 @@ function validateUserInfo() {
 }
 
 function validateFlat() {
+	if (countFlatPhotos === 0) {
+		alert('Необходимо загрузить хотя бы одну реальную фотографию квартиры');
+		$(window).scrollTop( $('.room-photos').offset().top );
+		return false;
+	}
+
 	var flat_description = $('#flat_description').val();
 	if ( flat_description !== '' && flat_description !== ' ') {
-		if (flat_description.length > 200) {
-			alert('Поле \'Описание квартиры\' не может быть длиннее 200 символов');
+		if (flat_description.length > 3000) {
+			alert('Поле \'Описание квартиры\' не может быть длиннее 3000 символов');
 			$('#flat_description').focus();
 			return false;
 		}
