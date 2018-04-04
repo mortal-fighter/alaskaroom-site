@@ -1,0 +1,143 @@
+doctype
+html(lang=ru)
+	head
+		include includes/head_common.pug
+		//- script(src="/js/filter.js", type="text/javascript")
+
+		style
+			|	.no-records {
+			|		text-align: center;
+			|		padding-top: 50%;
+			|	}
+	body
+		include includes/header.pug
+		div.wrp
+			div.main-page
+				//- левая колонка
+				div.main-filter
+					//- form(method="", action="")
+					//- 	p Город
+					//- 	select.prime-filter(size="1")
+					//- 		option(selected) Ростов-на-Дону
+					//- 	p Требуется:
+					//- 	select.lower-filter(size="1")
+					//- 		option(value="night", selected) Переночевать
+					//- 		option(value="move") Помочь переехать
+					//- 		option(value="animal") Передержать животных
+					//- 		option(value="stock") Передержать вещи для переезда
+					a.find-filter(href="#", style="width: auto") Получить дневной доступ
+					div.kampus-rules
+						h3 Правила кампуса
+						p 1. В Кампусе допускаются только молодые люди \ студенты в возрасте от 18 до 30 лет.
+						p 2. Вы можете пожаловаться на пользователя, если он завысил цену или недобросовестно повел себя.
+						p 3. Ценовая политика устанавливается сервисом AlaskaRoom и принимается всеми ее участниками.
+						p 4. Нарушение правил влечет перманентный бан.
+						h4 Расшифровика цен
+						p 5. Стоимость ночевки (1 сутки) - 500 рублей.
+						p 6. Помощь в переезде (сроки и условия оговариваются между участниками) - 500 рублей.
+						p 7. Передержка домашних животных - 500 рублей (не более 3 дней).
+						p 8. Передержка вещей - 500 рублей (не более 3 дней).
+
+				//- правая колонка		
+				div.listing
+					div.mbl-view.clear-view
+						input.mbl-filter(type="button", value="Фильтр румейтов")
+					div.desc-box
+						img(src="/images/kampus.jpg", alt="Cover")
+						div.kampus-post
+							h2 Кампус500 - это онлайн площадка для размещения и поиска краткосрочной аренды жилья, а также организации переезда для студентов.
+							p Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+							p После регистрации вы сможете разместить свое объявление, указать услуги, которые могли бы оказать другим и начать зарабатывать с нами. 
+								a(href="#") Регистрация
+							div.option-box
+								h3 Переночевать в гостях
+								img(src="/images/couch1.png", alt="couch")
+								h4 500 рублей
+							div.option-box
+								h3 Помощь с переездом
+								img(src="/images/move.png", alt="move")
+								h4 500 рублей
+							div.option-box
+								h3 Передержка животных
+								img(src="/images/pet.png", alt="pet")
+								h4 500 рублей
+							div.option-box
+								h3 Передержка вещей
+								img(src="/images/box.png", alt="box")
+								h4 500 рублей
+					div.user-list
+						img(src="/images/photo.jpg", alt="User")
+						h4 Влад
+						div.help-box
+							img(src="/images/move.png", alt="Move")
+							img(src="/images/pet.png", alt="Move")
+							img(src="/images/box.png", alt="Move")
+							img(src="/images/couch.png", alt="Move")
+					div.user-list
+						img(src="/images/photo.jpg", alt="User")
+						h4 Влад
+						div.help-box
+							img(src="/images/move.png", alt="Move")
+							img(src="/images/pet.png", alt="Move")
+							img(src="/images/box.png", alt="Move")
+							img(src="/images/couch.png", alt="Move")
+					div.user-list
+						img(src="/images/photo.jpg", alt="User")
+						h4 Влад
+						div.help-box
+							img(src="/images/move.png", alt="Move")
+							img(src="/images/pet.png", alt="Move")
+							img(src="/images/box.png", alt="Move")
+							img(src="/images/couch.png", alt="Move")
+					div.user-list
+						img(src="/images/photo.jpg", alt="User")
+						h4 Влад
+						div.help-box
+							img(src="/images/move.png", alt="Move")
+							img(src="/images/pet.png", alt="Move")
+							img(src="/images/box.png", alt="Move")
+							img(src="/images/couch.png", alt="Move")
+					div.user-list
+						img(src="/images/photo.jpg", alt="User")
+						h4 Влад
+						div.help-box
+							img(src="/images/move.png", alt="Move")
+							img(src="/images/pet.png", alt="Move")
+							img(src="/images/box.png", alt="Move")
+							img(src="/images/couch.png", alt="Move")
+					div.user-list
+						img(src="/images/photo.jpg", alt="User")
+						h4 Влад
+						div.help-box
+							img(src="/images/move.png", alt="Move")
+							img(src="/images/pet.png", alt="Move")
+							img(src="/images/box.png", alt="Move")
+							img(src="/images/couch.png", alt="Move")
+					div.user-list
+						img(src="/images/photo.jpg", alt="User")
+						h4 Влад
+						div.help-box
+							img(src="/images/move.png", alt="Move")
+							img(src="/images/pet.png", alt="Move")
+							img(src="/images/box.png", alt="Move")
+							img(src="/images/couch.png", alt="Move")
+					div.user-list
+						img(src="/images/photo.jpg", alt="User")
+						h4 Влад
+						div.help-box
+							img(src="/images/move.png", alt="Move")
+							img(src="/images/pet.png", alt="Move")
+							img(src="/images/box.png", alt="Move")
+							img(src="/images/couch.png", alt="Move")
+					div.user-list
+						img(src="/images/photo.jpg", alt="User")
+						h4 Влад
+						div.help-box
+							img(src="/images/move.png", alt="Move")
+							img(src="/images/pet.png", alt="Move")
+							img(src="/images/box.png", alt="Move")
+							img(src="/images/couch.png", alt="Move")
+					
+					a.load-more(href="#") Загрузить больше...
+
+		include includes/footer.pug

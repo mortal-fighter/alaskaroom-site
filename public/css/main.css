@@ -1592,6 +1592,149 @@ ol, ul {
 	height: auto !important;
 }
 
+/*Страница Кампуса*/
+
+.kampus-rules {
+	display: block;
+    width: 98%;
+    height: auto;
+    margin: 10px auto;
+    overflow: hidden;
+    padding: 7px 0;
+    border-radius: 3px;
+    background-color: #fff;
+    box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+}
+
+.kampus-rules h3 {
+	color: #3e9fd7;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    margin: 10px;
+	margin-bottom: 5px;
+}
+
+.kampus-rules p {
+	color: #888;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    margin: 10px;
+    line-height: 17px;
+}
+
+.kampus-rules h4 {
+	color: #555;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    margin: 10px;
+}
+
+.help-box {
+	display: block;
+	width: 98%;
+	height: 40px;
+	margin: 5px auto;
+}
+
+.help-box img {
+	display: block;
+	width: 31px;
+	height: 31px;
+	float: left;
+	margin: 5px;
+	padding: 3px;
+	border: 1px solid #aeaeae;
+	border-radius: 3px;
+}
+
+.desc-box {
+	display: block;
+	width: 98%;
+	height: auto;
+	overflow: hidden;
+	margin: 0 auto;
+}
+
+.desc-box h2 {
+	font-family: 'Roboto', sans-serif;
+	font-size: 20px;
+    line-height: 25px;
+    color: #5b9fc2;
+	margin: 20px;
+	margin-bottom: 5px;
+}
+
+.desc-box img {
+	display: block;
+	width: 98%;
+	margin: 0 auto;
+	margin-bottom: 10px;
+	overflow:hidden;
+}
+
+.kampus-post {
+	display: block;
+    width: 98%;
+    height: auto;
+    overflow: hidden;
+    margin: 0 auto;
+    border: 1px solid #eaeaea;
+    background-color: #fff;
+    border-radius: 3px;
+}
+
+.kampus-post p {
+	font-family: 'Roboto', sans-serif;
+	font-size: 13px;
+    line-height: 22px;
+    color: #333;
+	margin: 20px;
+}
+
+.kampus-post p a{
+	color: #164761;
+	font-weight: 500;
+}
+
+.option-box {
+	display: block;
+	width: 21%;
+	height: 170px;
+	margin: 12px;
+    border-radius: 3px;
+    background-color: #fff;
+    box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+	float: left;
+}
+
+.option-box h3 {
+	color: #3e9fd7;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    margin: 10px;
+	text-align: center;
+}
+
+.option-box img {
+	display: block;
+	width: 70px;
+	margin: 10px auto;
+	overflow: hidden;
+}
+
+.option-box h4 {
+	color: #555;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    margin: 15px 10px;
+	text-align: center;
+}
+
 
 /*Стили для футера*/
 

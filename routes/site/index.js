@@ -38,6 +38,7 @@ router.use('/filter', require('./filter'));
 router.use('/profile', require('./profile'));
 router.use('/requests', require('./request'));
 router.use('/faculty', require('./faculty'));
+router.use('/campus500', require('./campus500'));
 router.use('/', require('./homepage'));
 
 module.exports = router;
