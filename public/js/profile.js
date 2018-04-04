@@ -1,6 +1,7 @@
 'use strict';
 
 var countFlatPhotos = 0;
+var hasTemporaryPhotos = false;
 
 /* HANDLERS UI CONTROLS */
 function handlersProfileView() {
@@ -74,6 +75,25 @@ function handlersProfileView() {
 function handlersProfileEdit() {
 
 	countFlatPhotos = $('.room-photos > div[id]').length;
+
+	window.addEventListener("beforeunload", function(e) {
+		if (hasTemporaryPhotos) {
+			$.ajax({
+				method: 'DELETE',
+				url: '/profile/clear_temporary_flat_photos',
+				success: function(result) {
+					if (result.status === 'ok') {
+						console.log('Временные фото удалены');
+					} else {
+						console.log(result.message);
+					}
+				},
+				error: function(error) {
+					console.log('WARN: Нет соединения с сервером');
+				}
+			});
+		}
+	});
 
 	$('#user_birth_date').datepicker({
 		dayNames: [ "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье" ],
@@ -257,6 +277,7 @@ function handlersProfileEdit() {
 						
 						$('#btn-photo-add').parent().before(elems);
 						countFlatPhotos += result.newPhotos.length;
+						hasTemporaryPhotos = true;;
 						break;
 					case 'not ok':
 						alert('Ошибка при загрузке фото');
@@ -333,6 +354,7 @@ function handlersProfileEdit() {
 					success: function(result) {
 						if (result.status === 'ok') {
 							alert('Информация сохранена');
+							hasTemporaryPhotos = false;
 							window.location.href = '/profile/view/' + $('#user_id').val();
 						} else {
 							alert('При загрузке данных произошла ошибка');

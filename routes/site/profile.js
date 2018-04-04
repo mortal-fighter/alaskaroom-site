@@ -2,12 +2,13 @@
 
 const router = require('express').Router();
 const Promise = require('bluebird');
-const connectionPromise = require('../../components/connectionPromise.js');
-const logger = require('log4js').getLogger();
 const moment = require('moment');
 const fs = Promise.promisifyAll(require('fs'));
 const path = require('path');
 const sizeOfAsync = Promise.promisify(require('image-size'));
+
+const connectionPromise = require('../../components/connectionPromise.js');
+const logger = require('../../components/myLogger.js');
 
 const multer  = require('multer');
 //todo: fix bug with duplicating && corrupting images 
@@ -42,7 +43,7 @@ const storage = multer.diskStorage({
 			
 			}).catch(function(err) {
 			
-				logger.error(err.stack, err.message);
+				logger.error(req, err.stack, err.message);
 			
 			});
 		});	
@@ -223,23 +224,23 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 						SUBSTR(flat_enter_date, 1, 5) flat_enter_date
 					FROM v_user_all
 					WHERE user_id = ${req.params.userId};`;
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 	
 	}).then(function(result) {
 
-		logger.debug(result);
+		logger.debug(req, result);
 		data = result[0];
 
 		var sql = `	SELECT priority_name_full, option_name
 					FROM v_user_priority
 					WHERE user_id = ${req.params.userId};`;
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 	
 	}).then(function(result) {
 			
-		logger.debug(result);
+		//logger.debug(req, result);
 		priorities = result;
 		
 		if (data.flat_id) {
@@ -251,7 +252,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 							WHERE flat_id = ${data.flat_id};`;
 				return db.queryAsync(sql);
 			}).then(function(result) {
-				logger.debug(result);
+				logger.debug(req, result);
 				photos = result;
 			});
 		} else {
@@ -268,7 +269,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 							FROM roommate_request 
 							WHERE from_user_id = ${req.params.userId}
 						  	  AND to_user_id = ${req.user_id}) status_incoming;`
-			logger.debug(sql);
+			logger.debug(req, sql);
 			return db.queryAsync(sql);
 		} else {
 			return Promise.resolve();
@@ -277,7 +278,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 	}).then(function(result) {
 		
 		if (result) {
-			logger.debug(result);
+			logger.debug(req, result);
 			status_sended = result[0].status_sended;
 			status_incoming = result[0].status_incoming;
 		}
@@ -302,7 +303,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 	
 	}).catch(function(err) {
 		
-		logger.error(err.message, err.stack);
+		logger.error(req, err.message, err.stack);
 		res.render('errors/500.pug');
 	
 	});
@@ -379,12 +380,12 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 						flat_enter_date
 					FROM v_user_all
 					WHERE user_id = ${req.params.userId};`;
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 	
 	}).then(function(result) {
 
-		logger.debug(result);
+		logger.debug(req, result);
 		data = result[0];
 		if (data.flat_id) {
 			hasFlat = true;
@@ -394,66 +395,66 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 			SELECT '' id, 'Не выбран' name_short 
 			UNION
 			SELECT id, name_short FROM university;`;
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 
 	}).then(function(result) {
 
-		logger.debug(result);
+		//logger.debug(req, result);
 		universities = result;
 
 		var sql = ` 
 			SELECT '' id, 'Не выбран' name_full 
 			UNION
 			SELECT id, name_full FROM faculty WHERE university_id = ${data.university_id};`;
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 
 	}).then(function(result) {
 
-		logger.debug(result);
+		//logger.debug(req, result);
 		faculties = result;
 
 		var sql = ` 
 			SELECT '' id, 'Не выбрана' name_full 
 			UNION
 			SELECT id, name_full FROM department WHERE faculty_id = ${data.faculty_id};`;
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 
 	}).then(function(result) {
 
-		logger.debug(result);
+		//logger.debug(req, result);
 		departments = result;
 
 		var sql = ` 
 			SELECT '' id, 'Не выбран' name_full 
 			UNION
 			SELECT id, name_full FROM studyyear;`;
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 
 	}).then(function(result) {
 
-		logger.debug(result);
+		//logger.debug(req, result);
 		studyYears = result;
 
 		var sql = `	SELECT * FROM v_priority`;
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 
 	}).then(function(result) {
 
-		//logger.debug(result);
+		//logger.debug(req, result);
 		priorities = result;
 
 		var sql = `	SELECT * FROM v_user_priority WHERE user_id = ${req.params.userId};`;
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 
 	}).then(function(result) {
 
-		//logger.debug(result);
+		//logger.debug(req, result);
 		userPriorities = result;
 
 		// construct priority <select>s (begin)
@@ -503,7 +504,7 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 							WHERE flat_id = ${data.flat_id};`;
 				return db.queryAsync(sql);
 			}).then(function(result) {
-				logger.debug(result);
+				logger.debug(req, result);
 				photos = result;
 			});
 		} else {
@@ -517,13 +518,13 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 						display_name	utility_name 
 					FROM utility
 					ORDER BY display_order;`;
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 	
 	}).then(function(result) {
 
-		logger.debug(result);
-		//logger.debug('hasFlat='+hasFlat);
+		//logger.debug(req, result);
+		//logger.debug(req, 'hasFlat='+hasFlat);
 		utilities = result;
 
 		if (hasFlat) {
@@ -538,7 +539,7 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 	}).then(function(result) {
 
 		if (hasFlat) {
-			logger.debug(result);
+			logger.debug(req, result);
 			flatUtilities = result;
 		}
 
@@ -585,15 +586,14 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 	}).catch(function(err) {
 		
 		if (err.message.match(/^Parameters validation error/)) {
-			logger.debug(err.message, err.stack);
+			logger.debug(req, err.message, err.stack);
 			res.render('errors/404.pug');
 		}
 
-		logger.error(err.message, err.stack);
+		logger.error(req, err.message, err.stack);
 		res.render('errors/500.pug');
 	
 	});
-
 });
 
 router.post('/edit', function(req, res, next) {
@@ -660,11 +660,11 @@ router.post('/edit', function(req, res, next) {
 
 			} // end has flatId
 
-			logger.debug(sql);
+			logger.debug(req, sql);
 
 			return db.queryAsync(sql).then(function(result) {
 
-				logger.debug(result);
+				logger.debug(req, result);
 
 				if (!hasId) {
 					req.body.flat.id = result.insertId;
@@ -674,21 +674,21 @@ router.post('/edit', function(req, res, next) {
 							SET flat_id = ${req.body.flat.id}, 
 								temporary_user_id = NULL
 							WHERE temporary_user_id = ${req.user_id};`;
-				logger.debug(sql);
+				logger.debug(req, sql);
 				return db.queryAsync(sql);
 
 			}).then(function(result) {
 
-				logger.debug(result);
+				logger.debug(req, result);
 				
 				var sql = `	DELETE FROM flat_utility WHERE flat_id = ${req.body.flat.id}`;
-				logger.debug(sql);
+				logger.debug(req, sql);
 				return db.queryAsync(sql);
 
 			}).then(function(result) {
 
 				if (result) {
-					logger.debug(result);
+					logger.debug(req, result);
 				}
 
 				if (req.body.utility.length) {
@@ -698,7 +698,7 @@ router.post('/edit', function(req, res, next) {
 					for (var i = 1; i < req.body.utility.length; i++) {
 						sql += `\n, (${req.body.flat.id}, ${req.body.utility[i]})`;
 					}
-					logger.debug(sql);
+					logger.debug(req, sql);
 					return db.queryAsync(sql);
 				}
 			});
@@ -712,7 +712,7 @@ router.post('/edit', function(req, res, next) {
 	}).then(function(result) {
 
 		if (result) {
-			logger.debug(result);
+			logger.debug(req, result);
 		}
 			
 		validateUser(req.body.user);
@@ -745,19 +745,19 @@ router.post('/edit', function(req, res, next) {
 					flat_id = ${flat_id},
 					is_activated = 1
 				WHERE id = ${req.body.user.id};`;
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 	
 	}).then(function(result) {
 
-		logger.debug(result);
+		logger.debug(req, result);
 		var sql = `DELETE FROM user_priority_option WHERE user_id = ${req.body.user.id};`;
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 
 	}).then(function(result) {
 
-		logger.debug(result);
+		logger.debug(req, result);
 			
 		// todo: ?
 		if (!req.body.priority.length) {
@@ -771,19 +771,19 @@ router.post('/edit', function(req, res, next) {
 		}
 		sql += ';';
 
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 
 	}).then(function(result) {
 
-		logger.debug(result);
+		logger.debug(req, result);
 		res.json({
 			status: 'ok'
 		});
 
 	}).catch(function(err) {
 	
-		logger.error(err.stack, err.message);
+		logger.error(req, err.stack, err.message);
 		res.json({
 			status: 'not ok'
 		})
@@ -812,12 +812,12 @@ router.post('/upload_avatar', uploader.single('upload'), function(req, res, next
 			SET avatar = '${photo}'
 			WHERE id = ${req.body.user_id};`;
 
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 	
 	}).then(function(result) {
 		
-		logger.debug(result);
+		logger.debug(req, result);
 		res.json({
 			status: 'ok',
 			user_avatar: photo
@@ -825,7 +825,7 @@ router.post('/upload_avatar', uploader.single('upload'), function(req, res, next
 
 	}).catch(function(err) {
 		
-		logger.error(err.message, err.stack);
+		logger.error(req, err.message, err.stack);
 		res.json({
 			status: 'not ok'
 		});
@@ -894,10 +894,10 @@ router.post('/upload_photos', uploader.array('uploads'), function(req, res, next
 			}
 		}	
 
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 	}).then(function(result) {
-		logger.debug(result);
+		logger.debug(req, result);
 		
 		for (var i = 0; i < result.affectedRows; i++) {
 			newPhotos[i].id = result.insertId + i;
@@ -910,7 +910,7 @@ router.post('/upload_photos', uploader.array('uploads'), function(req, res, next
 
 	}).catch(function(err) {
 	
-		logger.error(err.message, err.stack);
+		logger.error(req, err.message, err.stack);
 		res.json({
 			status: 'not ok'
 		});
@@ -924,35 +924,69 @@ router.delete('/delete_photo', function(req, res, next) {
 		
 		db = connection;
 		var sql = ` SELECT filename_orig FROM photo WHERE id = '${req.body.photo_id.replace(/\'/g, '\\\'')}';`;
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 	
 	}).then(function(result) {
 	
-		logger.debug(result);
+		logger.debug(req, result);
 		return fs.unlinkAsync(path.normalize(__dirname + '/../../public/images/uploads/user_'+req.user_id+'/'+result[0].filename_orig));
 	
 	}).then(function() {
 		
-		logger.debug(`Unlink file success`);
+		logger.debug(req, `Unlink file success`);
 		var sql = `	DELETE FROM photo WHERE id = '${req.body.photo_id.replace(/\'/g, '\\\'')}';`;
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 	
 	}).then(function(result) {
 	
-		logger.debug(result);
+		logger.debug(req, result);
 		res.json({
 			status: 'ok'
 		});
 	
 	}).catch(function(err) {
 	
-		logger.error(err.stack + err.message);
+		logger.error(req, err.stack + err.message);
 		res.json({
 			status: 'not ok'
 		});
 	
+	});
+});
+
+router.delete('/clear_temporary_flat_photos', function(req, res, next) {
+	if (!req.isAuthorized) {
+		res.json({
+			status: 'not ok',
+			message: 'You are not authorized'
+		});
+		return;
+	}
+
+	connectionPromise().then(function(connection) {
+
+		var sql = ` DELETE 
+					FROM photo 
+					WHERE temporary_user_id = ${req.user_id}; `;
+
+		logger.debug(req, sql);
+
+		return connection.queryAsync(sql);
+
+	}).then(function(result) {
+
+		logger.debug(req, result);
+		res.json({
+			status: 'ok'
+		});
+		
+	}).catch(function(err) {
+
+		logger.error(err.message, err.stack);
+		res.render('errors/500.pug');
+
 	});
 });
 
@@ -964,10 +998,10 @@ router.get('/get_faculties/:university_id(\\d+)', function(req, res, next) {
 			SELECT '' id, 'Не выбран' name_full
 			UNION
 			SELECT id, name_full FROM faculty WHERE university_id = ${req.params.university_id};`;	
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 	}).then(function(result) {
-		logger.debug(result);
+		logger.debug(req, result);
 		res.json({
 			status: 'ok',
 			faculties: result
@@ -988,10 +1022,10 @@ router.get('/get_departments/:faculty_id(\\d+)', function(req, res, next) {
 			SELECT '' id, 'Не выбрана' name_full
 			UNION
 			SELECT id, name_full FROM department WHERE faculty_id = ${req.params.faculty_id};`;	
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 	}).then(function(result) {
-		logger.debug(result);
+		logger.debug(req, result);
 		departments = result;
 		res.json({
 			status: 'ok',
