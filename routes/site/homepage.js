@@ -1,9 +1,9 @@
 'use strict';
 
 const router = require('express').Router();
-const logger = require('log4js').getLogger();
 const Promise = require('bluebird');
 
+const logger = require('../../components/myLogger.js');
 const connectionPromise = require('../../components/connectionPromise.js');
 
 router.get('/', function(req, res, next) {
@@ -30,12 +30,12 @@ router.get('/', function(req, res, next) {
 					ORDER BY user_date_register DESC
 					LIMIT 3`;
 
-		logger.debug(sql);
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 
 	}).then(function(result) {
 
-		logger.debug(result);
+		logger.debug(req, result);
 		res.render('site/homepage.pug', {
 			lastRecordsWithFlat: result, 
 			message: req.query.message,
@@ -45,7 +45,7 @@ router.get('/', function(req, res, next) {
 	
 	}).catch(function(err) {
 	
-		logger.error(err.message, err.stack);
+		logger.error(req, err.message, err.stack);
 		res.render('errors/500.pug');
 	
 	});
