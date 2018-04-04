@@ -52,7 +52,11 @@ html(lang=ru)
 							h4= record.flat_address
 							-
 								var sex = record.user_sex.substr(0, 1).toUpperCase();
-							p= 'Сосед: ' + sex + ', ' + record.user_age + ', ' + record.university_name
+								var info = sex + ', ' + record.user_age;
+								if (record.university_name) {
+									info += ', ' + record.university_name;
+								}
+							p= 'Сосед: ' + info
 			div.uni-cover
 				h3 Популярные ВУЗЫ среди наших румейтов
 				h4 в Ростове-на-Дону

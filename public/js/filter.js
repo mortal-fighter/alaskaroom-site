@@ -125,20 +125,26 @@ function search() {
 							.append($('<h4></h4>')
 								.append($('<span>' + record.user_city + '</span>'))
 								.append($('<span>, ' + record.flat_address + '</span>')));
-						newItem
-							.append($('<p>Сосед: </p>')
-								.append($('<span>' + record.user_sex + ', </span>'))
-								.append($('<span>' + record.user_age + ', </span>'))
-								.append($('<span>' + record.university_name + '</span>')));
+						
+						var info = $('<p>Сосед: </p>');
+						info.append($('<span>' + record.user_sex + ', </span>'))
+							.append($('<span>' + record.user_age + '</span>'));
+						if (record.university_name) {
+							info.append($('<span>, ' + record.university_name + '</span>'));
+						}
+						info.appendTo(newItem);
 					} else {
 						newItem = $('<div class="user-list"></div>');
 						newItem.append($('<img src="'+ record.user_avatar +'" alt="Room"/>'));
 						newItem.append($('<h4>'+record.user_first_name+' '+record.user_last_name+'</h4>'));
-						newItem
-							.append($('<p>Ваш сосед: </p>')
-								.append($('<span>' + record.user_sex + ', </span>'))
-								.append($('<span>' + record.user_age + ', </span>'))
-								.append($('<span>' + record.university_name + '</span>')));
+						
+						var info = $('<p>Ваш сосед: </p>');
+						info.append($('<span>' + record.user_sex + ', </span>'))
+							.append($('<span>' + record.user_age + '</span>'));
+						if (record.university_name) {
+							info.append($('<span>, ' + record.university_name + '</span>'));
+						}
+						info.appendTo(newItem);
 					}
 					$('<a href="/profile/view/'+record.user_id+'"></a>')
 						.append(newItem)
