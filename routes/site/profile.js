@@ -336,9 +336,19 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 	var priorities = [];
 	var userPriorities = [];
 	var prioritySelect = [];
+	
 	var utilities = [];
 	var flatUtilities = [];
 	var utilityObject = [];
+	
+	var districts = [];
+	var userDistricts = [];
+	var districtObject = [];
+
+	var campus500 = [];
+	var userCampus500 = [];
+	var campus500Object = [];
+	
 	var hasFlat = false;
 	var messages = [];
 	
@@ -379,13 +389,13 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 						flat_total_pay,
 						flat_enter_date
 					FROM v_user_all
-					WHERE user_id = ${req.params.userId};`;
+					WHERE user_id = ${req.user_id};`;
 		logger.debug(req, sql);
 		return db.queryAsync(sql);
 	
 	}).then(function(result) {
 
-		logger.debug(req, result);
+		//logger.debug(req, result);
 		data = result[0];
 		if (data.flat_id) {
 			hasFlat = true;
@@ -495,6 +505,24 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 		
 		// construct priority <select>s (end)
 
+		var sql = `SELECT
+						id 		district_id,
+						name	district_name
+					FROM district
+					ORDER BY display_order;`;
+
+		return db.queryAsync(sql);
+		
+	}).then(function(result) {
+
+		districts = result;
+
+		var sql = ` SELECT district_id
+					FROM user_district
+					WHERE user_id = ${req.user_id};`;		
+
+		
+
 		if (hasFlat) {
 			return Promise.resolve().then(function() {	
 				var sql = `	SELECT 
@@ -518,7 +546,7 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 						display_name	utility_name 
 					FROM utility
 					ORDER BY display_order;`;
-		logger.debug(req, sql);
+		//logger.debug(req, sql);
 		return db.queryAsync(sql);
 	
 	}).then(function(result) {
@@ -539,7 +567,7 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 	}).then(function(result) {
 
 		if (hasFlat) {
-			logger.debug(req, result);
+			//logger.debug(req, result);
 			flatUtilities = result;
 		}
 
@@ -559,6 +587,8 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 				}
 			}
 		}
+
+
 
 		/*if (req.user_id == data.user_id && data.user_is_activated == 0) {
 			messages.push({

@@ -121,6 +121,43 @@ html(lang=ru)
 						div
 							p Сколько Вы готовы платить за аренду?
 							input.option-set-small(type="text", placeholder="Плата румейта", value=locals.data.wish_pay)
+				div.user-setting
+					h2.district Вы хотели бы найти жилье поближе к ВУЗу? (Ростов-на-Дону)
+					p.min-note Укажите район. Раз в месяц мы будем присылать вам подборку жилья в нужном районе.
+					label 
+						input.district-checkbox(type="checkbox") 
+						| Суворовский
+					//- label
+					//- 	input(type="checkbox") Кировский
+					//- label
+					//- 	input(type="checkbox"/> Первомайский</label>
+					//- <label><input type="checkbox"/> Каменка</label>
+					//- <label><input type="checkbox"/> Военвед</label>
+					//- <label><input type="checkbox"/> Западный \ Стачки</label>
+					//- <label><input type="checkbox"/> Пролетарский</label>
+					//- <label><input type="checkbox"/> Ленинский</label>
+					//- <label><input type="checkbox"/> Платовский</label>
+					//- <label><input type="checkbox"/> Октябрьский</label>
+				div.user-setting
+					h2.kampus-ad Кампус500
+					p.min-note Кампус500 - это сообщество молодых людей, которые готовы пустить переночевать, передержать животных или вещи, а также помочь с переездом другому студенту. За каждую оказанную услугу вы получите 500 рублей. Таким образом вы можете дополнительно зарабатывать каждый месяц.
+					h3.kampus-note Выберете услуги, которые вы готовы оказать
+					div.kampus-option
+						img(src="/images/couch.png", alt="Night")
+						p Пустить переночевать
+						input(type="checkbox", value="night")
+					div.kampus-option
+						img(src="/images/pet.png", alt="Pet")
+						p Передержать домашнее животное
+						input(type="checkbox", value="pet")
+					div.kampus-option
+						img(src="/images/box.png", alt="box")
+						p Передержать вещи
+						input(type="checkbox", value="box")
+					div.kampus-option
+						img(src="/images/move.png", alt="Move")
+						p Помочь с переездом
+						input(type="checkbox", value="move")
 				if !locals.data.flat_id
 					p.add-room У вас есть квартира и вы ищите соседа?
 						a#btn-showflat(href="#") Рассказать про квартиру и условия

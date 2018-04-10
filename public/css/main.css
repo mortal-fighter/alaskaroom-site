@@ -1592,6 +1592,106 @@ ol, ul {
 	height: auto !important;
 }
 
+/*Стили для новых блоков на странице создания объявления*/
+
+.district {
+	color: #3e9fd7;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 17px;
+    margin: 10px 10px;
+	margin-bottom: 5px;
+}
+
+.min-note {
+	color: #888 !important;
+	font-size: 11px !important;
+	margin: 5px 10px !important;
+}
+
+.add-room-btn {
+	background-color: #5b9fc2;
+	color: #fff !important;
+	padding: 10px 10px;
+	font-weight: 500;
+	margin: 0 5px;
+}
+
+.add-room-btn:hover {
+	background-color: #2f7294;
+}
+
+.add-roomate-btn {
+	background-color: #5b9fc2;
+	color: #fff !important;
+	padding: 10px 10px;
+	font-weight: 500;
+	margin: 0 5px;
+}
+
+.add-roomate-btn:hover {
+	background-color: #2f7294;
+}
+
+.kampus-ad {
+	color: #3e9fd7;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 17px;
+    margin: 10px 10px;
+    margin-bottom: 5px;
+}
+
+.kampus-note {
+	color: #777;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    margin: 20px 10px;
+}
+
+.kampus-option {
+	display: block;
+    width: 46% !important;
+    height: auto !important;
+    margin: 10px 10px !important;
+    overflow: hidden;
+    border-radius: 3px;
+    background-color: #fff;
+    box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+    overflow: hidden;
+    float: left;
+}
+
+.kampus-option:hover {
+	box-shadow: 0 1px 0 0 #2f7294, 0 0 0 1px #2f7294;
+	cursor: pointer;
+}
+
+.kampus-option img {
+	display: block;
+	width: 40px;
+	height: 40px;
+	margin: 10px;
+	float: left;
+}
+
+.kampus-option p {
+	color: #888;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    margin: 22px;
+}
+
+.checked-box {
+	box-shadow: 0 1px 0 0 #2f7294, 0 0 0 1px #2f7294;
+}
+
+.kampus-option > input[type=checkbox] {
+    display: none;
+}
+
 /*Страница Кампуса*/
 
 .kampus-rules {

@@ -290,6 +290,10 @@ function handlersProfileEdit() {
 		});
 	});
 
+	$('.kampus-option').on('click', function() {
+		triggerCampusButton(this);
+	});
+
 	$('#btn-saveall').on('click', function(e) {
 		e.preventDefault();
 		
@@ -313,6 +317,14 @@ function handlersProfileEdit() {
 			form.priority = [];
 			$('.priority').each(function() {
 				form.priority.push(processInputSelect(this.id));
+			});
+			form.district = [];
+			$('.district-checkbox').each(function() {
+				if ( $(this).prop('checked') ) form.district.push( $(this).val() );
+			});
+			form.campus = [];
+			$('.kampus-option > input[type=checkbox]').each(function() {
+				if ( $(this).prop('checked') ) form.campus.push( $(this).val() );
 			});
 
 			var validationFailed = false;
@@ -345,7 +357,7 @@ function handlersProfileEdit() {
 			}
 
 			if (!validationFailed) {
-				console.log('flat validated successfully, flat = ', form.flat, ', utility =', form.utility);
+				//console.log('flat validated successfully, flat = ', form.flat, ', utility =', form.utility);
 				$.ajax({
 					method: 'POST',
 					url: '/profile/edit',
@@ -573,6 +585,20 @@ function complainForm(html) {
 	});
 
 	showPopup();
+}
+
+function triggerCampusButton(button) {
+	var isChecked = false;
+	var elem = $(button);
+	if (elem.hasClass('checked-box')) isChecked = true;
+
+	if (!isChecked) {
+		elem.addClass('checked-box');
+		$('input[type=checkbox]', elem).prop('checked', true);
+	} else {
+		elem.removeClass('checked-box');
+		$('input[type=checkbox]', elem).prop('checked', false);
+	}
 }
 
 /* VALIDATION */
