@@ -2,7 +2,7 @@ doctype
 html(lang=ru)
 	head
 		include includes/head_common.pug
-		//- script(src="/js/filter.js", type="text/javascript")
+		script(src="/js/campus500.js", type="text/javascript")
 
 		style
 			|	.no-records {
@@ -15,17 +15,19 @@ html(lang=ru)
 			div.main-page
 				//- левая колонка
 				div.main-filter
-					//- form(method="", action="")
-					//- 	p Город
-					//- 	select.prime-filter(size="1")
-					//- 		option(selected) Ростов-на-Дону
-					//- 	p Требуется:
-					//- 	select.lower-filter(size="1")
-					//- 		option(value="night", selected) Переночевать
-					//- 		option(value="move") Помочь переехать
-					//- 		option(value="animal") Передержать животных
-					//- 		option(value="stock") Передержать вещи для переезда
-					a.find-filter(href="#", style="width: auto") Получить дневной доступ
+					if locals.is_campus_payed
+						form(method="", action="")
+							p Город
+							select.prime-filter(size="1")
+								option(selected) Ростов-на-Дону
+							p Требуется:
+							select#campus-option.lower-filter(size="1")
+								option(value="night", selected) Переночевать
+								option(value="move") Помочь переехать
+								option(value="animal") Передержать животных
+								option(value="stock") Передержать вещи для переезда
+					if !locals.is_campus_payed
+						a.find-filter(href="#", style="width: auto") Получить дневной доступ
 					div.kampus-rules
 						h3 Правила кампуса
 						p 1. В Кампусе допускаются только молодые люди \ студенты в возрасте от 18 до 30 лет.
@@ -65,79 +67,15 @@ html(lang=ru)
 								h3 Передержка вещей
 								img(src="/images/box.png", alt="box")
 								h4 500 рублей
-					div.user-list
-						img(src="/images/photo.jpg", alt="User")
-						h4 Влад
-						div.help-box
-							img(src="/images/move.png", alt="Move")
-							img(src="/images/pet.png", alt="Move")
-							img(src="/images/box.png", alt="Move")
-							img(src="/images/couch.png", alt="Move")
-					div.user-list
-						img(src="/images/photo.jpg", alt="User")
-						h4 Влад
-						div.help-box
-							img(src="/images/move.png", alt="Move")
-							img(src="/images/pet.png", alt="Move")
-							img(src="/images/box.png", alt="Move")
-							img(src="/images/couch.png", alt="Move")
-					div.user-list
-						img(src="/images/photo.jpg", alt="User")
-						h4 Влад
-						div.help-box
-							img(src="/images/move.png", alt="Move")
-							img(src="/images/pet.png", alt="Move")
-							img(src="/images/box.png", alt="Move")
-							img(src="/images/couch.png", alt="Move")
-					div.user-list
-						img(src="/images/photo.jpg", alt="User")
-						h4 Влад
-						div.help-box
-							img(src="/images/move.png", alt="Move")
-							img(src="/images/pet.png", alt="Move")
-							img(src="/images/box.png", alt="Move")
-							img(src="/images/couch.png", alt="Move")
-					div.user-list
-						img(src="/images/photo.jpg", alt="User")
-						h4 Влад
-						div.help-box
-							img(src="/images/move.png", alt="Move")
-							img(src="/images/pet.png", alt="Move")
-							img(src="/images/box.png", alt="Move")
-							img(src="/images/couch.png", alt="Move")
-					div.user-list
-						img(src="/images/photo.jpg", alt="User")
-						h4 Влад
-						div.help-box
-							img(src="/images/move.png", alt="Move")
-							img(src="/images/pet.png", alt="Move")
-							img(src="/images/box.png", alt="Move")
-							img(src="/images/couch.png", alt="Move")
-					div.user-list
-						img(src="/images/photo.jpg", alt="User")
-						h4 Влад
-						div.help-box
-							img(src="/images/move.png", alt="Move")
-							img(src="/images/pet.png", alt="Move")
-							img(src="/images/box.png", alt="Move")
-							img(src="/images/couch.png", alt="Move")
-					div.user-list
-						img(src="/images/photo.jpg", alt="User")
-						h4 Влад
-						div.help-box
-							img(src="/images/move.png", alt="Move")
-							img(src="/images/pet.png", alt="Move")
-							img(src="/images/box.png", alt="Move")
-							img(src="/images/couch.png", alt="Move")
-					div.user-list
-						img(src="/images/photo.jpg", alt="User")
-						h4 Влад
-						div.help-box
-							img(src="/images/move.png", alt="Move")
-							img(src="/images/pet.png", alt="Move")
-							img(src="/images/box.png", alt="Move")
-							img(src="/images/couch.png", alt="Move")
-					
-					a.load-more(href="#") Загрузить больше...
+					div#listing-content
+						//- div.user-list
+						//- 	img(src="/images/photo.jpg", alt="User")
+						//- 	h4 Влад
+						//- 	div.help-box
+						//- 		img(src="/images/move.png", alt="Move")
+						//- 		img(src="/images/pet.png", alt="Move")
+						//- 		img(src="/images/box.png", alt="Move")
+						//- 		img(src="/images/couch.png", alt="Move")
+					a.load-more(href="#", style="display: none") Загрузить больше...
 
 		include includes/footer.pug
