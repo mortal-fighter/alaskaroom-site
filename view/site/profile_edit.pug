@@ -124,40 +124,31 @@ html(lang=ru)
 				div.user-setting
 					h2.district Вы хотели бы найти жилье поближе к ВУЗу? (Ростов-на-Дону)
 					p.min-note Укажите район. Раз в месяц мы будем присылать вам подборку жилья в нужном районе.
-					label 
-						input.district-checkbox(type="checkbox") 
-						| Суворовский
-					//- label
-					//- 	input(type="checkbox") Кировский
-					//- label
-					//- 	input(type="checkbox"/> Первомайский</label>
-					//- <label><input type="checkbox"/> Каменка</label>
-					//- <label><input type="checkbox"/> Военвед</label>
-					//- <label><input type="checkbox"/> Западный \ Стачки</label>
-					//- <label><input type="checkbox"/> Пролетарский</label>
-					//- <label><input type="checkbox"/> Ленинский</label>
-					//- <label><input type="checkbox"/> Платовский</label>
-					//- <label><input type="checkbox"/> Октябрьский</label>
+					
+					for district in districts
+						label
+							if district.is_checked === 1
+								input.district-checkbox(district_id=district.id, type="checkbox", checked)
+							else
+								input.district-checkbox(district_id=district.id, type="checkbox")
+							span= district.name
 				div.user-setting
 					h2.kampus-ad Кампус500
 					p.min-note Кампус500 - это сообщество молодых людей, которые готовы пустить переночевать, передержать животных или вещи, а также помочь с переездом другому студенту. За каждую оказанную услугу вы получите 500 рублей. Таким образом вы можете дополнительно зарабатывать каждый месяц.
 					h3.kampus-note Выберете услуги, которые вы готовы оказать
-					div.kampus-option
-						img(src="/images/couch.png", alt="Night")
-						p Пустить переночевать
-						input(type="checkbox", value="night")
-					div.kampus-option
-						img(src="/images/pet.png", alt="Pet")
-						p Передержать домашнее животное
-						input(type="checkbox", value="pet")
-					div.kampus-option
-						img(src="/images/box.png", alt="box")
-						p Передержать вещи
-						input(type="checkbox", value="box")
-					div.kampus-option
-						img(src="/images/move.png", alt="Move")
-						p Помочь с переездом
-						input(type="checkbox", value="move")
+					
+					for service in campus500
+						if (service.is_checked === 1)
+							div.kampus-option.checked-box
+								img(src= service.icon, alt="icon")
+								p= service.name
+								input(campus500_id= service.id, type="checkbox" checked)
+						else
+							div.kampus-option
+								img(src= service.icon, alt="icon")
+								p= service.name
+								input(campus500_id= service.id, type="checkbox")
+
 				if !locals.data.flat_id
 					p.add-room У вас есть квартира и вы ищите соседа?
 						a#btn-showflat(href="#") Рассказать про квартиру и условия

@@ -286,6 +286,22 @@ router.get('/login_vk_callback/:postaction(\\S+)?', function(req, res, next) {
 				userHasPhoto = (user.photo_200 !== 'https://vk.com/images/camera_200.png') ? true : false;		
 				
 				var promiseChain = Promise.resolve();
+				
+				// Insert 'districts' and 'campus500'  
+				promiseChain = promiseChain.then(function() {
+					var sql = `	INSERT INTO user_district (name, user_id, display_order)
+								SELECT name, ${result.insertId}, display_order
+								FROM district;`;
+					logger.debug(sql);
+					return db.queryAsync(sql);
+				}).then(function() {
+					var sql = ` INSERT INTO user_campus500 (name, icon, user_id, display_order)
+								SELECT name, icon, ${result.insertId}, display_order
+								FROM campus500;`;
+					logger.debug(sql);
+					return db.queryAsync(sql);
+				});
+
 				if (userHasPhoto) {
 					
 					// create user folder, download photo from vk, save it and update mysql

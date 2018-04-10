@@ -319,18 +319,31 @@ function handlersProfileEdit() {
 				form.priority.push(processInputSelect(this.id));
 			});
 			form.district = [];
-			$('.district-checkbox').each(function() {
-				if ( $(this).prop('checked') ) form.district.push( $(this).val() );
+			$('.district-checkbox').each(function(index) {
+				form.district.push({
+					id: parseInt( $(this).attr('district_id') ),
+					name: $(this).next('span').text(),
+					is_checked: $(this).prop('checked'),
+					display_order: index + 1
+				});
 			});
+			//console.log('district=', form.district);
+
 			form.campus = [];
-			$('.kampus-option > input[type=checkbox]').each(function() {
-				if ( $(this).prop('checked') ) form.campus.push( $(this).val() );
+			$('.kampus-option > input[type=checkbox]').each(function(index) {
+				form.campus.push({
+					id: parseInt( $(this).attr('campus500_id') ),
+					name: $(this).prev('p').text(),
+					is_checked: $(this).prop('checked'),
+					display_order: index + 1
+				});
 			});
+			//console.log('campus500=', form.campus);
 
 			var validationFailed = false;
 
 			if (hasFlat()) {
-				console.log('has flat = true');
+				//console.log('has flat = true');
 				if (!validateFlat()) {
 					validationFailed = true;
 					return;
@@ -353,6 +366,8 @@ function handlersProfileEdit() {
 						form.utility.push($(this).val());
 					}
 				});
+
+				//console.log('utility=', form.utility);
 
 			}
 

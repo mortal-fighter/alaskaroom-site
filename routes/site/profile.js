@@ -342,12 +342,7 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 	var utilityObject = [];
 	
 	var districts = [];
-	var userDistricts = [];
-	var districtObject = [];
-
 	var campus500 = [];
-	var userCampus500 = [];
-	var campus500Object = [];
 	
 	var hasFlat = false;
 	var messages = [];
@@ -505,23 +500,36 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 		
 		// construct priority <select>s (end)
 
-		var sql = `SELECT
-						id 		district_id,
-						name	district_name
-					FROM district
+		var sql = `	SELECT
+						id,
+						name,
+						is_checked
+					FROM user_district
+					WHERE user_id = ${req.user_id}
 					ORDER BY display_order;`;
 
+		logger.debug(req, sql);
 		return db.queryAsync(sql);
 		
 	}).then(function(result) {
 
 		districts = result;
 
-		var sql = ` SELECT district_id
-					FROM user_district
-					WHERE user_id = ${req.user_id};`;		
+		var sql = `	SELECT
+						id,
+						name,
+						icon,
+						is_checked
+					FROM user_campus500
+					WHERE user_id = ${req.user_id}
+					ORDER BY display_order;`;
 
-		
+		logger.debug(req, sql);
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		campus500 = result;	
 
 		if (hasFlat) {
 			return Promise.resolve().then(function() {	
@@ -607,6 +615,8 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 			photos: photos,
 			priorities: prioritySelect,
 			utilities: utilityObject,
+			districts: districts,
+			campus500: campus500,
 			showFlatAnyway: (req.params.postaction && req.params.postaction === 'show_flat_area') ? true : false,
 			isAuthorized: req.isAuthorized,
 			userId: req.user_id,
@@ -721,7 +731,7 @@ router.post('/edit', function(req, res, next) {
 					logger.debug(req, result);
 				}
 
-				if (req.body.utility.length) {
+				if (req.body.utility && req.body.utility.length) {
 					var sql = `	INSERT INTO flat_utility(flat_id, utility_id) 
 								VALUES 
 									(${req.body.flat.id}, ${req.body.utility[0]})`;
@@ -803,6 +813,28 @@ router.post('/edit', function(req, res, next) {
 
 		logger.debug(req, sql);
 		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		logger.debug(req, result);
+
+		var promiseChain = Promise.resolve();
+		
+		req.body.district.forEach(function(elem) {
+			promiseChain = promiseChain.then(function() {
+				var sql = `UPDATE user_district SET is_checked = ${elem.is_checked} WHERE id = ${elem.id};`;
+				return db.queryAsync(sql);
+			});
+		});
+		
+		req.body.campus.forEach(function(elem) {
+			promiseChain = promiseChain.then(function() {
+				var sql = `UPDATE user_campus500 SET is_checked = ${elem.is_checked} WHERE id = ${elem.id};`;
+				return db.queryAsync(sql);
+			});
+		});		
+
+		return promiseChain;
 
 	}).then(function(result) {
 
