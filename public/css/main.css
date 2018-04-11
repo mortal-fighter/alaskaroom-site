@@ -1835,6 +1835,14 @@ ol, ul {
 	text-align: center;
 }
 
+.no-records {
+    margin-top: 50px;
+    margin-bottom: 25px;
+    text-align: center;
+    padding: 0 50px;
+    color: #333;
+}
+
 
 /*Стили для футера*/
 
