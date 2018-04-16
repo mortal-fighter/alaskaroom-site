@@ -14,9 +14,9 @@ function sessionUserIdByToken(token) {
 			logger.debug(sql);
 			return db.queryAsync(sql);
 		}).then(function(result) {
-			logger.debug(result);
+			//logger.debug(result);
 			if (result.length === 0) {
-				reject(new Error(`NO SESSION FOUND FOR TOKEN '${token}'`));
+				reject(new Error(`WARN: NO SESSION FOUND FOR TOKEN '${token}'`));
 			} else {
 				resolve(result[0].user_id);
 			}
@@ -32,9 +32,9 @@ function isSessionExistsByUserId(userId) {
 			logger.debug(sql);
 			return db.queryAsync(sql);
 		}).then(function(result) {
-			logger.debug(result);
+			//logger.debug(result);
 			if (result[0].cnt !== 1) {
-				reject(new Error(`NO SESSION FOUND FOR USER '${userId}'`));
+				reject(new Error(`WARN: NO SESSION FOUND FOR USER '${userId}'`));
 			} else {
 				resolve();
 			}
@@ -54,11 +54,11 @@ module.exports = {
 				logger.debug(sql);
 				return db.queryAsync(sql);
 			}).then(function(result) {
-				logger.debug(result);
+				//logger.debug(result);
 				resolve(token);
 			}).catch(function(err) {
 				logger.error(err.stack, err.message);
-				reject(new Error(`CAN'T START SESSION FOR user_id=${userId}`));
+				reject(new Error(`WARN: CAN'T START SESSION FOR user_id=${userId}`));
 			});
 		});
 	},
@@ -76,15 +76,15 @@ module.exports = {
 		return new Promise(function(resolve, reject) {
 			if (!req.cookies['AlaskaRoomAuthToken']) {
 				req.isAuthorized = false;
-				reject(new Error(`REQUEST '${req.originalUrl}' IS NOT AUTHORIZED`));
+				reject(new Error(`WARN: REQUEST '${req.originalUrl}' IS NOT AUTHORIZED`));
 			} else {
 				sessionUserIdByToken(req.cookies['AlaskaRoomAuthToken']).then(function(user_id) {
 					req.isAuthorized = true;
 					req.user_id = user_id;
 					resolve();
 				}).catch(function(err) {
-					logger.error(err);
-					reject(new Error(`REQUEST '${req.originalUrl}' IS NOT AUTHORIZED`));
+					//logger.error(err);
+					reject(err);
 				});
 			}
 		});

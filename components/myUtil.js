@@ -168,6 +168,58 @@ module.exports = {
 		});
 	},
 
+	// params: dictionaryTableName, counterpartTableName, orderByColumn, counterpartValue
+	generateCheckbox: function(p) {
+
+		var db = null;
+		var sql = null;
+		var dictionary = [];
+		var intersection = [];
+		var result = [];
+
+		return connectionPromise().then(function(connection) {
+
+			db = connection;
+
+			sql = ` SELECT * FROM ${p.dictionaryTableName} ORDER BY ${p.orderByColumn};`;
+			return db.queryAsync(sql);
+		
+		}).then(function(result) {
+
+			dictionary = result;
+
+			sql = ` SELECT ${p.dictionaryTableName}_id
+					FROM ${p.counterpartTableName}
+					WHERE ${p.counterpartTableName}_id = ${p.counterpartValue};`; 
+			return db.queryAsync(sql);
+		
+		}).then(function(result) {
+
+			intersection = result;
+
+			var isChecked = false;
+			dictionary.forEach(function(item) {
+
+				var one = {};
+				for (var key in item) {
+					if (item.hasOwnProperty(key)) {
+						one[key] = item[key];
+					}
+				}
+
+				for (var i = 0; i < intersection.length; i++) {
+					//if (intersection[])
+				}
+
+
+				result.push(one);
+
+			});
+
+		});
+
+	}
+
 	formatObjectForSQL: function(object) {
 	// The following processes data, received from the form into sql query values
 	for (var key in object) {

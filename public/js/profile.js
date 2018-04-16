@@ -318,16 +318,13 @@ function handlersProfileEdit() {
 			$('.priority').each(function() {
 				form.priority.push(processInputSelect(this.id));
 			});
-			form.district = [];
-			$('.district-checkbox').each(function(index) {
-				form.district.push({
-					id: parseInt( $(this).attr('district_id') ),
-					name: $(this).next('span').text(),
-					is_checked: $(this).prop('checked'),
-					display_order: index + 1
-				});
+			form.userDistricts = [];
+			$('.user-district-checkbox').each(function() {
+				if ( $(this).prop('checked') ) {
+					form.userDistricts.push($(this).attr('district_id'));
+				}
 			});
-			//console.log('district=', form.district);
+			//console.log('district=', form.userDistricts);
 
 			form.campus = [];
 			$('.kampus-option > input[type=checkbox]').each(function(index) {
@@ -360,6 +357,14 @@ function handlersProfileEdit() {
 				form.flat.rent_pay = $('#flat_rent_pay').val();
 				form.flat.enter_date = $('#flat_enter_date').val();
 				
+				form.flatDistricts = [];
+				$('.flat-district-checkbox').each(function() {
+					form.flatDistricts.push({
+						id: parseInt( $(this).parent().attr('flat-district-id') ),
+						is_checked: $(this).prop('checked')
+					});
+				});
+
 				form.utility = [];
 				$('#utility > label > [type=checkbox]').each(function() {
 					if ($(this).prop('checked')) {

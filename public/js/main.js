@@ -152,4 +152,8 @@ $(document).ready(function() {
 	initPopup();
 	handlersHeader();
 	indicatorNewRequests();
+
+	if (window.location.href.match(/^(http|https):\/\/(localhost|127\.0\.0\.1)/)) {
+		$('a.logo').text( $('a.logo').text() + ' (local)' );
+	}
 });

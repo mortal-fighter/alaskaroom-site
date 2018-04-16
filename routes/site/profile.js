@@ -342,7 +342,14 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 	var utilityObject = [];
 	
 	var districts = [];
+	var userDistricts = [];
+	var districtObject = [];
+
 	var campus500 = [];
+	var userCampus500 = [];
+	var campus500Object = [];
+
+	var flatDistricts = [];
 	
 	var hasFlat = false;
 	var messages = [];
@@ -500,13 +507,7 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 		
 		// construct priority <select>s (end)
 
-		var sql = `	SELECT
-						id,
-						name,
-						is_checked
-					FROM user_district
-					WHERE user_id = ${req.user_id}
-					ORDER BY display_order;`;
+		var sql = `	SELECT id, name FROM district ORDER BY name;`;
 
 		logger.debug(req, sql);
 		return db.queryAsync(sql);
@@ -515,13 +516,40 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 
 		districts = result;
 
+		var sql = ` SELECT district_id
+					FROM user_district
+					WHERE user_id = ${req.user_id};`;
+
+		logger.debug(req, sql);
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		userDistricts = result;
+
+		var isChecked = false;
+		districts.forEach(function(item) {
+			isChecked = false;
+
+			for (var i = 0; i < userDistricts.length; i++) {
+				if (userDistricts[i].district_id === item.id) {
+					isChecked = true;
+					break;
+				}
+			}
+
+			districtObject.push({
+				id: item.id,
+				name: item.name,
+				isChecked: isChecked
+			});
+		});		
+
 		var sql = `	SELECT
 						id,
 						name,
-						icon,
-						is_checked
-					FROM user_campus500
-					WHERE user_id = ${req.user_id}
+						icon
+					FROM campus500
 					ORDER BY display_order;`;
 
 		logger.debug(req, sql);
@@ -531,72 +559,132 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 
 		campus500 = result;	
 
+		var sql = ` SELECT campus500_id
+					FROM user_campus500
+					WHERE user_id = ${req.user_id};`;
+		logger.debug(req, sql);
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		userCampus500 = result;
+
+		var isChecked = false;
+		campus500.forEach(function(item) {
+
+			for (var i = 0; i < userCampus500.length; i++) {
+				if (userCampus500[i].campus500_id === item.id) {
+					isChecked = true;
+					break;
+				}
+			}
+
+			campus500Object.push({
+				id: item.id,
+				name: item.name,
+				icon: item.icon,
+				isChecked: isChecked
+			});
+
+		});
+
+		var promiseChain = Promise.resolve();
+
+		promiseChain = promiseChain.then(function() {
+
+			var sql = `	SELECT 
+							id, 
+							display_name	name 
+						FROM utility
+						ORDER BY display_order;`
+
+			logger.debug(req, sql);
+			return db.queryAsync(sql);
+
+		}).then(function(result) {
+
+			utilities = result;
+
+		});
+
 		if (hasFlat) {
-			return Promise.resolve().then(function() {	
+			
+			promiseChain = promiseChain.then(function() {	
+				
 				var sql = `	SELECT 
 								id, src_small, src_orig,
 								width_small, height_small, width_orig, height_orig
 							FROM photo
 							WHERE flat_id = ${data.flat_id};`;
 				return db.queryAsync(sql);
+
 			}).then(function(result) {
-				logger.debug(req, result);
+				
 				photos = result;
+
+				var sql = `	SELECT utility_id
+							FROM flat_utility
+							WHERE flat_id = ${data.flat_id};`;
+				logger.debug(req, sql);
+				return db.queryAsync(sql);
+
+			}).then(function(result) {
+
+				flatUtilities = result;
+
 			});
-		} else {
-			return Promise.resolve();
 		}
-	
+
+		return promiseChain;
+
 	}).then(function() {
-
-		var sql = `	SELECT 
-						id 				utility_id, 
-						display_name	utility_name 
-					FROM utility
-					ORDER BY display_order;`;
-		//logger.debug(req, sql);
-		return db.queryAsync(sql);
-	
-	}).then(function(result) {
-
-		//logger.debug(req, result);
-		//logger.debug(req, 'hasFlat='+hasFlat);
-		utilities = result;
-
-		if (hasFlat) {
-			var sql = `	SELECT utility_id
-						FROM flat_utility
-						WHERE flat_id = ${data.flat_id}; `;
-			return db.queryAsync(sql);			
-		} else {
-			return Promise.resolve();
-		}
-
-	}).then(function(result) {
-
-		if (hasFlat) {
-			//logger.debug(req, result);
-			flatUtilities = result;
-		}
 
 		for (var i = 0; i < utilities.length; i++) {
 			utilityObject.push({
-				id: utilities[i].utility_id,
-				name: utilities[i].utility_name,
+				id: utilities[i].id,
+				name: utilities[i].name,
 				isChecked: false
 			});
 			
-			if (hasFlat) {
-				for (var j = 0; j < flatUtilities.length; j++) {
-					if (flatUtilities[j].utility_id === utilities[i].utility_id) {
-						utilityObject[i].isChecked = true;
-						break;
-					}
+			for (var j = 0; j < flatUtilities.length; j++) {
+				if (flatUtilities[j].id === utilities[i].utility_id) {
+					utilityObject[i].isChecked = true;
+					break;
 				}
 			}
 		}
 
+		var promiseChain = Promise.resolve();
 
+		if (hasFlat) {
+			promiseChain = promiseChain.then(function() {
+				var sql = ` SELECT 
+								id,
+								district_name,
+								is_checked
+							FROM v_flat_district
+							WHERE flat_id = ${data.flat_id}`;
+				logger.debug(sql);
+				return db.queryAsync(sql);
+			});
+		} else {
+			promiseChain = promiseChain.then(function() {
+				var sql = ` SELECT 
+								id 		district_id,
+								name	district_name,
+								0		is_checked
+							FROM district
+							ORDER BY district_name;`;
+				logger.debug(sql);
+				return db.queryAsync(sql);
+			});
+		}
+
+		return promiseChain;
+
+	}).then(function(result) {
+
+		flatDistricts = result;
 
 		/*if (req.user_id == data.user_id && data.user_is_activated == 0) {
 			messages.push({
@@ -615,8 +703,9 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 			photos: photos,
 			priorities: prioritySelect,
 			utilities: utilityObject,
-			districts: districts,
+			userDistricts: userDistricts,
 			campus500: campus500,
+			flatDistricts: flatDistricts,
 			showFlatAnyway: (req.params.postaction && req.params.postaction === 'show_flat_area') ? true : false,
 			isAuthorized: req.isAuthorized,
 			userId: req.user_id,
@@ -663,11 +752,14 @@ router.post('/edit', function(req, res, next) {
 			validateFlat(req.body.flat);
 			formatObjectForSQL(req.body.flat);
 			var sql;
+			var promiseChain = Promise.resolve();
 
 			if (hasId) {
 				// new flat
 
-				sql = `	UPDATE flat
+				promiseChain = promiseChain.then(function() {
+					
+					var sql = `	UPDATE flat
 						SET description = ${req.body.flat.description},
 							address = ${req.body.flat.address},
 							square = ${req.body.flat.square},
@@ -677,38 +769,91 @@ router.post('/edit', function(req, res, next) {
 							total_pay = ${req.body.flat.total_pay},
 							enter_date = STR_TO_DATE(${req.body.flat.enter_date}, '%d.%m.%Y')
 						WHERE id = ${req.body.flat.id};`
+					logger.debug(req, sql);
+					return db.queryAsync(sql);
+
+				}).then(function(result) {
+
+					var distrChecked = [];
+					var distrNotChecked = [];
+
+					req.body.flatDistricts.forEach(function(elem) {
+						if (elem.is_checked === 'true') {
+							distrChecked.push(elem.id);
+						} else {
+							distrNotChecked.push(elem.id);
+						}
+					});
+
+					var promiseChain = Promise.resolve();
+
+					if (distrChecked.length) {
+						promiseChain = promiseChain.then(function() {
+							var sql = ` UPDATE flat_district SET is_checked = 1 WHERE id IN (${distrChecked.join(',')})`;
+							logger.debug(req, sql);
+							return db.queryAsync(sql);
+						});
+					}
+
+					if (distrNotChecked.length) {
+						promiseChain = promiseChain.then(function() {
+							var sql = ` UPDATE flat_district SET is_checked = 0 WHERE id IN (${distrNotChecked.join(',')})`;
+							logger.debug(req, sql);
+							return db.queryAsync(sql);
+						});
+					}
+
+					return promiseChain;
+				});
 
 			} else {
 				// existing flat
 
-				sql = `		INSERT INTO flat(	description,
-												address,
-												square,
-												room_num,
-												traffic,
-												rent_pay,
-												total_pay,
-												enter_date)
-							VALUES (	${req.body.flat.description},
-										${req.body.flat.address},
-										${req.body.flat.square},
-										${req.body.flat.room_num},
-										${req.body.flat.traffic},
-										${req.body.flat.rent_pay},
-										${req.body.flat.total_pay},
-										STR_TO_DATE(${req.body.flat.enter_date}, '%d.%m.%Y'));`;
+				promiseChain = promiseChain.then(function() {
 
-			} // end has flatId
+					var sql = `		INSERT INTO flat(	description,
+														address,
+														square,
+														room_num,
+														traffic,
+														rent_pay,
+														total_pay,
+														enter_date)
+									VALUES (	${req.body.flat.description},
+												${req.body.flat.address},
+												${req.body.flat.square},
+												${req.body.flat.room_num},
+												${req.body.flat.traffic},
+												${req.body.flat.rent_pay},
+												${req.body.flat.total_pay},
+												STR_TO_DATE(${req.body.flat.enter_date}, '%d.%m.%Y'));`;
+					logger.debug(req, sql);
+					return db.queryAsync(sql);
+				
+				}).then(function(result) {
 
-			logger.debug(req, sql);
+					//logger.debug(req, result);
 
-			return db.queryAsync(sql).then(function(result) {
-
-				logger.debug(req, result);
-
-				if (!hasId) {
 					req.body.flat.id = result.insertId;
-				}
+
+					var sqlValues = [];
+
+					req.body.flatDistricts.forEach(function(elem) {
+						var isChecked = ( elem.is_checked ) ? 1 : 0;
+						sqlValues.push(`(${req.body.flat.id}, ${elem.district_id}, ${isChecked})`);
+					});
+
+					var sql = ` INSERT INTO flat_district(flat_id, district_id, is_checked)
+								VALUES ${sqlValues.join(',')};`;
+					logger.debug(req, sql);
+					return db.queryAsync(sql);
+				});
+
+			} // end 'new flat'
+
+			return promiseChain.then(function(result) {
+
+				//logger.debug(req, result);
 
 				var sql = `	UPDATE photo 
 							SET flat_id = ${req.body.flat.id}, 
@@ -743,7 +888,7 @@ router.post('/edit', function(req, res, next) {
 				}
 			});
 
-		} else { // end has flat
+		} else { // end 'Flat data exists'
 
 			return Promise.resolve();
 			
@@ -814,31 +959,32 @@ router.post('/edit', function(req, res, next) {
 		logger.debug(req, sql);
 		return db.queryAsync(sql);
 
-	}).then(function(result) {
+	}).then(function() {
 
-		logger.debug(req, result);
-
-		var promiseChain = Promise.resolve();
-		
-		req.body.district.forEach(function(elem) {
-			promiseChain = promiseChain.then(function() {
-				var sql = `UPDATE user_district SET is_checked = ${elem.is_checked} WHERE id = ${elem.id};`;
-				return db.queryAsync(sql);
-			});
+		var promiseChain = Promise.resolve().then(function() {
+			var sql = `	DELETE FROM user_district WHERE user_id = ${req.body.user.id};`;
+			logger.debug(req, sql);
+			return db.queryAsync(sql);
 		});
-		
-		req.body.campus.forEach(function(elem) {
+
+		if (req.body.userDistricts && req.body.userDistricts.length) {
 			promiseChain = promiseChain.then(function() {
-				var sql = `UPDATE user_campus500 SET is_checked = ${elem.is_checked} WHERE id = ${elem.id};`;
+
+				var sqlValues = [];
+
+				req.body.userDistricts.forEach(function(elem) {
+					sqlValues.push(`(${elem}, ${req.body.user.id})`);
+				});
+
+				var sql = ` INSERT INTO user_district(district_id, user_id)
+							VALUES ${sqlValues.join(',')}`;
+				logger.debug(req, sql);
 				return db.queryAsync(sql);
 			});
-		});		
+		}
 
-		return promiseChain;
+	}).then(function() {
 
-	}).then(function(result) {
-
-		logger.debug(req, result);
 		res.json({
 			status: 'ok'
 		});

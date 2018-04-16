@@ -27,10 +27,13 @@ router.use(function(req, res, next) {
 	auth.authorization(req).then(function() {
 		next();
 	}).catch(function(err) {
-		logger.error(err);
+		if (err.message.match(/^WARN:/)) {
+			logger.debug(err.message, err.stack);
+		} else {
+			logger.error(err.message, err.stack);
+		}
 		next();
 	});
-	//next();
 });
 
 router.use('/auth', require('./auth'));
