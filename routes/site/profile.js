@@ -9,6 +9,7 @@ const sizeOfAsync = Promise.promisify(require('image-size'));
 
 const connectionPromise = require('../../components/connectionPromise.js');
 const logger = require('../../components/myLogger.js');
+const util = require('../../components/myUtil.js');
 
 const multer  = require('multer');
 //todo: fix bug with duplicating && corrupting images 
@@ -337,20 +338,11 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 	var userPriorities = [];
 	var prioritySelect = [];
 	
-	var utilities = [];
-	var flatUtilities = [];
-	var utilityObject = [];
-	
-	var districts = [];
 	var userDistricts = [];
-	var districtObject = [];
-
-	var campus500 = [];
-	var userCampus500 = [];
 	var campus500Object = [];
-
 	var flatDistricts = [];
-	
+	var utilityObject = [];
+
 	var hasFlat = false;
 	var messages = [];
 	
@@ -507,103 +499,48 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 		
 		// construct priority <select>s (end)
 
-		var sql = `	SELECT id, name FROM district ORDER BY name;`;
 
-		logger.debug(req, sql);
-		return db.queryAsync(sql);
+		return util.generateCheckbox({
+			dictionaryTableName: 'district',
+			table2Name: 'user',
+			orderByColumn: 'name',
+			table2_id: req.user_id
+		});
 		
-	}).then(function(result) {
-
-		districts = result;
-
-		var sql = ` SELECT district_id
-					FROM user_district
-					WHERE user_id = ${req.user_id};`;
-
-		logger.debug(req, sql);
-		return db.queryAsync(sql);
-
 	}).then(function(result) {
 
 		userDistricts = result;
 
-		var isChecked = false;
-		districts.forEach(function(item) {
-			isChecked = false;
-
-			for (var i = 0; i < userDistricts.length; i++) {
-				if (userDistricts[i].district_id === item.id) {
-					isChecked = true;
-					break;
-				}
-			}
-
-			districtObject.push({
-				id: item.id,
-				name: item.name,
-				isChecked: isChecked
-			});
-		});		
-
-		var sql = `	SELECT
-						id,
-						name,
-						icon
-					FROM campus500
-					ORDER BY display_order;`;
-
-		logger.debug(req, sql);
-		return db.queryAsync(sql);
-
-	}).then(function(result) {
-
-		campus500 = result;	
-
-		var sql = ` SELECT campus500_id
-					FROM user_campus500
-					WHERE user_id = ${req.user_id};`;
-		logger.debug(req, sql);
-		return db.queryAsync(sql);
-
-	}).then(function(result) {
-
-		userCampus500 = result;
-
-		var isChecked = false;
-		campus500.forEach(function(item) {
-
-			for (var i = 0; i < userCampus500.length; i++) {
-				if (userCampus500[i].campus500_id === item.id) {
-					isChecked = true;
-					break;
-				}
-			}
-
-			campus500Object.push({
-				id: item.id,
-				name: item.name,
-				icon: item.icon,
-				isChecked: isChecked
-			});
-
+		return util.generateCheckbox({
+			dictionaryTableName: 'campus500',
+			table2Name: 'user',
+			orderByColumn: 'display_order',
+			table2_id: req.user_id
 		});
 
-		var promiseChain = Promise.resolve();
+	}).then(function(result) {
 
-		promiseChain = promiseChain.then(function() {
+		campus500Object = result;	
 
-			var sql = `	SELECT 
-							id, 
-							display_name	name 
-						FROM utility
-						ORDER BY display_order;`
+		var promiseChain = util.generateCheckbox({
+			dictionaryTableName: 'utility',
+			table2Name: 'flat',
+			orderByColumn: 'display_order',
+			table2_id: (hasFlat) ? data.flat_id : undefined
+		}).then(function(result) {
 
-			logger.debug(req, sql);
-			return db.queryAsync(sql);
+			utilityObject = result;
+
+			return util.generateCheckbox({
+				dictionaryTableName: 'district',
+				table2Name: 'flat',
+				orderByColumn: 'name',
+				table2_id: (hasFlat) ? data.flat_id : undefined
+			});
 
 		}).then(function(result) {
 
-			utilities = result;
+			flatDistricts = result;
 
 		});
 
@@ -622,76 +559,12 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 				
 				photos = result;
 
-				var sql = `	SELECT utility_id
-							FROM flat_utility
-							WHERE flat_id = ${data.flat_id};`;
-				logger.debug(req, sql);
-				return db.queryAsync(sql);
-
-			}).then(function(result) {
-
-				flatUtilities = result;
-
 			});
 		}
 
 		return promiseChain;
 
 	}).then(function() {
-
-		for (var i = 0; i < utilities.length; i++) {
-			utilityObject.push({
-				id: utilities[i].id,
-				name: utilities[i].name,
-				isChecked: false
-			});
-			
-			for (var j = 0; j < flatUtilities.length; j++) {
-				if (flatUtilities[j].id === utilities[i].utility_id) {
-					utilityObject[i].isChecked = true;
-					break;
-				}
-			}
-		}
-
-		var promiseChain = Promise.resolve();
-
-		if (hasFlat) {
-			promiseChain = promiseChain.then(function() {
-				var sql = ` SELECT 
-								id,
-								district_name,
-								is_checked
-							FROM v_flat_district
-							WHERE flat_id = ${data.flat_id}`;
-				logger.debug(sql);
-				return db.queryAsync(sql);
-			});
-		} else {
-			promiseChain = promiseChain.then(function() {
-				var sql = ` SELECT 
-								id 		district_id,
-								name	district_name,
-								0		is_checked
-							FROM district
-							ORDER BY district_name;`;
-				logger.debug(sql);
-				return db.queryAsync(sql);
-			});
-		}
-
-		return promiseChain;
-
-	}).then(function(result) {
-
-		flatDistricts = result;
-
-		/*if (req.user_id == data.user_id && data.user_is_activated == 0) {
-			messages.push({
-				type: 'warn',
-				body: 'Каждый наш пользователь должен заполнить и сохнанить анкету, что начать использование сайта'
-			});
-		}*/
 
 		res.render('site/profile_edit.pug', {
 			user_id: req.params.userId,
@@ -702,9 +575,9 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 			studyYears: studyYears,
 			photos: photos,
 			priorities: prioritySelect,
-			utilities: utilityObject,
 			userDistricts: userDistricts,
-			campus500: campus500,
+			campus500: campus500Object,
+			utilities: utilityObject,
 			flatDistricts: flatDistricts,
 			showFlatAnyway: (req.params.postaction && req.params.postaction === 'show_flat_area') ? true : false,
 			isAuthorized: req.isAuthorized,
@@ -727,6 +600,7 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 
 router.post('/edit', function(req, res, next) {
 	var db = null;
+	var sql = null;
 
 	if (!req.isAuthorized) {
 		res.redirect(`/?message='Пожалуйста, авторизуйтесь в системе`);
@@ -745,21 +619,21 @@ router.post('/edit', function(req, res, next) {
 
 		var flatDataExists = (req.body.flat.address) ? true : false; 		// address is primary field
 		var hasId = (req.body.flat.id !== '') ? true : false;	//
+		var promiseChain = Promise.resolve();
 		
+
 		if (flatDataExists) {
 			// Flat data exists
 
 			validateFlat(req.body.flat);
 			formatObjectForSQL(req.body.flat);
-			var sql;
-			var promiseChain = Promise.resolve();
-
+			
 			if (hasId) {
-				// new flat
+				// existing flat
 
 				promiseChain = promiseChain.then(function() {
 					
-					var sql = `	UPDATE flat
+					sql = `	UPDATE flat
 						SET description = ${req.body.flat.description},
 							address = ${req.body.flat.address},
 							square = ${req.body.flat.square},
@@ -772,46 +646,14 @@ router.post('/edit', function(req, res, next) {
 					logger.debug(req, sql);
 					return db.queryAsync(sql);
 
-				}).then(function(result) {
-
-					var distrChecked = [];
-					var distrNotChecked = [];
-
-					req.body.flatDistricts.forEach(function(elem) {
-						if (elem.is_checked === 'true') {
-							distrChecked.push(elem.id);
-						} else {
-							distrNotChecked.push(elem.id);
-						}
-					});
-
-					var promiseChain = Promise.resolve();
-
-					if (distrChecked.length) {
-						promiseChain = promiseChain.then(function() {
-							var sql = ` UPDATE flat_district SET is_checked = 1 WHERE id IN (${distrChecked.join(',')})`;
-							logger.debug(req, sql);
-							return db.queryAsync(sql);
-						});
-					}
-
-					if (distrNotChecked.length) {
-						promiseChain = promiseChain.then(function() {
-							var sql = ` UPDATE flat_district SET is_checked = 0 WHERE id IN (${distrNotChecked.join(',')})`;
-							logger.debug(req, sql);
-							return db.queryAsync(sql);
-						});
-					}
-
-					return promiseChain;
 				});
 
 			} else {
-				// existing flat
+				// new flat
 
 				promiseChain = promiseChain.then(function() {
 
-					var sql = `		INSERT INTO flat(	description,
+					sql = `		INSERT INTO flat(	description,
 														address,
 														square,
 														room_num,
@@ -830,75 +672,70 @@ router.post('/edit', function(req, res, next) {
 					logger.debug(req, sql);
 					return db.queryAsync(sql);
 				
-				}).then(function(result) {
-
-					//logger.debug(req, result);
-
-					req.body.flat.id = result.insertId;
-
-					var sqlValues = [];
-
-					req.body.flatDistricts.forEach(function(elem) {
-						var isChecked = ( elem.is_checked ) ? 1 : 0;
-						sqlValues.push(`(${req.body.flat.id}, ${elem.district_id}, ${isChecked})`);
-					});
-
-					var sql = ` INSERT INTO flat_district(flat_id, district_id, is_checked)
-								VALUES ${sqlValues.join(',')};`;
-					logger.debug(req, sql);
-					return db.queryAsync(sql);
-				});
+				})
 
 			} // end 'new flat'
 
-			return promiseChain.then(function(result) {
+			promiseChain = promiseChain.then(function() {
 
-				//logger.debug(req, result);
-
-				var sql = `	UPDATE photo 
+				sql = `	UPDATE photo 
 							SET flat_id = ${req.body.flat.id}, 
 								temporary_user_id = NULL
 							WHERE temporary_user_id = ${req.user_id};`;
 				logger.debug(req, sql);
 				return db.queryAsync(sql);
 
-			}).then(function(result) {
+			}).then(function() {
 
-				logger.debug(req, result);
-				
-				var sql = `	DELETE FROM flat_utility WHERE flat_id = ${req.body.flat.id}`;
+				sql = ` DELETE FROM flat_district WHERE flat_id = ${req.body.flat.id};`;
 				logger.debug(req, sql);
 				return db.queryAsync(sql);
-
-			}).then(function(result) {
-
-				if (result) {
-					logger.debug(req, result);
-				}
-
-				if (req.body.utility && req.body.utility.length) {
-					var sql = `	INSERT INTO flat_utility(flat_id, utility_id) 
-								VALUES 
-									(${req.body.flat.id}, ${req.body.utility[0]})`;
-					for (var i = 1; i < req.body.utility.length; i++) {
-						sql += `\n, (${req.body.flat.id}, ${req.body.utility[i]})`;
-					}
-					logger.debug(req, sql);
-					return db.queryAsync(sql);
-				}
+				
 			});
 
-		} else { // end 'Flat data exists'
+			if (req.body.flatDistricts && req.body.flatDistricts.length) {
+				promiseChain = promiseChain.then(function() {
 
-			return Promise.resolve();
-			
-		}
+					var sqlValues = [];
+					req.body.flatDistricts.forEach(function(item) {
+						sqlValues.push(`(${req.body.flat.id}, ${item})`);
+					});
 
-	}).then(function(result) {
+					sql = `	INSERT INTO flat_district(flat_id, district_id)
+								VALUES ${sqlValues.join(',')};`;
+					logger.debug(req, sql);
+					return db.queryAsync(sql);
+				});
+			}
 
-		if (result) {
-			logger.debug(req, result);
-		}
+			promiseChain = promiseChain.then(function() {
+
+				sql = ` DELETE FROM flat_utility WHERE flat_id = ${req.body.flat.id};`;
+				logger.debug(req, sql);
+				return db.queryAsync(sql);
+				
+			});
+
+			if (req.body.utility && req.body.utility.length) {
+				promiseChain = promiseChain.then(function() {
+
+					var sqlValues = [];
+					req.body.utility.forEach(function(item) {
+						sqlValues.push(`(${req.body.flat.id}, ${item})`);
+					});
+
+					sql = `	INSERT INTO flat_utility(flat_id, utility_id)
+								VALUES ${sqlValues.join(',')};`;
+					logger.debug(req, sql);
+					return db.queryAsync(sql);
+				});
+			}
+
+		} // end 'flat data exists'
+
+		return promiseChain;
+
+	}).then(function() {
 			
 		validateUser(req.body.user);
 		formatObjectForSQL(req.body.user);
@@ -910,7 +747,7 @@ router.post('/edit', function(req, res, next) {
 		var about = (req.body.user.about) ? req.body.user.about : '\'\'';
 		var flat_id = (req.body.flat.id !== '') ? req.body.flat.id : 'NULL';
 
-		var sql =
+		sql =
 			`	UPDATE \`user\`
 				SET first_name = ${req.body.user.first_name},
 					last_name = ${req.body.user.last_name},
@@ -933,23 +770,20 @@ router.post('/edit', function(req, res, next) {
 		logger.debug(req, sql);
 		return db.queryAsync(sql);
 	
-	}).then(function(result) {
+	}).then(function() {
 
-		logger.debug(req, result);
-		var sql = `DELETE FROM user_priority_option WHERE user_id = ${req.body.user.id};`;
+		sql = `DELETE FROM user_priority_option WHERE user_id = ${req.body.user.id};`;
 		logger.debug(req, sql);
 		return db.queryAsync(sql);
 
-	}).then(function(result) {
-
-		logger.debug(req, result);
+	}).then(function() {
 			
 		// todo: ?
 		if (!req.body.priority.length) {
 			return Promise.resolve();
 		}	
 
-		var sql = `	INSERT INTO user_priority_option(user_id, priority_option_id) 
+		sql = `	INSERT INTO user_priority_option(user_id, priority_option_id) 
 					VALUES (${req.body.user.id}, ${req.body.priority[0]})`;
 		for (var i = 1; i < req.body.priority.length; i++) {
 					sql += ` \n ,(${req.body.user.id}, ${req.body.priority[i]})`;
@@ -962,7 +796,7 @@ router.post('/edit', function(req, res, next) {
 	}).then(function() {
 
 		var promiseChain = Promise.resolve().then(function() {
-			var sql = `	DELETE FROM user_district WHERE user_id = ${req.body.user.id};`;
+			sql = `	DELETE FROM user_district WHERE user_id = ${req.body.user.id};`;
 			logger.debug(req, sql);
 			return db.queryAsync(sql);
 		});
@@ -976,12 +810,36 @@ router.post('/edit', function(req, res, next) {
 					sqlValues.push(`(${elem}, ${req.body.user.id})`);
 				});
 
-				var sql = ` INSERT INTO user_district(district_id, user_id)
+				sql = ` INSERT INTO user_district(district_id, user_id)
 							VALUES ${sqlValues.join(',')}`;
 				logger.debug(req, sql);
 				return db.queryAsync(sql);
 			});
 		}
+
+		promiseChain = promiseChain.then(function() {
+			sql = `	DELETE FROM user_campus500 WHERE user_id = ${req.body.user.id};`;
+			logger.debug(req, sql);
+			return db.queryAsync(sql);
+		});
+
+		if (req.body.userCampus500 && req.body.userCampus500.length) {
+			promiseChain = promiseChain.then(function() {
+
+				var sqlValues = [];
+
+				req.body.userCampus500.forEach(function(elem) {
+					sqlValues.push(`(${elem}, ${req.body.user.id})`);
+				});
+
+				sql = ` INSERT INTO user_campus500(campus500_id, user_id)
+							VALUES ${sqlValues.join(',')}`;
+				logger.debug(req, sql);
+				return db.queryAsync(sql);
+			});
+		}
+
+		return promiseChain;
 
 	}).then(function() {
 
@@ -994,7 +852,7 @@ router.post('/edit', function(req, res, next) {
 		logger.error(req, err.stack, err.message);
 		res.json({
 			status: 'not ok'
-		})
+		});
 	
 	});
 });

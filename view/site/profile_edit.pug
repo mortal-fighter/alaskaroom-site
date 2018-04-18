@@ -127,27 +127,27 @@ html(lang=ru)
 					
 					for district in userDistricts
 						label
-							if district.is_checked === 1
-								input.user-district-checkbox(district_id=district.district_id, type="checkbox", checked)
+							if district.isChecked
+								input.user-district-checkbox(district_id=district.id, type="checkbox", checked)
 							else
-								input.user-district-checkbox(district_id=district.district_id, type="checkbox")
-							span= district.district_name
+								input.user-district-checkbox(district_id=district.id, type="checkbox")
+							span= district.name
 				div.user-setting
 					h2.kampus-ad Кампус500
 					p.min-note Кампус500 - это сообщество молодых людей, которые готовы пустить переночевать, передержать животных или вещи, а также помочь с переездом другому студенту. За каждую оказанную услугу вы получите 500 рублей. Таким образом вы можете дополнительно зарабатывать каждый месяц.
 					h3.kampus-note Выберете услуги, которые вы готовы оказать
 					
-					for service in campus500
-						if (service.is_checked === 1)
+					for campus in campus500
+						if (campus.isChecked)
 							div.kampus-option.checked-box
-								img(src= service.icon, alt="icon")
-								p= service.name
-								input(campus500_id= service.id, type="checkbox" checked)
+								img(src= campus.icon, alt="icon")
+								p= campus.name
+								input(campus500_id= campus.id, type="checkbox" checked)
 						else
 							div.kampus-option
-								img(src= service.icon, alt="icon")
-								p= service.name
-								input(campus500_id= service.id, type="checkbox")
+								img(src= campus.icon, alt="icon")
+								p= campus.name
+								input(campus500_id= campus.id, type="checkbox")
 
 				if !locals.data.flat_id
 					p.add-room У вас есть квартира и вы ищите соседа?
@@ -191,18 +191,18 @@ html(lang=ru)
 				div#flat-district.user-setting
 					h2.district В каком районе квартира? (Ростов-на-Дону)
 					if locals.flatDistricts
-						for flatDistrict in locals.flatDistricts
-							label(flat-district-id= flatDistrict.id)
-								if flatDistrict.is_checked
+						for district in locals.flatDistricts
+							label(flat-district-id= district.id)
+								if district.isChecked
 									input.flat-district-checkbox(type="checkbox", checked)
 								else
 									input.flat-district-checkbox(type="checkbox")
-								span= flatDistrict.district_name
+								span= district.name
 				div#utility.user-setting
 					h2.district Удобства в квартире
 					if locals.utilities
 						for utility in locals.utilities
-							label= utility.name
+							label= utility.display_name
 								if utility.isChecked
 									input(type="checkbox", value=utility.id, checked)
 								else

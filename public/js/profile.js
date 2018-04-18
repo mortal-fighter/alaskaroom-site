@@ -314,10 +314,12 @@ function handlersProfileEdit() {
 			form.user.department = processInputSelect('user_department');
 			form.user.studyyear = processInputSelect('user_studyyear');
 			form.user.wish_pay = $('#user_wish_pay').val();
+			
 			form.priority = [];
 			$('.priority').each(function() {
 				form.priority.push(processInputSelect(this.id));
 			});
+
 			form.userDistricts = [];
 			$('.user-district-checkbox').each(function() {
 				if ( $(this).prop('checked') ) {
@@ -326,16 +328,13 @@ function handlersProfileEdit() {
 			});
 			//console.log('district=', form.userDistricts);
 
-			form.campus = [];
+			form.userCampus500 = [];
 			$('.kampus-option > input[type=checkbox]').each(function(index) {
-				form.campus.push({
-					id: parseInt( $(this).attr('campus500_id') ),
-					name: $(this).prev('p').text(),
-					is_checked: $(this).prop('checked'),
-					display_order: index + 1
-				});
+				if ( $(this).prop('checked') ) {
+					form.userCampus500.push($(this).attr('campus500_id'));
+				}
 			});
-			//console.log('campus500=', form.campus);
+			//console.log('userCampus500=', form.userCampus500);
 
 			var validationFailed = false;
 
@@ -359,10 +358,9 @@ function handlersProfileEdit() {
 				
 				form.flatDistricts = [];
 				$('.flat-district-checkbox').each(function() {
-					form.flatDistricts.push({
-						id: parseInt( $(this).parent().attr('flat-district-id') ),
-						is_checked: $(this).prop('checked')
-					});
+					if ( $(this).prop('checked') ) {
+						form.flatDistricts.push($(this).parent().attr('flat-district-id'));
+					}
 				});
 
 				form.utility = [];

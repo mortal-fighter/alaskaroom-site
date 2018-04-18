@@ -168,38 +168,46 @@ module.exports = {
 		});
 	},
 
-	// params: dictionaryTableName, counterpartTableName, orderByColumn, counterpartValue
+	// params: dictionaryTableName, table2Name, orderByColumn, table2_id (optional)
 	generateCheckbox: function(p) {
 
 		var db = null;
 		var sql = null;
 		var dictionary = [];
 		var intersection = [];
-		var result = [];
+		var resultObject = [];
 
 		return connectionPromise().then(function(connection) {
 
 			db = connection;
 
 			sql = ` SELECT * FROM ${p.dictionaryTableName} ORDER BY ${p.orderByColumn};`;
+			//console.log(sql);
 			return db.queryAsync(sql);
 		
 		}).then(function(result) {
 
+			//console.log(result);
 			dictionary = result;
 
-			sql = ` SELECT ${p.dictionaryTableName}_id
-					FROM ${p.counterpartTableName}
-					WHERE ${p.counterpartTableName}_id = ${p.counterpartValue};`; 
-			return db.queryAsync(sql);
+			if (p.table2_id) {
+				sql = ` SELECT ${p.dictionaryTableName}_id
+						FROM ${p.table2Name}_${p.dictionaryTableName}
+						WHERE ${p.table2Name}_id = ${p.table2_id};`; 
+				//console.log(sql);
+				return db.queryAsync(sql);
+			} else {
+				return Promise.resolve([]);
+			}
 		
 		}).then(function(result) {
 
+			//console.log(result);
 			intersection = result;
 
 			var isChecked = false;
 			dictionary.forEach(function(item) {
-
+				
 				var one = {};
 				for (var key in item) {
 					if (item.hasOwnProperty(key)) {
@@ -207,18 +215,24 @@ module.exports = {
 					}
 				}
 
-				for (var i = 0; i < intersection.length; i++) {
-					//if (intersection[])
-				}
-
-
-				result.push(one);
+				if (p.table2_id) {
+					isChecked = false;
+					for (var i = 0; i < intersection.length; i++) {
+						if (intersection[i][p.dictionaryTableName + '_id'] === item.id) {
+							isChecked = true;
+							break;
+						}
+					}
+				} 
+				one.isChecked = isChecked;
+				
+				resultObject.push(one);
 
 			});
 
+			return resultObject;
 		});
-
-	}
+	},
 
 	formatObjectForSQL: function(object) {
 	// The following processes data, received from the form into sql query values

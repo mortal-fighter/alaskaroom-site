@@ -11,7 +11,7 @@ function sessionUserIdByToken(token) {
 		connectionPromise().then(function(connection) {
 			db = connection;
 			var sql = `	SELECT user_id FROM session WHERE token = '${token}';`;
-			logger.debug(sql);
+			//logger.debug(sql);
 			return db.queryAsync(sql);
 		}).then(function(result) {
 			//logger.debug(result);
