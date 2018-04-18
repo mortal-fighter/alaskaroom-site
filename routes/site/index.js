@@ -2,10 +2,13 @@
 
 const router = require('express').Router();
 const Promise = require('bluebird');
-const logger = require('log4js').getLogger();
+//const logger = require('log4js').getLogger();
+const myLogger = require('../../components/myLogger.js');
 const auth = require('../../components/auth.js');
 
 router.use(function(req, res, next) {
+	myLogger.info(req, req.method, req.originalUrl, JSON.stringify(req.body));
+
 	// urls which are allowed with no authorization
 	if (
 		// '/favicon.ico'
@@ -25,12 +28,13 @@ router.use(function(req, res, next) {
 	}
 
 	auth.authorization(req).then(function() {
+		myLogger.info(req, req.method, req.originalUrl, JSON.stringify(req.body));
 		next();
 	}).catch(function(err) {
 		if (err.message.match(/^WARN:/)) {
-			logger.debug(err.message, err.stack);
+			myLogger.debug(req, err.message, err.stack);
 		} else {
-			logger.error(err.message, err.stack);
+			myLogger.error(req, err.message, err.stack);
 		}
 		next();
 	});

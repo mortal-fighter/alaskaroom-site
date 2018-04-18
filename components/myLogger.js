@@ -7,6 +7,10 @@ const logger = {
 		rest.splice(0, 0, `[user_id=${req.user_id}] -`);
 		log4js.debug(...rest);
 	},
+	info: function(req, ...rest) {
+		rest.splice(0, 0, `[user_id=${req.user_id}] -`);
+		log4js.info(...rest);
+	},
 	error: function(req, ...rest) {
 		rest.splice(0, 0, `[user_id=${req.user_id}] -`);
 		log4js.error(...rest);

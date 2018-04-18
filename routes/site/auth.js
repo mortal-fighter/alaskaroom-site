@@ -115,12 +115,12 @@ router.get('/login_vk_callback/:postaction(\\S+)?', function(req, res, next) {
 			},
 			json: true
 		};
-		logger.debug(options);
+		logger.info('rp opts=', JSON.stringify(options));
 		return rp(options);
 	
 	}).then(function(result) {
 
-		logger.debug(JSON.stringify(result));
+		logger.info(JSON.stringify(result));
 		user = result.response[0];
 		
 		var sql = `SELECT id FROM \`user\` WHERE vk_id = ${user.id};`;
@@ -166,16 +166,16 @@ router.get('/login_vk_callback/:postaction(\\S+)?', function(req, res, next) {
 					},
 					json: true
 				};
-				logger.debug('city qs='+JSON.stringify(options));
+				logger.info('city qs=' + JSON.stringify(options));
 				
 				promiseChain = promiseChain.then(function() {
 					return rp(options);
 				}).then(function(result) {
-					logger.debug('city result='+JSON.stringify(result));
+					logger.info('city result=' + JSON.stringify(result));
 					user.universities[0].cityName = result.response[0].name;
 				});	
 			} else {
-				logger.debug(`Can't define user city (no university or 'city' field = 0)`);
+				logger.info(`Can't define user city (no university or 'city' field = 0)`);
 			}
 			
 			// 2. insert db (mandatory)
@@ -273,7 +273,7 @@ router.get('/login_vk_callback/:postaction(\\S+)?', function(req, res, next) {
 										${department},
 										${user.id},
 										NOW())`;
-				logger.debug(sql);
+				logger.info('sql=', sql.replace('\n', ' '));
 				return db.queryAsync(sql);
 			
 			}).then(function(result) {
@@ -307,7 +307,7 @@ router.get('/login_vk_callback/:postaction(\\S+)?', function(req, res, next) {
 						isAvatarFileCreated = true;
 						//update db
 						var sql = `UPDATE \`user\` SET avatar = '${avatarHref}' WHERE id = ${newUserId};`;
-						logger.debug(sql);
+						logger.info('sql=', sql);
 						return db.queryAsync(sql);
 					}).catch(function(err) {
 						logger.error(err.message+' '+err.stack);
