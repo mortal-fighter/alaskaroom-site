@@ -206,6 +206,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 						user_age,
 						user_about,
 						user_avatar,
+						user_phone,
 						user_wish_pay,
 						user_is_activated,
 						university_id,
@@ -291,12 +292,18 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 			});
 		}
 
+		var isCameFromCampus500 = false;
+		if ( req.header('Referer') && req.header('Referer').match(/campus500/) ) {
+			isCameFromCampus500 = true;
+		}
+
 		res.render('site/profile_view.pug', {
 			data: data,
 			photos: photos,
 			priorities: priorities,
 			status_sended: status_sended,
 			status_incoming: status_incoming,
+			user_phone: ( isCameFromCampus500 ) ? data.user_phone : null,
 			isAuthorized: req.isAuthorized,
 			userId: req.user_id,
 			messages: messages

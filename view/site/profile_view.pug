@@ -26,6 +26,8 @@ html(lang=ru)
 						caption += ', ' + locals.data.faculty_name;
 					}
 				p= caption
+				if locals.user_phone
+					div.user-phone= 'Кампус500. Телефон для связи: ' + locals.user_phone
 				if locals.data.user_id != locals.userId
 					if locals.status_sended === 'pending'
 						p.roommate-status= 'Соседство: в ожидании ответа от пользователя ' + locals.data.user_first_name

@@ -1000,6 +1000,15 @@ ol, ul {
     font-weight: 300;
 }
 
+.user-phone {
+    float: left;
+    margin: 20px;
+    margin-top: 0;
+    font-size: 14px;
+    color: #777;
+    line-height: 1.4em;
+}
+
 .user-caracter {
 	display: block;
 	width: 98%;

@@ -51,6 +51,7 @@ router.post('/search', function(req, res, next) {
 	var db = null;
 	var countTotal = null;
 	var users = [];
+	var sql = null;
 	
 	var limit = (req.body.limit) ? req.body.limit : 9;
 	var offset = (req.body.offset) ? req.body.offset : 0;
@@ -59,7 +60,7 @@ router.post('/search', function(req, res, next) {
 
 		db = connection;
 
-		var sql = ` SELECT 	
+		sql = ` SELECT 	
 						user.id,
 						user.first_name,
 						user.last_name,
@@ -68,8 +69,7 @@ router.post('/search', function(req, res, next) {
 					WHERE id IN (
 						SELECT DISTINCT user_id
 						FROM user_campus500
-						WHERE is_checked = 1
-						  AND campus500_id = ${req.body.campus.replace(/'/g, '\\\'')}
+						WHERE campus500_id = ${req.body.campus.replace(/'/g, '\\\'')}
 					)
 					ORDER BY id DESC
 					LIMIT ${limit}
@@ -81,12 +81,11 @@ router.post('/search', function(req, res, next) {
 
 		users = result;
 
-		var sql = `	SELECT COUNT(*) countTotal
+		sql = `	SELECT COUNT(*) countTotal
 					FROM (
 						SELECT DISTINCT user_id
 						FROM user_campus500
-						WHERE is_checked = 1
-						  AND campus500_id = ${req.body.campus.replace(/'/g, '\\\'')}
+						WHERE campus500_id = ${req.body.campus.replace(/'/g, '\\\'')}
 					) user_list;`;
 		logger.debug(req, sql);			
 		return db.queryAsync(sql);
@@ -98,10 +97,14 @@ router.post('/search', function(req, res, next) {
 		var userIds = [];
 		users.forEach(function(user) { userIds.push(user.id); });
 
-		var sql = `	SELECT user_id, name, icon
+		var sql = `	SELECT 
+						user_campus500.user_id, 
+						campus500.name, 
+						campus500.icon
 					FROM user_campus500
-					WHERE is_checked = 1
-					  AND user_id IN (${userIds.join(',')});`;
+					JOIN campus500 ON campus500.id = user_campus500.campus500_id
+					WHERE user_id IN (${userIds.join(',')})
+					ORDER BY user_id DESC, campus500_id;`;
 
 		logger.debug(req, sql);
 		return db.queryAsync(sql);
