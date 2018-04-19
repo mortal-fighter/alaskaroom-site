@@ -95,6 +95,10 @@ function handlersProfileEdit() {
 		}
 	});
 
+	var curYear = (new Date()).getFullYear();
+	var minAge = 17;
+	var maxAge = 30;
+
 	$('#user_birth_date').datepicker({
 		dayNames: [ "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье" ],
 		dayNamesShort: [ "Пон", "Вто", "Сре", "Чет", "Пят", "Суб", "Вос" ],
@@ -104,7 +108,7 @@ function handlersProfileEdit() {
 		dateFormat: "dd.mm.yy",
 		changeYear: true,
 		changeMonth: true,
-		yearRange: "1980:2013"
+		yearRange: (curYear-maxAge) + ':' + (curYear-minAge)
 	});
 
 	$('#flat_enter_date').datepicker({
