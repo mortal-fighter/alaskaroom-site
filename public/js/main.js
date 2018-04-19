@@ -95,24 +95,6 @@ function _resetPopupHeightPosition() {
 	$('.popup-container, .popup-content').removeAttr('style');
 }
 
-/* AUTH POPUP */
-function initAuthPopup() {
-	$('#btn-close-auth').on('click', function(e) {
-		e.preventDefault();
-		closeAuthPopup();
-	});
-	$('#btn-enter-site').on('click', function(e) {
-		e.preventDefault();
-		window.location.href='/post';
-	})
-}
-function showAuthPopup() {
-	$('.auth-popup').fadeIn(200);
-}
-function closeAuthPopup() {
-	$('.auth-popup').fadeOut(200);
-}
-
 function indicatorNewRequests() {
 	function inner() {
 		//console.log('window.location.href=', window.location.href);
@@ -148,7 +130,6 @@ function indicatorNewRequests() {
 }
 
 $(document).ready(function() {
-	initAuthPopup();
 	initPopup();
 	handlersHeader();
 	indicatorNewRequests();

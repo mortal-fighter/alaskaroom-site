@@ -6,29 +6,37 @@ html(lang=ru)
 	body
 		include includes/header.pug
 		div.wrp
-			div.cover
-				h2
-					span Найди соседа по комнате за <span class="colored">3</span> дня!
-				h3 Дешевле аренда - больше денег на себя!
+			div.front-info
+				div.front-desc
+					img(src="/images/logo1.png", alt="Logo")
+					h2 AlaskaRoom - студенческая социальная сеть для поиска идеального соседа по квартире (румейта) или нового жилья рядом с ВУЗом.
+				div.front-phone
+					a#btn-find-roommate.front-menu(href="/auth/login_soc/2") Поиск румейта
+					a#btn-find-flat(href="/auth/login_soc/1") Поиск жилья
+					a#btn-go-campus(href="/auth/login_soc/3") Кампус500
+					a#btn-enter-site(href="/auth/login_soc") Войти через ВК
 			div.weoffer
 				div.offer1
 					div
-						img(src="images/stud2.jpg", alt="Promo")
-					h3 Живи с соседом из твоего ВУЗа
-					p Для тех, кто уже снимает квартиру и не против жить с соседом, а может ищет нового.
-					input.promo-btn#btn-enter-site-2(type="button", name="", value="Найти соседа")
-				div.offer1
+						img(src="/images/stud2.jpg", alt="Promo")
+					h3 Найди жилье или соседа по комнате
+					p AlaskaRoom - это онлайн портал для студентов российских ВУЗов! Здесь каждый сможет найти своего идеального соседа по комнате или выбрать жилье близко к учебному заведению! Только студенты без посредников и риэлторов!
+					input#btn-promo1.promo-btn(type="button", value="Найти")
+				div.offer2
 					div
-						img(src="images/stud5.jpg", alt="Promo")
-					h3 Найди жилье на период обучения
-					p На сайте объявления только студентов местных ВУЗов. Бесплатно создай свое, чтобы найти румейта.
-					input.promo-btn#btn-enter-site-3(type="button", name="", value="Найти квартиру")
-				div.offer1
-					div
-						img(src="images/stud3.jpg", alt="Promo")
-					h3 Есть квартира с мебелью?
-					p У вас есть квартира с мебелью и вы хотите сдать ее? Мы поможем и возьмем все сложности на себя!
-					input.promo-btn(type="button", name="", value="Скоро к услугам")
+						img(src="/images/kampus.jpg", alt="Promo")
+					h3 Помочь с переездом и заработать
+					p В Кампусе ты можешь найти других студентов, готовых помочь вам с переездом, или предложить свои услуги и заработать на этом.
+					img.offer-img(src="/images/box.png", alt="Передержка вещей", title="Передержка вещей")
+					img.offer-img(src="/images/couch1.png", alt="Ночевка в гостях", title="Ночевка в гостях")
+					img.offer-img(src="/images/move.png", alt="Помощь с переездом", title="Помощь с переездом")
+					img.offer-img(src="/images/pet.png", alt="Передержка животных", title="Передержка животных")
+					input#btn-promo2.promo-btn(type="button", value="Мне интересно!")
+			div.edu-close
+				div
+					h3 Живи ближе к ВУЗу
+				h4 Подборка жилья около ВУЗа от AlaskaRoom
+				p После регистрации на сайте, один раз в месяц ты будешь получать подборку нового жилья или румейтов, которые находятся ближе всего к учебному заведению. Также на сервисе ты сможешь быстро и дешево организовать переезд!
 			div.alaska-features
 				h2 Больше о поиске соседа (румейта)
 				div

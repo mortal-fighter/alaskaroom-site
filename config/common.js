@@ -23,7 +23,6 @@ module.exports = {
 		name: 'localhost',
 		clientSecret: '9W8DQ2D3r97l3hWNoAfY',
 		redirectUrl: 'http://' + HOST + ':' + PORT + '/auth/login_vk_callback',
-		redirectUrlShowFlatArea: 'http://localhost/auth/login_vk_callback/show_flat_area',
 		version: 5.71
 	},
 	mailer: { 

@@ -15,23 +15,52 @@ const config = require('../../config/common.js');
 const connectionPromise = require('../../components/connectionPromise.js');
 const auth = require('../../components/auth.js');
 
-router.get('/login_soc/:postaction(\\S+)?', function(req, res, next) {
+var codes = {
+	0: {
+		desc: 'По умолчанию (Профиль)',
+		url1: '/profile/view/me',
+		url2: '/profile/edit/me'
+	},
+	1: {
+		desc: 'Поиск жилья',
+		url1: '/filter',
+		url2: '/profile/edit/me'
+	},
+	2: {
+		desc: 'Поиск румейта',
+		url1: '/filter/find-roommate',
+		url2: '/profile/edit/me/show_flat_area'
+	},
+	3: {
+		desc: 'Кампус500',
+		url1: '/campus500',
+		url2: '/campus500'
+	}
+};
+
+router.get('/login_soc/:destinationCode(\\d+)?', function(req, res, next) {
 	Promise.resolve().then(function() {
-		var redirectUrl = config.vkApp.redirectUrl;
-	
-		if (req.params.postaction && req.params.postaction === 'show_flat_area') {
-			redirectUrl = config.vkApp.redirectUrlShowFlatArea;
-		} else if (req.params.postaction) {
-			throw new Error(`Parameters validation error: postcation = '${req.params.postaction}' is not valid`);
+		
+		if (!req.params.destinationCode) req.params.destinationCode = 0;	
+
+		var valid = ( codes[parseInt(req.params.destinationCode)] ) ? true : false;
+		
+		if (!valid) {
+			throw new Error(`WARN: Parameters validation error: destinationCode = '${req.params.destinationCode}' is not valid`);
 		}
-	
-		res.redirect(`https://oauth.vk.com/authorize?client_id=${config.vkApp.id}&display=page&redirect_uri=${redirectUrl}&response_type=code&v=${config.vkApp.version}`);
+
+		res.cookie('AlaskaRoomDestinationCode', req.params.destinationCode);
+		res.redirect(`https://oauth.vk.com/authorize?client_id=${config.vkApp.id}&display=page&redirect_uri=${config.vkApp.redirectUrl}&response_type=code&v=${config.vkApp.version}`);
 
 	}).catch(function(err) {
 
-		logger.error(err.message + ' ' + err.stack);
-		res.render('errors/404.pug');
-
+		if (err.message.match(/^WARN:/)) {
+			logger.info(err.message, err.stack);
+			res.render('errors/404.pug');
+		} else {
+			logger.error(err.message, err.stack);
+			res.render('errors/500.pug');
+		}
 	});
 	
 });
@@ -46,7 +75,7 @@ router.get('/logout/:userId(\\d+)', function(req, res, next) {
 	});
 })
 
-router.get('/login_vk_callback/:postaction(\\S+)?', function(req, res, next) {
+router.get('/login_vk_callback', function(req, res, next) {
 	var db = null;
 	var access = null;
 	var user = null;
@@ -59,17 +88,10 @@ router.get('/login_vk_callback/:postaction(\\S+)?', function(req, res, next) {
 	var userId = null;
 
 	Promise.resolve().then(function() {
-		
-		if (req.params.postaction && req.params.postaction !== 'show_flat_area') {
-			throw new Error(`Parameters validation error: postcation = '${req.params.postaction}' is not valid`);
-		}
 
 		logger.debug(req.query.code);
-		
+
 		var redirectUrl = config.vkApp.redirectUrl;
-		if (req.params.postaction && req.params.postaction === 'show_flat_area') {
-			redirectUrl = config.vkApp.redirectUrlShowFlatArea;
-		}
 
 		var options = {
 			uri: 'https://oauth.vk.com/access_token',
@@ -141,7 +163,13 @@ router.get('/login_vk_callback/:postaction(\\S+)?', function(req, res, next) {
 			// EXISTING USER
 			auth.sessionStart(userId).then(function(token) {
 				res.cookie('AlaskaRoomAuthToken', token);
-				res.redirect(`/profile/view/${userId}`);	
+				console.log("req.cookies['AlaskaRoomDestinationCode']=", req.cookies['AlaskaRoomDestinationCode']);
+				var authCode = parseInt(req.cookies['AlaskaRoomDestinationCode']);
+				console.log('authCode=', authCode);
+				res.cookie('AlaskaRoomDestinationCode', '');
+				console.log('codes[authCode]=', codes[authCode]);
+				console.log('codes[authCode].url1=', codes[authCode].url1);
+				res.redirect(codes[authCode].url1);
 			}).catch(function(err) {
 				logger.error(err);
 				res.render('errors/500.pug');
@@ -318,11 +346,9 @@ router.get('/login_vk_callback/:postaction(\\S+)?', function(req, res, next) {
 			}).then(function(result) {
 				auth.sessionStart(newUserId).then(function(token) {
 					res.cookie('AlaskaRoomAuthToken', token);
-					if (req.params.postaction && req.params.postaction === 'show_flat_area') {
-						res.redirect(`/profile/edit/${newUserId}/show_flat_area`);
-					} else {
-						res.redirect(`/profile/edit/${newUserId}`);
-					}
+					var authCode = parseInt(req.cookies['AlaskaRoomDestinationCode']);
+					res.cookie('AlaskaRoomDestinationCode', '');
+					res.redirect(codes[authCode].url2);
 				}).catch(function(err) {
 					logger.error(err);
 					res.render('errors/500.pug');

@@ -20,7 +20,6 @@ module.exports = {
 		name: 'Alaska Room',
 		clientSecret: '9W8DQ2D3r97l3hWNoAfY',
 		redirectUrl: 'http://alaskaroom.ru/auth/login_vk_callback',
-		redirectUrlShowFlatArea: 'http://alaskaroom.ru/auth/login_vk_callback/show_flat_area',
 		version: 5.71
 	},
 	mailer: { 
