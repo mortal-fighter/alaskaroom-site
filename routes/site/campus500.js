@@ -51,6 +51,7 @@ router.post('/search', function(req, res, next) {
 	var db = null;
 	var countTotal = null;
 	var users = [];
+	var campusOptions = [];
 	var sql = null;
 	
 	var limit = (req.body.limit) ? req.body.limit : 9;
@@ -79,6 +80,7 @@ router.post('/search', function(req, res, next) {
 
 	}).then(function(result) {
 
+		logger.debug(req, result);
 		users = result;
 
 		sql = `	SELECT COUNT(*) countTotal
@@ -92,29 +94,45 @@ router.post('/search', function(req, res, next) {
 
 	}).then(function(result) {
 		
+		logger.debug(req, result);
 		countTotal = result[0].countTotal;
 
-		var userIds = [];
-		users.forEach(function(user) { userIds.push(user.id); });
+		var promiseChain = Promise.resolve();
+		
+		if (countTotal > 0) {
+			
+			promiseChain = promiseChain.then(function() {
+				
+				var userIds = [];
+				users.forEach(function(user) { userIds.push(user.id); });
 
-		var sql = `	SELECT 
-						user_campus500.user_id, 
-						campus500.name, 
-						campus500.icon
-					FROM user_campus500
-					JOIN campus500 ON campus500.id = user_campus500.campus500_id
-					WHERE user_id IN (${userIds.join(',')})
-					ORDER BY user_id DESC, campus500_id;`;
+				var sql = `	SELECT 
+								user_campus500.user_id, 
+								campus500.name, 
+								campus500.icon
+							FROM user_campus500
+							JOIN campus500 ON campus500.id = user_campus500.campus500_id
+							WHERE user_id IN (${userIds.join(',')})
+							ORDER BY user_id DESC, campus500_id;`;
 
-		logger.debug(req, sql);
-		return db.queryAsync(sql);
+				logger.debug(req, sql);
+				return db.queryAsync(sql);
+			
+			}).then(function(result) {
 
-	}).then(function(result) {
+				campusOptions = result;
+
+			});
+		}
+
+		return promiseChain;
+
+	}).then(function() {
 
 		res.json({
 			status: 'ok',
 			users: users,
-			campusOptions: result,
+			campusOptions: campusOptions,
 			usersCountTotal: countTotal
 		});
 
