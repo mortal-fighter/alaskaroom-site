@@ -116,11 +116,11 @@ html(lang=ru)
 				div.room-param
 					p Сколько комнат?
 					h3= locals.data.flat_room_num
-				if locals.data.flat_utils
+				if locals.utilities && locals.utilities.length
 					div.room-param
 						p Удобства
-						foreach util in locals.data.flat_utils
-							h4= util.name
+						for util in locals.utilities
+							h4= util.display_name
 		
 		include includes/footer.pug
 

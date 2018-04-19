@@ -186,8 +186,10 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 	}
 
 	var data = null;
+	var sql = null;
 	var priorities = [];
 	var photos = [];
+	var utilities = [];
 	var status_sended = null;
 	var status_incoming = null;
 	var messages = [];
@@ -196,7 +198,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 		
 		db = connection;
 		
-		var sql = `	SELECT 
+		sql = `	SELECT 
 						user_id,
 						user_first_name,
 						user_last_name,
@@ -234,7 +236,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 		logger.debug(req, result);
 		data = result[0];
 
-		var sql = `	SELECT priority_name_full, option_name
+		sql = `	SELECT priority_name_full, option_name
 					FROM v_user_priority
 					WHERE user_id = ${req.params.userId};`;
 		logger.debug(req, sql);
@@ -247,15 +249,26 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 		
 		if (data.flat_id) {
 			return Promise.resolve().then(function() {	
-				var sql = `	SELECT 
+				sql = `	SELECT 
 								src_small, src_orig,
 								width_small, height_small, width_orig, height_orig
 							FROM photo
 							WHERE flat_id = ${data.flat_id};`;
 				return db.queryAsync(sql);
 			}).then(function(result) {
-				logger.debug(req, result);
 				photos = result;
+				
+				sql = ` SELECT 
+							utility.id,
+							utility.display_name
+						FROM utility
+						JOIN flat_utility ON utility.id = flat_utility.utility_id
+						WHERE flat_utility.flat_id = ${data.flat_id}
+						ORDER BY utility.display_order;`;
+				logger.debug(req, sql);
+				return db.queryAsync(sql);
+			}).then(function(result) {
+				utilities = result;
 			});
 		} else {
 			return Promise.resolve();
@@ -300,6 +313,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 		res.render('site/profile_view.pug', {
 			data: data,
 			photos: photos,
+			utilities: utilities,
 			priorities: priorities,
 			status_sended: status_sended,
 			status_incoming: status_incoming,
