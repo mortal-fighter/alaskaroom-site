@@ -10,11 +10,6 @@ router.get('/', function(req, res, next) {
 	var db = null;
 	var campus = [];
 
-	if (!req.isAuthorized) {
-		res.redirect('/?message=Пожалуйста авторизуйтесь на сайте');
-		return;
-	}
-
 	connectionPromise().then(function(connection) {
 
 		db = connection;

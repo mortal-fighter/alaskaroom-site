@@ -6,7 +6,7 @@ function handlersHomepage() {
 	});
 
 	$('#btn-promo2').on('click', function() {
-		window.location.href='/auth/login_soc/3';
+		window.location.href='/campus500';
 	});
 }
 

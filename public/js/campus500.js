@@ -2,8 +2,11 @@
 
 var countRecords = 0;
 var lastForm = null;
+var isMobile = false;
 
 function campus500handlers() {
+	isMobile = ( $('.main-filter').css('display') === 'none' ) ? true : false;
+
 	$('.load-more').on('click', function(e) {
 		e.preventDefault();
 		loadMore();
@@ -13,7 +16,24 @@ function campus500handlers() {
 		search();
 	});
 
-	search();
+	if ( $('#isAuthorized').val() === '1' ) {
+		search();
+	}
+
+	$('.cpm-filter').on('click', function() {
+		$('.listing, .kampus-rules').hide();
+		$('.main-filter').show();
+	});
+
+	$('.find-filter').on('click', function(e) {
+		e.preventDefault();
+		if (isMobile) {
+			$('.main-filter').hide();
+			$('.listing, .kampus-rules').show();
+			$(window).scrollTop( $('#listing-content').offset().top );;	
+		}
+		search();
+	});
 }
 
 function search() {

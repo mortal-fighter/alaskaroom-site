@@ -8,15 +8,17 @@ html(lang=ru)
 		div.wrp
 			div.main-page
 				//- левая колонка
-				div.main-filter
-					form(method="", action="")
-						p Город
-						select.prime-filter(size="1")
-							option(selected) Ростов-на-Дону
-						p Требуется:
-						select#campus-option.lower-filter(size="1")
-							for option in locals.campus500
-								option(value=option.id)= option.name
+				div.main-filter.menu-campus
+					if locals.isAuthorized
+						form(method="", action="")
+							p Город
+							select.prime-filter(size="1")
+								option(selected) Ростов-на-Дону
+							p Требуется:
+							select#campus-option.lower-filter(size="1")
+								for option in locals.campus500
+									option(value=option.id)= option.name
+						a.find-filter(id="btn-find", href="#") Найти
 					div.kampus-rules
 						h3 Правила кампуса
 						p 1. В Кампусе допускаются только молодые люди \ студенты в возрасте от 18 до 30 лет.
@@ -32,7 +34,7 @@ html(lang=ru)
 				//- правая колонка		
 				div.listing
 					div.mbl-view.clear-view
-						input.mbl-filter(type="button", value="Фильтр румейтов")
+						input.cpm-filter(type="button", value="Фильтр услуг")
 					div.desc-box
 						img(src="/images/kampus.jpg", alt="Cover")
 						div.kampus-post
@@ -45,8 +47,9 @@ html(lang=ru)
 								Будем рады услышать ваше мнение о новом разделе. 
 								Ваша команда Аляски.
 
-							p После регистрации вы сможете разместить свое объявление, указать услуги, которые могли бы оказать другим и начать зарабатывать с нами. 
-								a(href="#") Регистрация
+							if !locals.isAuthorized	
+								p После регистрации вы сможете разместить свое объявление, указать услуги, которые могли бы оказать другим и начать зарабатывать с нами. 
+									a(href="/auth/login_soc") Регистрация
 							div.option-box
 								h3 Переночевать в гостях
 								img(src="/images/couch1.png", alt="couch")
@@ -65,5 +68,7 @@ html(lang=ru)
 								h4 500 рублей
 					div#listing-content
 					a.load-more(href="#", style="display: none") Загрузить больше...
+
+		input#isAuthorized(type="hidden", value= (locals.isAuthorized) ? '1' : '0')
 
 		include includes/footer.pug

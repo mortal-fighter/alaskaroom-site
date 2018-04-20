@@ -75,7 +75,7 @@ function initPopup() {
 }
 function _setPopupHeightPosition() {
 	// set appropriate height and position to popup
-	const delta = $('body').height() - $('#popup-window .popup-container').height();
+	var delta = $('body').height() - $('#popup-window .popup-container').height();
 	if (delta > 150) {
 		// case 1: short window, set standard top and bottom margins
 		$('#popup-window .popup-container').css('marginTop', '100px').css('marginBottom', '50px');
@@ -84,9 +84,9 @@ function _setPopupHeightPosition() {
 		$('#popup-window .popup-container').css('marginTop', (delta / 2) + 'px').css('marginBottom', (delta / 2) + 'px');
 	} else {
 		// case 3: larger window, set little top and bottom margins and reduce .popup-content's size
-		const margins = 100;
-		const heightHeader = 30;
-		const paddings = 40;
+		var margins = 100;
+		var heightHeader = 30;
+		var paddings = 40;
 		$('#popup-window .popup-container').css('marginTop', '50px').css('marginBottom', '50px');
 		$('#popup-window .popup-content').height($('body').height() - margins - heightHeader - paddings);
 	}

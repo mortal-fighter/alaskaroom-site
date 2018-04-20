@@ -3,10 +3,10 @@ div.top
 	if locals.isAuthorized 
 		a.user-profile(href="/auth/logout/"+locals.userId) Выйти
 		a.user-profile(href="/profile/view/"+locals.userId) Профиль
+		a.cpm-topline(href="/campus500") Кампус500
 		a.mbl-viev.mbl-profile(href="/profile/view/"+locals.userId)
 			img(src="/images/usericon.png", alt="profile")
 		div.top-nav
-			a(href="/campus500") Кампус500
 			a(href="/filter") Поиск
 			a(href="/requests") Отклики
 				span#indicatorNewRequests

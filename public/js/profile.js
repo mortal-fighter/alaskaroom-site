@@ -159,7 +159,7 @@ function handlersProfileEdit() {
 
 		var image = document.getElementById('avatar-cropper');
 		image.onload = function() {
-			let croppedCanvas = null;
+			var croppedCanvas = null;
 			var cropper = new Cropper(image, {
 				aspectRatio: 1 / 1,
 				viewMode: 1,

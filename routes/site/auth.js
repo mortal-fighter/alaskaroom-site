@@ -200,7 +200,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 					return rp(options);
 				}).then(function(result) {
 					logger.info('city result=' + JSON.stringify(result));
-					user.universities[0].cityName = result.response[0].name;
+					user.universities[0].cityName = result.response[0].title;
 				});	
 			} else {
 				logger.info(`Can't define user city (no university or 'city' field = 0)`);

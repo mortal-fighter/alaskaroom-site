@@ -343,8 +343,6 @@ ol, ul {
 .roommate-cover {
 	display: block;
 	width: 100%;
-	border-bottom: 1px solid #bcbcbc;
-	border-top: 1px solid #bcbcbc;
 	margin: 30px auto;
 	text-align: center;
 	overflow: hidden;
@@ -563,7 +561,7 @@ ol, ul {
 	width: 45px;
 	height: 45px;
 	margin: 6px;
-	margin-left: 14px;
+	margin-left: 16px;
 	margin-bottom: 20px;
 	overflow: hidden;
 	float: left;
@@ -752,6 +750,11 @@ ol, ul {
 	margin: 16px 15px;
 }
 
+.cpm-topline {
+	margin: 16px;
+    float: right;
+}
+
 .top-nav a.nav-button,
 .top-nav a.nav-button:link,
 .top-nav a.nav-button:active,
@@ -806,6 +809,7 @@ ol, ul {
 	max-width: 1000px;
 	height: auto;
 	margin: 0 auto;
+	min-height: calc(100vh - 50px);
 }
 
 .top-message {
@@ -915,7 +919,7 @@ ol, ul {
 
 .listing {
 	display: block;
-	width: 68%;
+	width: 66%;
 	height: auto;
 	margin: 10px;
 	float: left;
@@ -1179,8 +1183,9 @@ ol, ul {
     margin: 20px;
     margin-top: 0;
     font-size: 14px;
-    color: #777;
+    color: #c58888;
     line-height: 1.4em;
+	font-weight: 700;
 }
 
 .user-caracter {
@@ -2073,6 +2078,7 @@ ol, ul {
 	width: 32%;
 	text-align: center;
 	margin: 0;
+	margin-top: -5px;
 	padding: 10px 0px;
 	font-size: 12px;
 	padding-bottom: 5px;
@@ -2157,6 +2163,8 @@ ol, ul {
 
 .room-ex {
 	width: 90%;
+	float: none;
+	margin: 10px auto;
 }
 
 .uni-cover h3 {
@@ -2169,7 +2177,7 @@ ol, ul {
 }
 
 .uni-cover p {
-	width: 37%;
+	width: 42%;
 }
 
 .register {
@@ -2261,6 +2269,7 @@ ol, ul {
 	background-color: white;
 	border-radius: 2px;
 	padding-bottom: 2px;
+	min-height: 295px;
 }
 
 .user-list img {
@@ -2345,7 +2354,8 @@ ol, ul {
 
 .room-param {
 	width: 38%;
-	height: 110px;
+	min-height: 90px;
+	height: auto;
 	margin: 8px;
 	float: left;
 }
@@ -2378,6 +2388,201 @@ ol, ul {
 	width: 44%;
 }
 
+/*Добавленные стили на страницу Промо*/
+
+.cpm-topline {
+	margin: 16px;
+    float: right;
+}
+
+.front-desc {
+	width: 51%;
+	height: auto;
+}
+
+.front-desc img {
+	width: 100%;
+	margin-top: 10px;
+	margin-left: 3px;
+}
+
+.front-desc h2 {
+	display: none;
+}
+
+.front-phone {
+	width: 40%;
+	height: auto;
+}
+
+.front-phone a {
+	font-size: 17px;
+}
+
+.front-menu {
+	margin-top: 10px !important;
+}
+
+.offer1 {
+	width: 94%;
+	height: auto;
+}
+
+.offer1 div {
+	height: auto;
+}
+
+.offer1 div img {
+	margin-top: 0;
+}
+
+.offer1 h3 {
+	width: 90%;
+}
+
+.offer1 p {
+	width: 94%;
+	font-size: 12px;
+}
+
+.promo-btn {
+	width: 85%;
+}
+
+.offer2 {
+	width: 94%;
+	height: auto;
+}
+
+.offer2 div {
+	height: 200px;
+}
+
+.offer2 div img {
+	margin-top: -90px;
+	margin-left: -30px;
+}
+
+.offer2 p {
+	font-size: 12px;
+}
+
+.offer-img {
+	width: 80px;
+	height: 80px;
+}
+
+.edu-close {
+	height: auto;
+	width: 94%;
+}
+
+.edu-close div {
+	width: 110px;
+}
+
+.edu-close div h3 {
+	font-size: 12px;
+	margin: 10px 15px;
+}
+
+.edu-close h4 {
+	font-size: 13px;
+	text-align: right;
+	margin: 10px 15px;
+	font-weight: 400;
+	line-height: 14px;
+}
+
+.edu-close p {
+	font-size: 11px;
+	font-weight: 400;
+	clear: both;
+}
+
+.alaska-features h2 {
+	font-size: 20px;
+	margin-top: 10px;
+}
+
+.alaska-features div {
+	width: 94%;
+}
+
+.option-box {
+	width: 45%;
+	float: left;
+}
+
+.help-box img {
+	width: 15% !important;
+	margin: 3px !important;
+	height: 32px !important;
+}
+
+.cpm-filter {
+	display: block;
+	width: 96%;
+	height: 40px;
+	overflow: hidden;
+	margin: 5px;
+    margin-right: 5px;
+	margin-right: 5px;
+	margin-right: 0;
+	border: 2px solid #aeaeae;
+	color: #aeaeae;
+	outline: none;
+	background-color: transparent;
+	float: left;
+	cursor: pointer;
+	font-weight: 600;
+	text-transform: uppercase;
+	font-size: 12px;
+}
+
+.desc-box h2 {
+	font-size: 15px;
+}
+
+.room-desc h3 {
+	font-size: 20px;
+}
+
+.room-param h3 {
+	font-size: 23px;
+}
+
+.user-setting label {
+	font-size: 11px;
+	width: 43%;
+}
+
+.kampus-option {
+	width: 43% !important;
+	height: 100px !important;
+}
+
+.kampus-option img {
+	float: none;
+	margin: 10px auto !important;
+}
+
+.kampus-option p {
+	width: 90%;
+	margin: 10px auto !important;
+	text-align: center;
+	font-size: 11px;
+}
+.option-set-big {
+	width: 92%;
+}
+
+.final-ad {
+	width: 94% !important;
+	margin: 10px auto;
+	float: none;
+}
+
 }
 
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
@@ -2399,8 +2604,9 @@ ol, ul {
 }
 
 .top-nav a {
-    margin-top: 7px;
+    margin-top: 2px;
     margin-bottom: 7px;
+	width: 23%;
 }
 
 .top-nav a.nav-button,
@@ -2495,6 +2701,8 @@ ol, ul {
 
 .room-ex {
 	width: 90%;
+	margin: 10px auto;
+	float: none;
 }
 
 .uni-cover h3 {
@@ -2637,7 +2845,7 @@ ol, ul {
 }
 
 .profile-user {
-	width: 88%;
+	width: 86%;
 	margin: 5px auto;
 	float: none;
 }
@@ -2683,7 +2891,8 @@ ol, ul {
 
 .room-param {
 	width: 38%;
-	height: 110px;
+	height: auto;
+	min-height: 90px;
 	margin: 8px;
 	float: left;
 }
@@ -2714,6 +2923,185 @@ ol, ul {
 
 .user-small {
 	width: 44%;
+}
+
+/*Добавленные стили на страницу Промо*/
+
+.cpm-topline {
+	margin: 16px;
+    float: right;
+}
+
+.front-desc {
+	width: 51%;
+	height: auto;
+}
+
+.front-desc img {
+	width: 100%;
+	margin-top: 10px;
+	margin-left: 3px;
+}
+
+.front-desc h2 {
+	display: none;
+}
+
+.front-phone {
+	width: 40%;
+	height: auto;
+}
+
+.front-phone a {
+	font-size: 12px;
+}
+
+.front-menu {
+	margin-top: 10px !important;
+}
+
+.offer1 {
+	width: 94%;
+}
+
+.offer1 div {
+	height: auto;
+}
+
+.offer1 div img {
+	margin-top: 0;
+}
+
+.offer1 h3 {
+	width: 90%;
+}
+
+.offer1 p {
+	width: 94%;
+	font-size: 12px;
+}
+
+.promo-btn {
+	width: 85%;
+}
+
+.offer2 {
+	width: 94%;
+}
+
+.offer2 p {
+	font-size: 12px;
+}
+
+.edu-close {
+	height: auto;
+	width: 94%;
+}
+
+.edu-close div {
+	width: 110px;
+}
+
+.edu-close div h3 {
+	font-size: 12px;
+	margin: 10px 15px;
+}
+
+.edu-close h4 {
+	font-size: 13px;
+	text-align: right;
+	margin: 10px 15px;
+	font-weight: 400;
+	line-height: 14px;
+}
+
+.edu-close p {
+	font-size: 11px;
+	font-weight: 400;
+	clear: both;
+}
+
+.alaska-features h2 {
+	font-size: 20px;
+	margin-top: 10px;
+}
+
+.alaska-features div {
+	width: 94%;
+}
+
+.option-box {
+	width: 42%;
+	float: left;
+}
+
+.help-box img {
+	width: 15% !important;
+	margin: 3px !important;
+	height: 22px !important;
+}
+
+.cpm-filter {
+	display: block;
+	width: 96%;
+	height: 40px;
+	overflow: hidden;
+	margin: 5px;
+    margin-right: 5px;
+	margin-right: 5px;
+	margin-right: 0;
+	border: 2px solid #aeaeae;
+	color: #aeaeae;
+	outline: none;
+	background-color: transparent;
+	float: left;
+	cursor: pointer;
+	font-weight: 600;
+	text-transform: uppercase;
+	font-size: 12px;
+}
+
+.desc-box h2 {
+	font-size: 15px;
+}
+
+.room-desc h3 {
+	font-size: 20px;
+}
+
+.room-param h3 {
+	font-size: 23px;
+}
+
+.user-setting label {
+	font-size: 11px;
+	width: 43%;
+}
+
+.kampus-option {
+	width: 43% !important;
+	height: 100px !important;
+}
+
+.kampus-option img {
+	float: none;
+	margin: 10px auto !important;
+}
+
+.kampus-option p {
+	width: 90%;
+	margin: 10px auto !important;
+	text-align: center;
+	font-size: 11px;
+}
+.option-set-big {
+	width: 92%;
+}
+
+.final-ad {
+	width: 94% !important;
+	margin: 10px auto;
+	float: none;
 }
 
 }

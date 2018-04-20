@@ -2,39 +2,6 @@
 
 /* HANDLERS UI CONTROLS */
 function handlersRequest() {
-	/*$.ajax({
-		method: 'GET',
-		url: '/requests/get_count_incoming',
-		success: function(result) {
-			if (result.status === 'ok') {
-				if (result.count > 0) {
-					$('#count-incoming').html('+' + result.count);
-				}
-			} else {
-				console.log('При запросе количества входящих новых заявок произошла ошибка');
-			}
-		},
-		error: function() {
-			alert('При запросе количества входящих новых заявок произошла ошибка');
-		}
-	});
-
-	$.ajax({
-		method: 'GET',
-		url: '/requests/get_count_accepted',
-		success: function(result) {
-			if (result.status === 'ok') {
-				if (result.count > 0) {
-					$('#count-accepted').html('+' + result.count);
-				}
-			} else {
-				console.log('При запросе количества одобренных заявок произошла ошибка');
-			}
-		},
-		error: function() {
-			alert('При запросе количества одобренных заявок произошла ошибка');
-		}
-	});*/
 
 	$('.btn-request-accept').on('click', function(e) {
 		e.preventDefault();
