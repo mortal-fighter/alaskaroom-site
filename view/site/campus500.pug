@@ -33,8 +33,9 @@ html(lang=ru)
 
 				//- правая колонка		
 				div.listing
-					div.mbl-view.clear-view
-						input.cpm-filter(type="button", value="Фильтр услуг")
+					if locals.isAuthorized
+						div.mbl-view.clear-view
+							input.cpm-filter(type="button", value="Фильтр услуг")
 					div.desc-box
 						img(src="/images/kampus.jpg", alt="Cover")
 						div.kampus-post

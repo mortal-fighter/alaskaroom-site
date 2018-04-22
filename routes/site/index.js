@@ -32,7 +32,7 @@ router.use(function(req, res, next) {
 		next();
 	}).catch(function(err) {
 		if (err.message.match(/^WARN:/)) {
-			myLogger.debug(req, err.message, err.stack);
+			myLogger.debug(req, err.message);
 		} else {
 			myLogger.error(req, err.message, err.stack);
 		}
