@@ -35,7 +35,7 @@ if (config.app.mode === 'development') {
 app.set('views', __dirname + '/view/');
 app.set('view engine', 'pug');
 
-app.use('/api', require('./routes/api'));
+app.use('/admin', require('./routes/admin'));
 app.use('/', require('./routes/site'));
 
 app.all('*', function(req, res, next) {
