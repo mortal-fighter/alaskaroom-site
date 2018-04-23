@@ -174,6 +174,10 @@ router.get('/calculate_similarity', function(req, res, next) {
 	var sql = null;
 	var db = null;
 	var countPriority = 0;
+	var countBasicValues = 5;
+	var countValuesTotal = 0;
+	var similarityPairs = {};
+
 
 	function calculate(offset, limit) {
 		var users = [];
@@ -188,6 +192,7 @@ router.get('/calculate_similarity', function(req, res, next) {
 
 				sql = ` SELECT 
 							user_id,
+							user_sex,
 							user_age,
 							department_id,
 							faculty_id,
@@ -208,9 +213,10 @@ router.get('/calculate_similarity', function(req, res, next) {
 				for (let i = 0; i < users.length; i++) {
 					promiseChain = promiseChain.then(function() {
 
-						sql = ` SELECT priority_option_id 
-								FROM user_priority_option
-								WHERE user_id = ${users[i].user_id};`;
+						sql = ` SELECT a.id, a.default 
+								FROM user_priority_option b
+								JOIN priority_option a ON b.priority_option_id = a.id
+								WHERE b.user_id = ${users[i].user_id};`;
 						//logger.debug(req, sql);
 						return db.queryAsync(sql);		
 
@@ -218,20 +224,57 @@ router.get('/calculate_similarity', function(req, res, next) {
 
 						//logger.debug(req, JSON.stringify(result));
 
-						users[i].priorities = [];
+						users[i].priorities = {};
+						var ind = 0;
 						for (var j = 0; j < result.length; j++) {
-							users[i].priorities.push(result[j].priority_option_id);
+							users[i].priorities[ind] = {
+								id: result[j].id,
+								isDefault: (result[j].default === 1) ? true : false
+							};
+							ind++;
 						}
-
 					});
 				}
 
 				return promiseChain;
 
 			}).then(function() {
+				
+				for (var i = 0; i < users.length; i++) {
+					for (var j = i + 1; j < users.length; j++) {
+						var score = 0.0;
+						if (users[i].user_sex === users[j].user_sex) score += 1;
+						if (users[i].university_id === users[j].university_id) score += 1;
+						if (users[i].faculty_id === users[j].faculty_id) score += 1;
+						if (users[i].department_id === users[j].department_id) score += 1;
+							
+						var diffAge = Math.abs(users[i].user_age - users[j].user_age);	
+						if (diffAge < 3) {
+							score += 1;
+						} else if (diffAge < 6) {
+							score += 0.5;
+						}
 
-				resolve(users);
-			
+						for (var m in users[i].priorities) {
+							for (var n in users[j].priorities) {
+								if (users[i].priorities[m].id === users[j].priorities[n].id) {
+									if (users[i].priorities[m].isDefault) {
+										score += 0.3;
+									} else {
+										score += 1;
+									}
+									break;
+								}
+							}
+						}
+						var scorePercent = score / countValuesTotal;
+						similarityPairs[`(${users[i].user_id},${users[j].user_id})`] = Math.round( scorePercent * 100) / 100;
+					}
+					
+				}
+
+				resolve({users: users, similarityPairs: similarityPairs});
+
 			}).catch(function(err) {
 
 				reject(err);
@@ -250,7 +293,9 @@ router.get('/calculate_similarity', function(req, res, next) {
 	}).then(function(result) {
 
 		countPriority = result[0].cnt;
+		countValuesTotal = countPriority + countBasicValues;
 		logger.info(req, `countPriority = ${countPriority}`);
+		logger.info(req, `countValues = ${countValuesTotal}`);
 
 		return calculate(0, 100);
 
