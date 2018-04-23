@@ -16,7 +16,7 @@ module.exports = {
 		database: 'onemarkt_alaskaroom'
 	},
 	logger: {
-		level: 'INFO'
+		level: 'DEBUG'
 	},
 	vkApp: {
 		id: 5763848,

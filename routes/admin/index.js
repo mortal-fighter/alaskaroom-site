@@ -170,4 +170,113 @@ router.get('/delete_user_from_database/:userId(\\d+)', function(req, res, next) 
 	});
 });
 
+router.get('/calculate_similarity', function(req, res, next) {
+	var sql = null;
+	var db = null;
+	var countPriority = 0;
+
+	function calculate(offset, limit) {
+		var users = [];
+		
+		var db = null;
+
+		return new Promise(function(resolve, reject) {
+			
+			connectionPromise().then(function(connection) {
+			
+				db = connection;
+
+				sql = ` SELECT 
+							user_id,
+							user_age,
+							department_id,
+							faculty_id,
+							university_id 
+						FROM v_user 
+						LIMIT ${limit} 
+						OFFSET ${offset};`;
+				//logger.debug(req, sql);
+				return db.queryAsync(sql);
+			
+			}).then(function(result) {
+
+				//logger.debug(req, JSON.stringify(result));
+				users = result;
+
+				var promiseChain = Promise.resolve();
+
+				for (let i = 0; i < users.length; i++) {
+					promiseChain = promiseChain.then(function() {
+
+						sql = ` SELECT priority_option_id 
+								FROM user_priority_option
+								WHERE user_id = ${users[i].user_id};`;
+						//logger.debug(req, sql);
+						return db.queryAsync(sql);		
+
+					}).then(function(result) {
+
+						//logger.debug(req, JSON.stringify(result));
+
+						users[i].priorities = [];
+						for (var j = 0; j < result.length; j++) {
+							users[i].priorities.push(result[j].priority_option_id);
+						}
+
+					});
+				}
+
+				return promiseChain;
+
+			}).then(function() {
+
+				resolve(users);
+			
+			}).catch(function(err) {
+
+				reject(err);
+
+			});
+
+		});
+	}
+
+	connectionPromise().then(function(connection) {
+
+		db = connection;
+		sql = ` SELECT COUNT(*) cnt FROM priority;`
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		countPriority = result[0].cnt;
+		logger.info(req, `countPriority = ${countPriority}`);
+
+		return calculate(0, 100);
+
+	}).then(function(result) {
+
+		logger.info(req, result);
+
+		res.json({
+			status: 'ok',
+			message: result
+		});
+
+	}).catch(function(err) {
+		
+		if (err.message.match(/^WARN:/)) {
+			logger.debug(req, err.message);	
+		} else {
+			logger.error(req, err.message, err.stack);	
+		}
+		
+		res.json({
+			status: 'not ok',
+			message: err.message
+		});
+
+	});
+});
+
 module.exports = router;
