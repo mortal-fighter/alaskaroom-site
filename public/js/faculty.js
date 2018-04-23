@@ -68,7 +68,7 @@ function load() {
 					var newItem = null;
 					newItem = $('<div class="user-small"></div>');
 					newItem.append($('<img src="'+ record.user_avatar +'" alt="Room"/>'));
-					newItem.append($('<h4>' + record.user_first_name + ' ' + record.user_last_name + '</h4>'));
+					newItem.append($('<h4>' + record.user_first_name + '</h4>'));
 					newItem.append($('<p>' + record.user_sex.substr(0, 1).toUpperCase() + ', ' + record.user_age + ', ' +  record.university_name + '</p>'));
 					$('<a href="/profile/view/'+record.user_id+'"></a>')
 						.append(newItem)
@@ -110,7 +110,7 @@ function loadMore() {
 					var newItem = null;
 					newItem = $('<div class="user-small"></div>');
 					newItem.append($('<img src="'+ record.user_avatar +'" alt="Room"/>'));
-					newItem.append($('<h4>' + record.user_first_name + ' ' + record.user_last_name + '</h4>'));
+					newItem.append($('<h4>' + record.user_first_name + '</h4>'));
 					newItem.append($('<p>' + record.user_sex.substr(0, 1).toUpperCase() + ', ' + record.user_age + ', ' +  record.university_name + '</p>'));
 					$('<a href="/profile/view/'+record.user_id+'"></a>')
 						.append(newItem)

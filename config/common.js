@@ -16,7 +16,7 @@ module.exports = {
 		database: 'onemarkt_alaskaroom'
 	},
 	logger: {
-		level: 'DEBUG'
+		level: 'INFO'
 	},
 	vkApp: {
 		id: 5763848,
@@ -27,18 +27,20 @@ module.exports = {
 	},
 	mailer: { 
 		smtpConfig: {
-			service: 'Yandex',
+			/*service: 'Yandex',
 			auth: {
 				user: 'info@alaskaroom.ru',
 				pass: '19882010'
-			}
-			/*host: 'smtp.yandex.ru',
+			}*/
+			host: 'smtp.yandex.ru',
 			port: 465,
 			secure: true, // true for 465, false for other ports 587
 			auth: {
 				user: 'info@alaskaroom.ru',
 				pass: '19882010'
-			}*/
+			},
+			debug: true,
+			logger: true
 		}
 	}
 };
