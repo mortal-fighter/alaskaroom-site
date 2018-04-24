@@ -198,6 +198,7 @@ router.get('/calculate_similarity', function(req, res, next) {
 							faculty_id,
 							university_id 
 						FROM v_user 
+						ORDER BY user_id
 						LIMIT ${limit} 
 						OFFSET ${offset};`;
 				//logger.debug(req, sql);
@@ -224,14 +225,13 @@ router.get('/calculate_similarity', function(req, res, next) {
 
 						//logger.debug(req, JSON.stringify(result));
 
-						users[i].priorities = {};
-						var ind = 0;
+						users[i].priorities = [];
+						
 						for (var j = 0; j < result.length; j++) {
-							users[i].priorities[ind] = {
+							users[i].priorities.push({
 								id: result[j].id,
 								isDefault: (result[j].default === 1) ? true : false
-							};
-							ind++;
+							});
 						}
 					});
 				}
@@ -240,33 +240,54 @@ router.get('/calculate_similarity', function(req, res, next) {
 
 			}).then(function() {
 				
+				//logger.debug(req, JSON.stringify(users));
+
 				for (var i = 0; i < users.length; i++) {
 					for (var j = i + 1; j < users.length; j++) {
 						var score = 0.0;
+						
 						if (users[i].user_sex === users[j].user_sex) score += 1;
-						if (users[i].university_id === users[j].university_id) score += 1;
-						if (users[i].faculty_id === users[j].faculty_id) score += 1;
-						if (users[i].department_id === users[j].department_id) score += 1;
-							
+						
+						if (users[i].university_id === users[j].university_id) {
+							score += 1;
+						} else {
+							score += 0.3;
+						}
+						
+						if (users[i].faculty_id === users[j].faculty_id) {
+							score += 1;
+						} else {
+							score += 0.3;
+						}
+						
+						if (users[i].department_id === users[j].department_id) {
+							score += 1;
+						} else {
+							score += 0.3;
+						}
+
 						var diffAge = Math.abs(users[i].user_age - users[j].user_age);	
 						if (diffAge < 3) {
 							score += 1;
 						} else if (diffAge < 6) {
-							score += 0.5;
+							score += 0.6;
+						} else {
+							score += 0.3;
 						}
 
-						for (var m in users[i].priorities) {
-							for (var n in users[j].priorities) {
-								if (users[i].priorities[m].id === users[j].priorities[n].id) {
-									if (users[i].priorities[m].isDefault) {
-										score += 0.3;
-									} else {
-										score += 1;
-									}
-									break;
+						for (var k = 0; k < users[i].priorities.length; k++) {
+							if (users[i].priorities[k].id === users[j].priorities[k].id) {
+								if (users[i].priorities[k].isDefault) {
+									score += 0.3;
+								} else {
+									score += 1;
 								}
-							}
+							} else if ( (users[i].priorities[k].isDefault && !users[j].priorities[k].isDefault) ||
+										(!users[i].priorities[k].isDefault && users[j].priorities[k].isDefault) ) {
+								score += 0.3;
+							} 
 						}
+						
 						var scorePercent = score / countValuesTotal;
 						similarityPairs[`(${users[i].user_id},${users[j].user_id})`] = Math.round( scorePercent * 100) / 100;
 					}
@@ -294,18 +315,42 @@ router.get('/calculate_similarity', function(req, res, next) {
 
 		countPriority = result[0].cnt;
 		countValuesTotal = countPriority + countBasicValues;
-		logger.info(req, `countPriority = ${countPriority}`);
-		logger.info(req, `countValues = ${countValuesTotal}`);
+		//logger.info(req, `countPriority = ${countPriority}`);
+		//logger.info(req, `countValues = ${countValuesTotal}`);
 
 		return calculate(0, 100);
 
 	}).then(function(result) {
 
-		logger.info(req, result);
+		//logger.info(req, result);
+
+		sql = ` DELETE FROM similarity 
+				WHERE user_id1 >= ${result.users[0].user_id} 
+				  AND user_id1 <= ${result.users[ result.users.length-1 ].user_id};`;
+		logger.debug(req, sql);
+		return db.queryAsync(sql);
+				  
+	}).then(function(result) {
+
+		var sqlValues = [];
+		for (var k in similarityPairs) {
+			if (similarityPairs.hasOwnProperty(k)) {
+				var match = k.match(/^\((\d+),(\d+)\)$/);
+				sqlValues.push(`('${k}', ${similarityPairs[k]}, ${match[1]}, ${match[2]})`);
+			}
+		}
+
+		logger.debug(req, sqlValues);
+
+		sql = ` INSERT INTO similarity (pair, percent, user_id1, user_id2)
+				VALUES ${ sqlValues.join(',') };`;
+
+		return db.queryAsync(sql);
+
+	}).then(function() {
 
 		res.json({
-			status: 'ok',
-			message: result
+			status: 'ok'
 		});
 
 	}).catch(function(err) {
