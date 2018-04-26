@@ -26,6 +26,13 @@ html(lang=ru)
 						caption += ', ' + locals.data.faculty_name;
 					}
 				p= caption
+				if locals.similarity
+					-
+						var color = 'gray';
+						if (locals.similarity >= 50) color = 'green';
+						else if (locals.similarity < 30) color = 'red';
+					span(style="background: #ccc; display: block; text-align: center; padding: 10px; color: " + color + ";").similarity= 'Сходство со мной: ' + locals.similarity + '%'
+				
 				if locals.user_phone
 					div.user-phone= 'Кампус500. Телефон для связи: ' + locals.user_phone
 				if locals.data.user_id != locals.userId

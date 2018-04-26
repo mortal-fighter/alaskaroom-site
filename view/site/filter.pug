@@ -58,6 +58,14 @@ html(lang=ru)
 				div.listing
 					div.mbl-view.clear-view
 						input.mbl-filter(type="button", value="Фильтр румейтов")
-					div(id="listing-content")
+					div.filter-top
+						label Сортировать по:
+							select#sortby
+								option(value="1") Сходство со мной
+								option(value="2") Дата регистрации
+							select#sortby-priority
+								option(value="1") По убыванию
+								option(value="2") По возрастанию
+							div(id="listing-content")
 					a#load-more.load-more(href="#") Загрузить больше...
 		include includes/footer.pug

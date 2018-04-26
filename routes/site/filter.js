@@ -116,7 +116,7 @@ router.post('/ajax', function(req, res, next) {
 
 		var priority_list;
 		var priority_count;
-		var limit = (req.body.limit) ? req.body.limit : 15;
+		var limit = (req.body.limit) ? req.body.limit : 3;
 		var offset = (req.body.offset) ? req.body.offset : 0;
 
 		if (req.body.priorities) {
@@ -126,198 +126,157 @@ router.post('/ajax', function(req, res, next) {
 			priority_list = '';
 			priority_count = 0;
 		}
+			
+		sql = `	SELECT
+					v_user.user_id,
+					user_first_name,
+					user_last_name,\n`;
+
+		if (req.body.sortby === '1') {
+			sql += `similarity.percent,\n`;
+		}
+		
+		sql +=	`	user_sex,
+					user_age,
+					user_avatar,
+					university_name,
+					user_city,
+					flat_address,
+					flat_rent_pay,
+					flat_id,
+					flat_first_photo
+				FROM v_user 
+				JOIN (
+					/*выбрать пользователей у которых совпадают приоритеры с заданными*/
+					SELECT user_id, COUNT(priority_option_id) cnt_priority
+					FROM user_priority_option\n`;
+	
+		if (priority_count > 0) {
+			sql+= `	WHERE priority_option_id IN (${priority_list})\n`;
+		}
+	
+		sql+= `		GROUP BY user_id
+					HAVING cnt_priority >= ${priority_count}
+				) matched ON v_user.user_id = matched.user_id\n`;
+		
+		if (req.body.sortby === '1') {
+			sql += `JOIN (
+						SELECT user_id2 user_id, percent 
+						FROM similarity
+						WHERE user_id1 = ${req.user_id}
+						UNION 
+						SELECT user_id1 user_id, percent
+						FROM similarity
+						WHERE user_id2 = ${req.user_id}
+					) similarity ON v_user.user_id = similarity.user_id\n`
+		}
 
 		if (req.body.type === 'find-flat') {
-		
-			sql = ` 
-					SELECT
-						v_user.user_id,
-						user_sex,
-						user_age,
-						university_name,
-						user_city,
-						flat_address,
-						flat_rent_pay,
-						flat_id,
-						flat_first_photo
-					FROM v_user
-					JOIN (
-						/*выбрать пользователей у которых совпадают приоритеры с заданными*/
-						SELECT user_id, COUNT(priority_option_id) cnt_priority
-						FROM user_priority_option\n`;
-			
-			if (priority_count > 0) {
-				sql+= `	WHERE priority_option_id IN (${priority_list})`;
-			}
-			
-			sql+= `		GROUP BY user_id
-						HAVING cnt_priority >= ${priority_count}
-					) matched ON v_user.user_id = matched.user_id 
-					WHERE 1=1
-					  /* выбрать только тех, у кого есть квартира */
-					  AND flat_id IS NOT NULL`;
-			
-			if (req.body.user_sex !== '') {
-				sql+= ` 
-					  AND v_user.user_sex = '${req.body.user_sex}'`;
-			}
-			
-			if (req.body.user_age_range !== '') {
-				var age_from = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[1];
-				var age_to = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[2];
-				sql+= ` 
-					  AND v_user.user_age >= ${age_from} AND v_user.user_age <= ${age_to}`;
-			}
-
-			if (req.body.university_id != 0) {
-				sql+= `
-					  AND v_user.university_id = ${req.body.university_id}`;
-			}
-
-			if (req.body.faculty_id != 0) {
-				sql+= ` 
-					  AND v_user.faculty_id = ${req.body.faculty_id}`;
-			}
-
-			sql+=`
-					LIMIT ${limit}
-					OFFSET ${offset};`;
-
-			// ------
-
-			sqlCount = ` 
-					SELECT count(*) cnt
-					FROM v_user
-					JOIN (
-						/*выбрать пользователей у которых совпадают приоритеры с заданными*/
-						SELECT user_id, COUNT(priority_option_id) cnt_priority
-						FROM user_priority_option\n`;
-			
-			if (priority_count > 0) {
-				sqlCount+= `	WHERE priority_option_id IN (${priority_list})`;
-			}
-			
-			sqlCount+= `		GROUP BY user_id
-						HAVING cnt_priority >= ${priority_count}
-					) matched ON v_user.user_id = matched.user_id 
-					WHERE 1=1
-					  /* выбрать только тех, у кого есть квартира */
-					  AND flat_id IS NOT NULL`;
-			
-			if (req.body.user_sex !== '') {
-				sqlCount+= ` 
-					  AND v_user.user_sex = '${req.body.user_sex}'`;
-			}
-			
-			if (req.body.user_age_range !== '') {
-				var age_from = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[1];
-				var age_to = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[2];
-				sqlCount+= ` 
-					  AND v_user.user_age >= ${age_from} AND v_user.user_age <= ${age_to}`;
-			}
-
-			if (req.body.university_id != 0) {
-				sqlCount+= `
-					  AND v_user.university_id = '${req.body.university_id.replace(/\'/g, '\\\'')}'`;
-			}
-
-			if (req.body.faculty_id != 0) {
-				sqlCount+= ` 
-					  AND v_user.faculty_id = '${req.body.faculty_id.replace(/\'/g, '\\\'')}'`;
-			}	
-		
+			sql += `WHERE flat_id IS NOT NULL\n`;
 		} else {
-		
-			sql = `	SELECT
-						v_user.user_id,
-						user_first_name,
-						user_last_name,
-						user_sex,
-						user_age,
-						user_avatar,
-						university_name
-					FROM v_user 
-					/* кроме тех, у кого не совпадают приоритеры*/
-					JOIN (
-						/*выбрать пользователей у которых совпадают приоритеры с заданными*/
-						SELECT user_id, COUNT(priority_option_id) cnt_priority
-						FROM user_priority_option\n`;
-		
-			if (priority_count > 0) {
-				sql+= `	WHERE priority_option_id IN (${priority_list})`;
-			}
-		
-			sql+= `		GROUP BY user_id
-						HAVING cnt_priority >= ${priority_count}
-					) matched ON v_user.user_id = matched.user_id
-					/* кроме тех, у кого есть квартира */
-					WHERE flat_id IS NULL`;
-			if (req.body.user_sex !== '') {
-				sql+= ` 
-					  AND v_user.user_sex = '${req.body.user_sex}'`;
-			}
-			
-			if (req.body.user_age_range !== '') {
-				var age_from = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[1];
-				var age_to = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[2];
-				sql+= ` 
-					  AND v_user.user_age >= ${age_from} AND v_user.user_age <= ${age_to}`;
-			}
-
-			if (req.body.university_id != 0) {
-				sql+= `
-					  AND v_user.university_id = ${req.body.university_id.replace(/\'/g, '\\\'')}`;
-			}
-
-			if (req.body.faculty_id != 0) {
-				sql+= ` 
-					  AND v_user.faculty_id = ${req.body.faculty_id.replace(/\'/g, '\\\'')}`;
-			}
-			sql+=`	LIMIT ${limit}
-					OFFSET ${offset};`;
-			
-			// -----
-
-			sqlCount = `	SELECT count(*) cnt
-					FROM v_user 
-					/* кроме тех, у кого не совпадают приоритеры*/
-					JOIN (
-						/*выбрать пользователей у которых совпадают приоритеры с заданными*/
-						SELECT user_id, COUNT(priority_option_id) cnt_priority
-						FROM user_priority_option\n`;
-		
-			if (priority_count > 0) {
-				sqlCount+= `	WHERE priority_option_id IN (${priority_list})`;
-			}
-		
-			sqlCount+= `		GROUP BY user_id
-						HAVING cnt_priority >= ${priority_count}
-					) matched ON v_user.user_id = matched.user_id
-					/* кроме тех, у кого есть квартира */
-					WHERE flat_id IS NULL`;
-			if (req.body.user_sex !== '') {
-				sqlCount+= ` 
-					  AND v_user.user_sex = '${req.body.user_sex}'`;
-			}
-			
-			if (req.body.user_age_range !== '') {
-				var age_from = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[1];
-				var age_to = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[2];
-				sqlCount+= ` 
-					  AND v_user.user_age >= ${age_from} AND v_user.user_age <= ${age_to}`;
-			}
-
-			if (req.body.university_id != 0) {
-				sqlCount+= `
-					  AND v_user.university_id = ${req.body.university_id.replace(/\'/g, '\\\'')}`;
-			}
-
-			if (req.body.faculty_id != 0) {
-				sqlCount+= ` 
-					  AND v_user.faculty_id = ${req.body.faculty_id.replace(/\'/g, '\\\'')}`;
-			}
-
+			sql += `WHERE flat_id IS NULL\n`;
 		}
+
+		if (req.body.user_sex !== '') {
+			sql+= ` 
+				  AND v_user.user_sex = '${req.body.user_sex}'`;
+		}
+		
+		if (req.body.user_age_range !== '') {
+			var age_from = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[1];
+			var age_to = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[2];
+			sql+= ` 
+				  AND v_user.user_age >= ${age_from} AND v_user.user_age <= ${age_to}`;
+		}
+
+		if (req.body.university_id != 0) {
+			sql+= `
+				  AND v_user.university_id = ${req.body.university_id.replace(/\'/g, '\\\'')}`;
+		}
+
+		if (req.body.faculty_id != 0) {
+			sql+= ` 
+				  AND v_user.faculty_id = ${req.body.faculty_id.replace(/\'/g, '\\\'')}`;
+		}
+
+		sql += `
+					AND v_user.user_id <> ${req.user_id}`;
+
+		if (req.body.sortby == '1') {
+			sql += '\nORDER BY percent';
+		} else {
+			sql += '\nORDER BY v_user.user_date_register';
+		}
+
+		if (req.body.sortbyPriority == '1') {
+			sql += ' DESC\n'
+		} else {
+			sql += ' \n';
+		}
+
+		sql+=`	LIMIT ${limit}
+				OFFSET ${offset};`;
+		
+		// -----
+
+		sqlCount = `	SELECT count(*) cnt
+				FROM v_user 
+				/* кроме тех, у кого не совпадают приоритеры*/
+				JOIN (
+					/*выбрать пользователей у которых совпадают приоритеры с заданными*/
+					SELECT user_id, COUNT(priority_option_id) cnt_priority
+					FROM user_priority_option\n`;
+	
+		if (priority_count > 0) {
+			sqlCount+= `	WHERE priority_option_id IN (${priority_list})`;
+		}
+	
+		sqlCount+= `		GROUP BY user_id
+					HAVING cnt_priority >= ${priority_count}
+				) matched ON v_user.user_id = matched.user_id\n`;
+
+		if (req.body.sortby === '1') {
+			sqlCount += `JOIN (
+						SELECT user_id2 user_id, percent 
+						FROM similarity
+						WHERE user_id1 = ${req.user_id}
+						UNION 
+						SELECT user_id1 user_id, percent
+						FROM similarity
+						WHERE user_id2 = ${req.user_id}
+					) similarity ON v_user.user_id = similarity.user_id\n`
+		}
+				
+		if (req.body.type === 'find-flat') {
+			sqlCount += `WHERE flat_id IS NOT NULL\n`;
+		} else {
+			sqlCount += `WHERE flat_id IS NULL\n`;
+		}
+		
+		if (req.body.user_sex !== '') {
+			sqlCount+= ` 
+				  AND v_user.user_sex = '${req.body.user_sex}'`;
+		}
+		
+		if (req.body.user_age_range !== '') {
+			var age_from = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[1];
+			var age_to = req.body.user_age_range.match(/^(\d+)-(\d+)$/)[2];
+			sqlCount+= ` 
+				  AND v_user.user_age >= ${age_from} AND v_user.user_age <= ${age_to}`;
+		}
+
+		if (req.body.university_id != 0) {
+			sqlCount+= `
+				  AND v_user.university_id = ${req.body.university_id.replace(/\'/g, '\\\'')}`;
+		}
+
+		if (req.body.faculty_id != 0) {
+			sqlCount+= ` 
+				  AND v_user.faculty_id = ${req.body.faculty_id.replace(/\'/g, '\\\'')}`;
+		}
+
+		sqlCount += `
+				AND v_user.user_id <> ${req.user_id}`;
 
 		logger.debug(sql);
 		logger.debug(sqlCount);

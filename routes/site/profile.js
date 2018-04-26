@@ -192,6 +192,8 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 	var utilities = [];
 	var status_sended = null;
 	var status_incoming = null;
+	var isCameFromCampus500 = false;
+	var similarity = null;
 	var messages = [];
 
 	connectionPromise().then(function(connection) {
@@ -305,9 +307,24 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 			});
 		}
 
-		var isCameFromCampus500 = false;
+		isCameFromCampus500 = false;
 		if ( req.header('Referer') && req.header('Referer').match(/campus500/) ) {
 			isCameFromCampus500 = true;
+		}
+
+		if (req.params.userId != req.user_id) {
+			var pair = `(${Math.min(req.params.userId, req.user_id)},${Math.max(req.params.userId, req.user_id)})`;
+			var sql = ` SELECT percent FROM similarity WHERE pair = '${pair}';`;
+			logger.debug(req, sql);
+			return db.queryAsync(sql);
+		} else {
+			return Promise.resolve();
+		}
+
+	}).then(function(result) {
+
+		if (result && result.length) {
+			similarity = Math.trunc(result[0].percent * 100);
 		}
 
 		res.render('site/profile_view.pug', {
@@ -318,6 +335,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 			status_sended: status_sended,
 			status_incoming: status_incoming,
 			user_phone: ( isCameFromCampus500 ) ? data.user_phone : null,
+			similarity: similarity,
 			isAuthorized: req.isAuthorized,
 			userId: req.user_id,
 			messages: messages

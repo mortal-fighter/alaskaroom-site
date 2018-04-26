@@ -9,6 +9,8 @@ var type = null;
 var countRecords = 0;
 var lastForm = null;
 var isMobile = false;
+var sortby = 1;
+var sortbyPriority = 1;
 
 /* HANDLERS UI CONTROLS */
 function handlersFilter() {
@@ -18,6 +20,10 @@ function handlersFilter() {
 	isMobile = ( $('.main-filter').css('display') === 'none' ) ? true : false;
 
 	$('.prime-filter, .lower-filter').on('change', function() {
+		search();
+	});
+
+	$('#sortby, #sortby-priority').on('change', function() {
 		search();
 	});
 
@@ -86,6 +92,8 @@ function search() {
 	form.user_age_range = processInputSelect('user_age_range');
 	form.university_id = processInputSelect('user_university');
 	form.faculty_id = processInputSelect('user_faculty');
+	form.sortby = processInputSelect('sortby');
+	form.sortbyPriority = processInputSelect('sortby-priority');
 
 	lastForm = form;
 
@@ -136,7 +144,8 @@ function search() {
 					} else {
 						newItem = $('<div class="user-list"></div>');
 						newItem.append($('<img src="'+ record.user_avatar +'" alt="Room"/>'));
-						newItem.append($('<h4>'+record.user_first_name+' '+record.user_last_name+'</h4>'));
+						var percent = (record.percent) ? Math.trunc(record.percent * 100) + '%' : '';
+						newItem.append($('<h4>'+record.user_first_name+' '+record.user_last_name+' '+percent+'</h4>'));
 						
 						var info = $('<p>Ваш сосед: </p>');
 						info.append($('<span>' + record.user_sex + ', </span>'))
@@ -202,7 +211,8 @@ function loadMore() {
 					} else {
 						newItem = $('<div class="user-list"></div>');
 						newItem.append($('<img src="'+ record.user_avatar +'" alt="Room"/>'));
-						newItem.append($('<h4>'+record.user_first_name+' '+record.user_last_name+'</h4>'));
+						var percent = (record.percent) ? Math.trunc(record.percent * 100) + '%' : '';
+						newItem.append($('<h4>'+record.user_first_name+' '+record.user_last_name+' '+percent+'</h4>'));
 						newItem
 							.append($('<p>Ваш сосед: </p>')
 								.append($('<span>' + record.user_sex + ', </span>'))
