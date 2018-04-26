@@ -1,0 +1,13 @@
+doctype
+html(lang=ru)
+	head
+		include includes/head_common.pug
+		script(src="/js/profile.js", type="text/javascript")
+	body
+		include includes/header.pug
+		if !locals.isAuthorized
+			p Вы собираетесь отписаться от получения всех уведомлений по email от сайта alaskaroom.ru. Для продолжения войдите на сайт через ВК, нажав "Продолжить".
+			input#btn-unsubscribe-continue.final-ad(type="button", value="Продолжить")
+		else
+			p#unsubscribe-text Вы собираетесь отписаться от получения всех уведомлений по email от сайта alaskaroom.ru.
+			input#btn-unsubscribe-action.final-ad(type="button", value="Отписаться")

@@ -35,6 +35,11 @@ var codes = {
 		desc: 'Кампус500',
 		url1: '/campus500',
 		url2: '/campus500'
+	},
+	4: {
+		desc: 'Отписаться от рассылки',
+		url1: '/profile/unsubscribe',
+		url2: '/profile/unsubscribe'
 	}
 };
 

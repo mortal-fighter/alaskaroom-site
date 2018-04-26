@@ -619,6 +619,18 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 	});
 });
 
+router.get('/unsubscribe', function(req, res, next) {
+	Promise.resolve().then(function() {
+		res.render('site/profile_unsubscribe.pug', {
+			isAuthorized: req.isAuthorized,
+			userId: req.user_id
+		});
+	}).catch(function(err) {
+		logger.error(err.message, err.stack);
+		res.render('errors/500.pug');
+	});;
+});
+
 router.post('/edit', function(req, res, next) {
 	var db = null;
 	var sql = null;
@@ -1002,6 +1014,44 @@ router.post('/upload_photos', uploader.array('uploads'), function(req, res, next
 			status: 'not ok'
 		});
 	
+	});
+});
+
+router.post('/unsubscribe', function(req, res, next) {
+	var db = null;
+	var sql = null;
+
+	if (!req.isAuthorized) {
+		res.render('site/profile_unsubscribe.pug', {
+			isAuthorized: req.isAuthorized,
+			userId: req.user_id
+		});
+		return;
+	}
+
+	connectionPromise().then(function(connection) {
+
+		db = connection;
+
+		sql = ` UPDATE user SET is_emailable = 0 WHERE id = ${req.user_id};`;
+		logger.debug(req, sql);
+		return db.queryAsync(sql);
+
+	}).then(function() {
+
+		res.json({
+			status: 'ok',
+			message: 'Вы успешно отписались от рассылки'
+		});
+		
+	}).catch(function(err) {
+
+		logger.error(err.message, err.stack);
+		res.json({
+			status: 'not ok',
+			message: 'Ошибка'
+		});
+
 	});
 });
 

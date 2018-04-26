@@ -403,6 +403,28 @@ function handlersProfileEdit() {
 	});
 }
 
+function handlersProfileUnsubscribe() {
+	$('#btn-unsubscribe-continue').on('click', function() {
+		window.location.href='/auth/login_soc/4';
+	});
+
+	$('#btn-unsubscribe-action').on('click', function() {
+		$.ajax({
+			method: 'POST',
+			url: '/profile/unsubscribe',
+			data: {},
+			success: function(result) {
+				$('#btn-unsubscribe-action').hide();
+				$('#unsubscribe-text').text(result.message);
+				alert(result.message);
+			},
+			error: function(error) {
+				alert('Нет соединения с сервером');
+			}
+		});
+	});
+}
+
 function loadFaculties(university_id) {
 	//console.log('loadFaculties');
 	
@@ -852,6 +874,8 @@ $(document).ready(function() {
 		handlersProfileView();	
 	} else if (window.location.href.lastIndexOf('edit') !== -1) {
 		handlersProfileEdit();
+	} else if (window.location.href.lastIndexOf('unsubscribe') !== -1) {
+		handlersProfileUnsubscribe();
 	}
 	
 	showAllMessages();
