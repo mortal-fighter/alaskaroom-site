@@ -72,6 +72,25 @@ module.exports = {
 		});
 	},
 
+	sessionEndAnyway: function(req) {
+		return sessionUserIdByToken( req.cookies['AlaskaRoomAuthToken'] ).then(function(user_id) {
+			
+			return connectionPromise().then(function(connection) {
+				db = connection;
+				var sql = `	DELETE FROM session WHERE user_id = ${user_id};`;
+				logger.debug(sql);
+				return db.queryAsync(sql);
+			});
+
+		}).catch(function(err) {
+
+			if (err.message.match(/^WARN/)) {
+				null;
+			}
+
+		});
+	},
+
 	authorization: function(req) {
 		return new Promise(function(resolve, reject) {
 			if (!req.cookies['AlaskaRoomAuthToken']) {

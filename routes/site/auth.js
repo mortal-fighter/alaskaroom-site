@@ -92,9 +92,11 @@ router.get('/login_vk_callback', function(req, res, next) {
 	var userHasPhoto = false;
 	var userId = null;
 
-	Promise.resolve().then(function() {
+	auth.sessionEndAnyway(req).then(function() {
 
-		logger.debug(req.query.code);
+		if (!req.cookies['AlaskaRoomDestinationCode']) {
+			res.cookie('AlaskaRoomDestinationCode', 0);
+		}
 
 		var redirectUrl = config.vkApp.redirectUrl;
 
@@ -109,7 +111,16 @@ router.get('/login_vk_callback', function(req, res, next) {
 			json: true
 		};
 
-		return rp(options);
+		return rp(options).catch(function(err) {
+
+			res.render('errors/operation_expired.pug', {
+				isAuthorized: req.isAuthorized,
+				userId: req.user_id
+			});
+
+			throw new Error('EXIT');
+
+		});
 
 	}).then(function(result) {
 		
@@ -391,11 +402,15 @@ router.get('/login_vk_callback', function(req, res, next) {
 
 	}).catch(function(err) {
 	
-		logger.error(err.message, err.stack);
-		
+		if (err.message.match(/^EXIT$/)) {
+			return;
+		}
+
 		//todo: remove both on server and client
 		/*logger.debug(`END SESSION FOR USER ${userId}...`);
 		auth.sessionEnd(userId);*/
+
+		logger.error(err.message, err.stack);
 
 		if (access) {
 			logger.debug('ROLLBACK access_token...');
