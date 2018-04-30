@@ -38,6 +38,23 @@ html(lang=ru)
 					}
 				p= caption
 			div.profile-param
+				div.user-setting.search-status
+					p Статус:
+					select#search-status.option-set
+						if locals.data.user_search_status === 1
+							option(value="1", selected) Ищу квартиру
+						else
+							option(value="1") Ищу квартиру
+						
+						if locals.data.user_search_status === 2
+							option(value="2", selected) Ищу румейта
+						else
+							option(value="2") Ищу румейта
+
+						if locals.data.user_search_status === 3	
+							option(value="3", selected) Не ищу квартиру/румейта
+						else
+							option(value="3") Не ищу квартиру/румейта
 				div.user-desc
 					h3 Обо мне
 					textarea#user_about(placeholder="Напишите тут несколько предложений о себе ...")= locals.data.user_about

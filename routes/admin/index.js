@@ -170,6 +170,109 @@ router.get('/delete_user_from_database/:userId(\\d+)', function(req, res, next) 
 	});
 });
 
+
+router.get('/delete_flat_from_database/:flatId(\\d+)', function(req, res, next) {
+	var db = null;
+	var sql = null;
+
+	if (!req.isAuthorized) {
+		res.json({
+			status: 'not ok',
+			message: 'Пожалуйста авторизуйтесь на сайте'
+		});
+		return;
+	}
+
+	connectionPromise().then(function(connection) {
+
+		db = connection;
+
+		sql = ` SELECT is_superadmin
+					FROM user
+					WHERE id = ${req.user_id};`;
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		if (result[0].is_superadmin !== 1) {
+			throw new Error('WARN: You don\'t have superadmin rights');
+		}
+
+		sql = ` SELECT count(*) cnt FROM flat WHERE id = ${req.params.flatId};`;
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		if (result.length === 0) {
+			throw new Error('WARN: Квартира отсутствует в базе данных. Завершаем работу.');
+		}
+
+		sql = ` DELETE FROM photo WHERE flat_id = ${req.params.flatId};`;
+		return db.queryAsync(sql);
+		
+	}).then(function() {
+
+		sql = ` DELETE FROM flat_district WHERE flat_id = ${req.params.flatId};`;
+		return db.queryAsync(sql);
+
+	}).then(function() {
+
+		sql = ` DELETE FROM flat_utility WHERE flat_id = ${req.params.flatId};`;
+		return db.queryAsync(sql);
+
+	}).then(function() {
+
+		sql = ` SELECT id FROM user WHERE flat_id = ${req.params.flatId};`;
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		if (!result) {
+			return Promise.resolve();
+		}
+
+		sql = ` UPDATE user SET flat_id = NULL WHERE id = ${result[0].id};`;
+		return db.queryAsync(sql);
+
+	}).then(function() {
+
+		sql = ` DELETE FROM flat WHERE id = ${req.params.flatId};`;
+		return db.queryAsync(sql);
+
+	}).then(function() {
+
+		res.json({
+			status: 'ok',
+			message: `Все данные о квартире успешно удалены`
+		});
+
+	}).catch(function(err) {
+
+		if (err.message.match(/^WARN:/)) {
+
+			logger.debug(req, err.message);
+		
+		} else if (err.message.match(/^ENOENT:/)) {
+		
+			res.json({
+				status: 'ok',
+				message: `Все данные о квартире успешно удалены`
+			});
+			return;
+		
+		} else {
+		
+			logger.error(req, err.message, err.stack);
+		
+		}
+		
+		res.json({
+			status: 'not ok',
+			message: err.message
+		});
+	});
+});
+
 router.get('/calculate_similarity', function(req, res, next) {
 	var sql = null;
 	var db = null;

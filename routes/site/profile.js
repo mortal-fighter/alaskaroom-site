@@ -213,6 +213,7 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 						user_phone,
 						user_wish_pay,
 						user_is_activated,
+						user_search_status,
 						university_id,
 						university_name,
 						department_name,	
@@ -412,6 +413,7 @@ router.get('/edit/:userId((\\d+|me))/:postaction(\\S+)?', function(req, res, nex
 						user_last_name,
 						CONCAT(user_first_name, " ", user_last_name) user_name,
 						user_wish_pay,
+						user_search_status,
 						flat_id,
 						flat_description,
 						flat_square,
@@ -816,7 +818,8 @@ router.post('/edit', function(req, res, next) {
 					phone = ${req.body.user.phone},
 					wish_pay = ${wish_pay},
 					flat_id = ${flat_id},
-					is_activated = 1
+					is_activated = 1,
+					search_status = ${req.body.user.search_status}
 				WHERE id = ${req.body.user.id};`;
 		logger.debug(req, sql);
 		return db.queryAsync(sql);

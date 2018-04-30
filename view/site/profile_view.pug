@@ -52,6 +52,22 @@ html(lang=ru)
 					input#request-complain.complain(type="button", value="Жалоба на румейта")
 			div.profile-param
 				div.user-desc
+					-
+						var searchStatus = null;
+						switch (locals.data.user_search_status) {
+							case 1:
+								searchStatus = 'Ищу квартиру';
+								break;
+							case 2:
+								searchStatus = 'Ищу румейта';
+								break;
+							case 3:
+								searchStatus = 'Не ищу квартиру или румейта';
+								break;
+						}
+					h3 Статус
+					p= searchStatus
+				div.user-desc
 					h3 Обо мне
 					p= locals.data.user_about
 				div.user-caracter

@@ -116,7 +116,7 @@ router.post('/ajax', function(req, res, next) {
 
 		var priority_list;
 		var priority_count;
-		var limit = (req.body.limit) ? req.body.limit : 3;
+		var limit = (req.body.limit) ? req.body.limit : 15;
 		var offset = (req.body.offset) ? req.body.offset : 0;
 
 		if (req.body.priorities) {

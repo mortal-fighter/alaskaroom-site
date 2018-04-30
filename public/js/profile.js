@@ -318,7 +318,8 @@ function handlersProfileEdit() {
 			form.user.department = processInputSelect('user_department');
 			form.user.studyyear = processInputSelect('user_studyyear');
 			form.user.wish_pay = $('#user_wish_pay').val();
-			
+			form.user.search_status = processInputSelect('search-status');
+
 			form.priority = [];
 			$('.priority').each(function() {
 				form.priority.push(processInputSelect(this.id));
@@ -736,6 +737,11 @@ function validateUserInfo() {
 	if (!user_wish_pay.match(/^\d+$/)) {
 		alert('Поле \'Сколько готов(а) платить за жилье\' должно быть числом');
 		$('#user_wish_pay').focus();
+		return false;
+	}
+
+	if ( processInputSelect('search-status') === '2' && !validateFlat() ) {
+		alert('Чтобы установить статус "Ищу румейта" необходимо добавить описание Вашей квартиры');
 		return false;
 	}
 
