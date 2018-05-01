@@ -172,9 +172,9 @@ router.post('/ajax', function(req, res, next) {
 		}
 
 		if (req.body.type === 'find-flat') {
-			sql += `WHERE flat_id IS NOT NULL\n`;
+			sql += `WHERE user_search_status = 2\n`;
 		} else {
-			sql += `WHERE flat_id IS NULL\n`;
+			sql += `WHERE user_search_status = 1\n`;
 		}
 
 		if (req.body.user_sex !== '') {
@@ -248,9 +248,9 @@ router.post('/ajax', function(req, res, next) {
 		}
 				
 		if (req.body.type === 'find-flat') {
-			sqlCount += `WHERE flat_id IS NOT NULL\n`;
+			sqlCount += `WHERE user_search_status = 2\n`;
 		} else {
-			sqlCount += `WHERE flat_id IS NULL\n`;
+			sqlCount += `WHERE user_search_status = 1\n`;
 		}
 		
 		if (req.body.user_sex !== '') {

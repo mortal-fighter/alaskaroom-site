@@ -322,7 +322,7 @@ function handlersProfileEdit() {
 
 			form.priority = [];
 			$('.priority').each(function() {
-				form.priority.push(processInputSelect(this.id));
+				form.priority.push(processInputSelectIsDefault(this.id));
 			});
 
 			form.userDistricts = [];
@@ -862,6 +862,27 @@ function processInputSelect(id) {
 			return false; // break the loop
 		}
 	});
+	return result;
+}
+
+function processInputSelectIsDefault(id) {
+	var elems = $('#'+id+'>option')
+	
+	// default return first val
+	var result = {
+		id: elems.eq(0).val(), 
+		isDefault: true
+	};
+
+	for (var i = 0; i < elems.length; i++) {
+		if ( $(elems[i]).prop('selected') ) {
+			result = {
+				id: $(elems[i]).val(),
+				isDefault: (i === 0) ? true : false
+			}
+		}
+	}
+
 	return result;
 }
 

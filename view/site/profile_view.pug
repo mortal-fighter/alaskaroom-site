@@ -16,6 +16,8 @@ html(lang=ru)
 				h6 О румейте
 			div.profile-user
 				img(src=locals.data.user_avatar, alt="User")
+				if locals.similarity
+					div.percent(title="Процент сходства со мной")= locals.similarity + '%'
 				h3= locals.data.user_name
 				-
 					var caption = locals.data.user_age + ' год';
@@ -26,16 +28,14 @@ html(lang=ru)
 						caption += ', ' + locals.data.faculty_name;
 					}
 				p= caption
-				if locals.similarity
-					-
-						var color = 'gray';
-						if (locals.similarity >= 50) color = 'green';
-						else if (locals.similarity < 30) color = 'red';
-					span(style="background: #ccc; display: block; text-align: center; padding: 10px; color: " + color + ";").similarity= 'Сходство со мной: ' + locals.similarity + '%'
 				
 				if locals.user_phone
 					div.user-phone= 'Кампус500. Телефон для связи: ' + locals.user_phone
+				
+				// нельзя предложить соседство себе
 				if locals.data.user_id != locals.userId
+					
+					// если соседство уже предолжено (3 варианта)
 					if locals.status_sended === 'pending'
 						p.roommate-status= 'Соседство: в ожидании ответа от пользователя ' + locals.data.user_first_name
 							span  &#x029D6;
@@ -45,11 +45,14 @@ html(lang=ru)
 					else if locals.status_sended === 'declined'
 						p.roommate-status= 'Соседство: пользователь ' + locals.data.user_first_name + ' отказался от соседства'
 							span  &cross;
-					else if !locals.status_incoming
+					else if (locals.data.user_search_status !== 3 && !locals.status_incoming)
+						// если пользователь никого не ищет или если он сам уже предложил соседство
 						input#request-roommate.request-info(type="button", value="Предложить соседство")
 					else if locals.status_incoming
+						// пользователь сам предложил соседство
 						p.roommate-status= 'Соседство: пользователь ' + locals.data.user_first_name + ' отправил Вам заявку на соседство'
 					input#request-complain.complain(type="button", value="Жалоба на румейта")
+			
 			div.profile-param
 				div.user-desc
 					-

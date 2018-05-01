@@ -11,7 +11,7 @@ const connectionPromise = require('../../components/connectionPromise.js');
 const logger = require('../../components/myLogger.js');
 const util = require('../../components/myUtil.js');
 
-const multer  = require('multer');
+const multer = require('multer');
 //todo: fix bug with duplicating && corrupting images 
 
 const storage = multer.diskStorage({
@@ -97,6 +97,35 @@ function formatObjectForSQL(object) {
 	}
 }
 
+function formatObjectForSQLCopy(object) {
+	// The following processes data, received from the form into sql query values
+	var copy = Object.assign({}, object); 
+	for (var key in copy) {
+		//convert 'true'/'false' into 1/0 (checkbox values in mind...)
+		switch (copy[key]) {
+			case 'true':
+				copy[key] = 1;
+				break;
+			case 'false':
+				copy[key] = 0;
+				break;
+		}
+
+		//convert blank strings into 'NULL's
+		if (copy[key].length === 0) {
+			copy[key] = 'NULL';	
+		} 
+
+		//1. surround all, except 'NULL', with single quotes, preparing it for sql query
+		//2. escape single quote inside text
+		if (copy[key] !== 'NULL') {
+			copy[key] = '\'' + copy[key].replace(/\'/g, '\\\'') + '\'';
+		}
+	}
+
+	return copy;
+}
+
 function validateFlat(flat) {
 	if (flat.id && !flat.id.match(/^\d+$/)) {
 		throw new Error(`Parameters validation error (flat.id): '${flat.id}'.`);
@@ -170,6 +199,8 @@ function validateUser(user) {
 	if (!user.wish_pay.match(/^\d+$/)) {
 		throw new Error(`Parameters validation error (user.wish_pay): '${user.wish_pay}'.`);
 	}
+
+	// todo: сделать проверку что у пользователя есть квартира, если user.search_status === '2'
 }
 
 router.get('/view/:userId((\\d+|me))', function(req, res, next) {
@@ -314,8 +345,11 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 		}
 
 		if (req.params.userId != req.user_id) {
-			var pair = `(${Math.min(req.params.userId, req.user_id)},${Math.max(req.params.userId, req.user_id)})`;
-			var sql = ` SELECT percent FROM similarity WHERE pair = '${pair}';`;
+			var minId = Math.min(req.params.userId, req.user_id);
+			var maxId = Math.max(req.params.userId, req.user_id);
+			var sql = ` SELECT percent FROM similarity 
+						WHERE user_id1 = ${minId}
+						  AND user_id2 = ${maxId};`;
 			logger.debug(req, sql);
 			return db.queryAsync(sql);
 		} else {
@@ -654,6 +688,13 @@ router.get('/unsubscribe', function(req, res, next) {
 router.post('/edit', function(req, res, next) {
 	var db = null;
 	var sql = null;
+	var POSTData = null;
+	var countPriority = 0;
+	var countBasicValues = 5;
+	var countValuesTotal = 0;
+	var similarityPairs = [];
+	var users = [];
+	var age = null;
 
 	if (!req.isAuthorized) {
 		res.redirect(`/?message='Пожалуйста, авторизуйтесь в системе`);
@@ -725,7 +766,11 @@ router.post('/edit', function(req, res, next) {
 					logger.debug(req, sql);
 					return db.queryAsync(sql);
 				
-				})
+				}).then(function(result) {
+
+					req.body.flat.id = result.insertId;
+
+				});
 
 			} // end 'new flat'
 
@@ -791,36 +836,36 @@ router.post('/edit', function(req, res, next) {
 	}).then(function() {
 			
 		validateUser(req.body.user);
-		formatObjectForSQL(req.body.user);
+		POSTData = formatObjectForSQLCopy(req.body.user);
 
 		var now = moment();
-		var bdate = moment(req.body.user.birth_date, 'DD.MM.YYYY');
-		var age = now.diff(bdate, 'years');
-		var wish_pay = (req.body.user.wish_pay) ? req.body.user.wish_pay : 'NULL';
-		var about = (req.body.user.about) ? req.body.user.about : '\'\'';
+		var bdate = moment(POSTData.birth_date, 'DD.MM.YYYY');
+		age = now.diff(bdate, 'years');
+		var wish_pay = (POSTData.wish_pay) ? POSTData.wish_pay : 'NULL';
+		var about = (POSTData.about) ? POSTData.about : '\'\'';
 		var flat_id = (req.body.flat.id !== '') ? req.body.flat.id : 'NULL';
 
 		sql =
 			`	UPDATE \`user\`
-				SET first_name = ${req.body.user.first_name},
-					last_name = ${req.body.user.last_name},
-					sex = ${req.body.user.sex},
-					birth_date = STR_TO_DATE(${req.body.user.birth_date}, '%d.%m.%Y'),
+				SET first_name = ${POSTData.first_name},
+					last_name = ${POSTData.last_name},
+					sex = ${POSTData.sex},
+					birth_date = STR_TO_DATE(${POSTData.birth_date}, '%d.%m.%Y'),
 					age = ${age},
 					about = ${about},
-					phone = ${req.body.user.phone},
-					email = ${req.body.user.email},
-					city = ${req.body.user.city},
-					university_id = ${req.body.user.university},
-					faculty_id = ${req.body.user.faculty},
-					department_id = ${req.body.user.department},
-					studyyear_id = ${req.body.user.studyyear},
-					phone = ${req.body.user.phone},
+					phone = ${POSTData.phone},
+					email = ${POSTData.email},
+					city = ${POSTData.city},
+					university_id = ${POSTData.university},
+					faculty_id = ${POSTData.faculty},
+					department_id = ${POSTData.department},
+					studyyear_id = ${POSTData.studyyear},
+					phone = ${POSTData.phone},
 					wish_pay = ${wish_pay},
 					flat_id = ${flat_id},
 					is_activated = 1,
-					search_status = ${req.body.user.search_status}
-				WHERE id = ${req.body.user.id};`;
+					search_status = ${POSTData.search_status}
+				WHERE id = ${POSTData.id};`;
 		logger.debug(req, sql);
 		return db.queryAsync(sql);
 	
@@ -838,9 +883,9 @@ router.post('/edit', function(req, res, next) {
 		}	
 
 		sql = `	INSERT INTO user_priority_option(user_id, priority_option_id) 
-					VALUES (${req.body.user.id}, ${req.body.priority[0]})`;
+					VALUES (${req.body.user.id}, ${req.body.priority[0].id})`;
 		for (var i = 1; i < req.body.priority.length; i++) {
-					sql += ` \n ,(${req.body.user.id}, ${req.body.priority[i]})`;
+					sql += ` \n ,(${req.body.user.id}, ${req.body.priority[i].id})`;
 		}
 		sql += ';';
 
@@ -894,6 +939,141 @@ router.post('/edit', function(req, res, next) {
 		}
 
 		return promiseChain;
+
+	}).then(function() {
+
+		countPriority = req.body.priority.length;
+		countValuesTotal = countBasicValues + countPriority;
+
+		sql = ` SELECT 
+					id user_id,
+					sex user_sex,
+					age user_age,
+					department_id,
+					faculty_id,
+					university_id 
+				FROM user`;
+		logger.debug(req, sql);
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		users = result;
+
+		var promiseChain = Promise.resolve();
+
+		for (let i = 0; i < users.length; i++) {
+			promiseChain = promiseChain.then(function() {
+
+				sql = ` SELECT a.id, a.default 
+						FROM user_priority_option b
+						JOIN priority_option a ON b.priority_option_id = a.id
+						WHERE b.user_id = ${users[i].user_id}
+						ORDER BY a.id;`;
+				//logger.debug(req, sql);
+				return db.queryAsync(sql);
+
+			}).then(function(result) {
+
+				//logger.debug(req, JSON.stringify(result));
+
+				users[i].priorities = [];
+				
+				for (var j = 0; j < result.length; j++) {
+					users[i].priorities.push({
+						id: result[j].id,
+						isDefault: (result[j].default === 1) ? true : false
+					});
+				}
+			});
+		}
+
+		return promiseChain;
+
+	}).then(function() {
+
+		for (var i = 0; i < users.length; i++) {
+			if (users[i].user_id == req.body.user.id) continue;
+
+			var score = 0.0;
+
+			if (users[i].user_sex == req.body.user.sex) score += 1;
+
+			if (users[i].university_id && req.body.user.university !== '' && users[i].university_id == req.body.user.university) {
+				score += 1;
+			} else {
+				score += 0.3;
+			}
+
+			if (users[i].faculty_id && req.body.user.faculty !== '' && users[i].faculty_id == req.body.user.faculty) {
+				score += 1;
+			} else {
+				score += 0.3;
+			}
+
+			if (users[i].department_id && req.body.user.department !== '' && users[i].department_id == req.body.user.department) {
+				score += 1;
+			} else {
+				score += 0.3;
+			}
+
+			if (users[i].user_age && age) {
+				var diffAge = Math.abs(users[i].user_age - age);	
+				if (diffAge < 3) {
+					score += 1;
+				} else if (diffAge < 6) {
+					score += 0.6;
+				} else {
+					score += 0.3;
+				}
+			}
+
+			if (users[i].priorities.length && req.body.priority.length) {
+				for (var k = 0; k < users[i].priorities.length; k++) {
+					if (users[i].priorities[k].id == req.body.priority[k].id) {
+						if (users[i].priorities[k].isDefault) {
+							score += 0.3;
+						} else {
+							score += 1;
+						}
+					} else if ( (users[i].priorities[k].isDefault && req.body.priority[k].isDefault !== 'true') ||
+								(!users[i].priorities[k].isDefault && req.body.priority[k].isDefault === 'true') ) {
+						score += 0.3;
+					} 
+				}
+			}
+			
+			var scorePercent = score / countValuesTotal;
+			var min = Math.min(users[i].user_id, req.body.user.id);
+			var max = Math.max(users[i].user_id, req.body.user.id);
+			similarityPairs.push({
+				userId1: min,
+				userId2: max,
+				percent: Math.round(scorePercent * 100) / 100
+			});
+		}
+
+		console.log('similarityPairs=', similarityPairs);
+
+		var myId = parseInt(req.body.user.id);
+
+		sql = `	DELETE FROM similarity
+				WHERE (user_id1 < ${myId} AND user_id2 = ${myId})
+				   OR (user_id1 = ${myId} AND user_id2 > ${myId});`;
+		return db.queryAsync(sql);
+				   
+	}).then(function() {
+
+		var sqlValues = [];
+		
+		similarityPairs.forEach(function(pair) {
+			sqlValues.push(`(${pair.userId1}, ${pair.userId2}, ${pair.percent})`);
+		});
+
+		sql = ` INSERT INTO similarity (user_id1, user_id2, percent)
+				VALUES ${ sqlValues.join(',') };`;
+
+		return db.queryAsync(sql);
 
 	}).then(function() {
 
