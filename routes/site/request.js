@@ -343,14 +343,21 @@ router.post('/invite', function(req, res, next) {
 			status: 'ok'
 		});
 	
+	}).catch(function(err) {
+		
+		logger.error(err.message + '\n' + err.stack);
+		res.json({
+			status: 'not ok'
+		});
+
 	}).then(function() {
 
 		var sql = `	SELECT 
-						user_id, 
-						user_first_name,
-						user_last_name
-					FROM v_user
-					WHERE user_id = ${req.user_id};`;
+						id 				user_id, 
+						first_name 		user_first_name,
+						last_name 		user_last_name
+					FROM user
+					WHERE id = ${req.user_id};`;
 
 		logger.debug(sql);
 		return db.queryAsync(sql);
@@ -361,10 +368,11 @@ router.post('/invite', function(req, res, next) {
 		from = result[0];
 
 		var sql = `	SELECT 
-						user_first_name,
-						user_email
-					FROM v_user
-					WHERE user_id = ${req.body.user_id};`;
+						first_name 		user_first_name,
+						email 			user_email,
+						is_emailable
+					FROM user
+					WHERE id = ${req.body.user_id};`;
 
 		logger.debug(sql);
 		return db.queryAsync(sql);
@@ -373,6 +381,8 @@ router.post('/invite', function(req, res, next) {
 
 		logger.debug(result);
 		to = result[0];
+
+		if (to.is_emailable === 0) return Promise.resolve();
 
 		const options = {
 			from: config.mailer.smtpConfig.auth.user,
@@ -385,6 +395,8 @@ router.post('/invite', function(req, res, next) {
 				--------
 				С уважением, 
 				команда Alaskaroom.ru
+
+				Если вы не хотите больше получать от нас письма, перейдите по ссылке http://alaskaroom.ru/profile/unsubscribe
 			`,
 			html: `
 				<p>Здравствуйте, ${to.user_first_name}!</p> 
@@ -393,6 +405,8 @@ router.post('/invite', function(req, res, next) {
 				--------<br>
 				С уважением,<br> 
 				команда Alaskaroom.ru<br>
+				<br>
+				<span style="font-size:10px">Если вы не хотите больше получать от нас письма, перейдите по <a href="http://alaskaroom.ru/profile/unsubscribe">ссылке</a></span> 
 			`
 		};
 
@@ -401,9 +415,6 @@ router.post('/invite', function(req, res, next) {
 	}).catch(function(err) {
 		
 		logger.error(err.message + '\n' + err.stack);
-		res.json({
-			status: 'not ok'
-		});
 
 	});
 });
