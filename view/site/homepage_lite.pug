@@ -1,0 +1,25 @@
+doctype
+html(lang=ru)
+	head
+		include includes/head_common.pug
+		script(src="js/homepage_lite.js", type="text/javascript")
+	body
+		div.highline
+			img(src="/images/logo3.png", alt="Alaskaroom")
+			a(href="http://alaskaroom.ru?view=desktop") Инфо
+		div.mobile-win
+			div.mobile-btn
+				h3 Студент, выбери один из вариантов
+				input#get-roommate(type="button", value="Найти соседа")
+				input#get-room(type="button", value="Найти жилье")
+				input#get-kampus(type="button", value="Организовать переезд")
+			div.mobile-note
+				div.m-note-pic
+					img(src="/images/vk1.png", alt="VK")
+				div.m-note-text
+					h3 Почему вход только через ВКонтакте?
+					p - Так мы можем модерировать сервис и оставлять только студентов, ограничивая доступ риэлторам, агентствам и другим посредникам;
+					p - Сокращать время регистрации новых пользователей;
+					p - Подбирать соседей, учитывая Ваш ВУЗ, факультет и специальность;
+					p - Вы увидите друзей из ВК, которые тоже ищут жилье или соседа;
+					p - Вам не придется запоминать логин и пароль;
