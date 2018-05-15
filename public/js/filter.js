@@ -145,7 +145,7 @@ function search() {
 						newItem = $('<div class="user-list"></div>');
 						newItem.append($('<img src="'+ record.user_avatar +'" alt="Room"/>'));
 						var percent = (record.percent) ? Math.trunc(record.percent * 100) + '%' : '';
-						newItem.append($('<h4>'+record.user_first_name+' '+record.user_last_name+'</h4>').append($('<span title="Процент сходства со мной"> '+percent+'</span>')));
+						newItem.append($('<h4>'+record.user_first_name+' '+record.user_last_name+'</h4>').append($('<span class="common" title="Процент сходства со мной"> '+percent+'</span>')));
 						
 						var info = $('<p>Ваш сосед: </p>');
 						info.append($('<span>' + record.user_sex + ', </span>'))
@@ -212,7 +212,7 @@ function loadMore() {
 						newItem = $('<div class="user-list"></div>');
 						newItem.append($('<img src="'+ record.user_avatar +'" alt="Room"/>'));
 						var percent = (record.percent) ? Math.trunc(record.percent * 100) + '%' : '';
-						newItem.append($('<h4>'+record.user_first_name+' '+record.user_last_name+'</h4>').append($('<span title="Процент сходства со мной"> '+percent+'</span>')));
+						newItem.append($('<h4>'+record.user_first_name+' '+record.user_last_name+'</h4>').append($('<span class="common" title="Процент сходства со мной"> '+percent+'</span>')));
 						newItem
 							.append($('<p>Ваш сосед: </p>')
 								.append($('<span>' + record.user_sex + ', </span>'))
