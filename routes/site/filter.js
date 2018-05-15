@@ -130,13 +130,9 @@ router.post('/ajax', function(req, res, next) {
 		sql = `	SELECT
 					v_user.user_id,
 					user_first_name,
-					user_last_name,\n`;
-
-		if (req.body.sortby === '1') {
-			sql += `similarity.percent,\n`;
-		}
-		
-		sql +=	`	user_sex,
+					user_last_name,
+					similarity.percent,
+					user_sex,
 					user_age,
 					user_avatar,
 					university_name,
@@ -157,10 +153,8 @@ router.post('/ajax', function(req, res, next) {
 	
 		sql+= `		GROUP BY user_id
 					HAVING cnt_priority >= ${priority_count}
-				) matched ON v_user.user_id = matched.user_id\n`;
-		
-		if (req.body.sortby === '1') {
-			sql += `JOIN (
+				) matched ON v_user.user_id = matched.user_id
+				JOIN (
 						SELECT user_id2 user_id, percent 
 						FROM similarity
 						WHERE user_id1 = ${req.user_id}
@@ -168,8 +162,7 @@ router.post('/ajax', function(req, res, next) {
 						SELECT user_id1 user_id, percent
 						FROM similarity
 						WHERE user_id2 = ${req.user_id}
-					) similarity ON v_user.user_id = similarity.user_id\n`
-		}
+					) similarity ON v_user.user_id = similarity.user_id\n`;
 
 		if (req.body.type === 'find-flat') {
 			sql += `WHERE user_search_status = 2\n`;
@@ -233,10 +226,8 @@ router.post('/ajax', function(req, res, next) {
 	
 		sqlCount+= `		GROUP BY user_id
 					HAVING cnt_priority >= ${priority_count}
-				) matched ON v_user.user_id = matched.user_id\n`;
-
-		if (req.body.sortby === '1') {
-			sqlCount += `JOIN (
+				) matched ON v_user.user_id = matched.user_id
+				JOIN (
 						SELECT user_id2 user_id, percent 
 						FROM similarity
 						WHERE user_id1 = ${req.user_id}
@@ -244,8 +235,7 @@ router.post('/ajax', function(req, res, next) {
 						SELECT user_id1 user_id, percent
 						FROM similarity
 						WHERE user_id2 = ${req.user_id}
-					) similarity ON v_user.user_id = similarity.user_id\n`
-		}
+					) similarity ON v_user.user_id = similarity.user_id\n`;
 				
 		if (req.body.type === 'find-flat') {
 			sqlCount += `WHERE user_search_status = 2\n`;
