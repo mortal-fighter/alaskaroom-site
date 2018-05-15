@@ -1104,16 +1104,57 @@ ol, ul {
 	text-decoration: none;
 }
 
+.filter-top {
+	display: block;
+    width: 97%;
+    height: 40px;
+    margin: 0px auto;
+	padding: 5px;
+}
+
+.filter-top label {
+	display: block;
+	width: 375px;
+	color: #484848;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+	float: right;
+	margin: 15px 5px;
+}
+
+#sortby {
+	display: block;
+    width: 270px;
+    height: 40px;
+    font-family: 'Roboto', sans-serif;
+    border: 2px solid #5eb0e0;
+    border-radius: 3px;
+    font-weight: 400;
+    font-size: 15px;
+    color: #787878;
+	margin: -15px 2px;
+	margin-right: 0px;
+    padding: 5px;
+    float: right;
+    cursor: pointer;
+}
+
+#sortby-priority {
+	display: none;
+}
+
 .user-list {
 	display: block;
 	width: 30%;
-	height: auto;
+	height: 275px;
 	overflow: hidden;
 	margin: 10px;
 	float: left;
 	cursor: pointer;
     background-color: #fff;
     box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+	position: relative;
 }
 
 .user-list img {
@@ -1138,9 +1179,27 @@ ol, ul {
 	color: #787878;
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
-    font-size: 13px;
+    font-size: 12px;
     margin: 5px;
+	line-height: 17px;
 	text-align: left;
+}
+
+.common {
+	display: block;
+    position: absolute;
+    z-index: 111;
+    right: 5px;
+    bottom: 85px;
+    background-color: rgba(45, 195, 77, 0.8);
+    padding: 5px 7px;
+    border-radius: 4px;
+    color: #fbfbfb;
+}
+
+.common:before {
+	content: 'Совпадение';
+	font-size: 11px;
 }
 
 .room-list {
@@ -1279,15 +1338,15 @@ ol, ul {
 
 .profile-user .percent {
     display: block;
-    background: rgba(0,0,0,0.61);
+    background: rgba(45, 195, 77, 0.8);
     width: 45px;
     text-align: center;
     padding: 5px;
     border-radius: 3px;
     color: #fff;
     position: absolute;
-    right: 20px;
-    top: 40px;
+    right: 45px;
+    top: 35px;
 }
 
 .request-info {
@@ -1355,13 +1414,13 @@ ol, ul {
     font-weight: 400;
     padding-bottom: 7px;
     padding-left: 10px;
-    border-bottom: 1px solid #eaeaea;
 }
 
 .user-desc p {
 	font-size: 14px;
     color: #888;
     margin: 10px;
+	margin-left: 20px;
     line-height: 20px;
     font-weight: 300;
 }
@@ -2117,8 +2176,8 @@ ol, ul {
 
 .help-box img {
 	display: block;
-	width: 31px;
-	height: 31px;
+	width: 30px;
+	height: 30px;
 	float: left;
 	margin: 5px;
 	padding: 3px;
@@ -2434,6 +2493,10 @@ ol, ul {
 	padding: 10px 15px;
 }
 
+.profile-user .percent {
+	right: 111px;
+}
+
 /*Стили для главной с фильтрами - мобильная*/
 
 .main-page {
@@ -2451,13 +2514,21 @@ ol, ul {
 	float: none;
 }
 
+.filter-top {
+	width: 92%;
+}
+
+#sortby {
+	border: 2px solid #aaa;
+}
+
 .user-list {
 	width: 47%;
 	margin: 10px 4px;
 	background-color: white;
 	border-radius: 2px;
 	padding-bottom: 2px;
-	min-height: 295px;
+	min-height: 300px;
 }
 
 .user-list img {
@@ -2989,8 +3060,24 @@ ol, ul {
 	float: none;
 }
 
+.filter-top label {
+	width: 96%;
+}
+
+#sortby {
+	width: 65%;
+	border: 2px solid #aeaeae;
+}
+
+.common {
+	bottom: 95px;
+	right: 5px;
+	font-size: 11px;
+}
+
 .user-list {
 	width: 47%;
+	height: 235px;
 	margin: 10px 4px;
 	background-color: white;
 	border-radius: 2px;
@@ -3060,6 +3147,11 @@ ol, ul {
 
 .option-set-small {
 	width: 92%;
+}
+
+.profile-user p {
+	width: 90%;
+	font-size: 12px;
 }
 
 /*Стили профиля другого пользователя*/
