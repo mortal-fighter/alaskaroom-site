@@ -179,12 +179,8 @@ router.get('/login_vk_callback', function(req, res, next) {
 			// EXISTING USER
 			auth.sessionStart(userId).then(function(token) {
 				res.cookie('AlaskaRoomAuthToken', token);
-				console.log("req.cookies['AlaskaRoomDestinationCode']=", req.cookies['AlaskaRoomDestinationCode']);
 				var authCode = parseInt(req.cookies['AlaskaRoomDestinationCode']);
-				console.log('authCode=', authCode);
 				res.cookie('AlaskaRoomDestinationCode', '');
-				console.log('codes[authCode]=', codes[authCode]);
-				console.log('codes[authCode].url1=', codes[authCode].url1);
 				res.redirect(codes[authCode].url1);
 			}).catch(function(err) {
 				logger.error(err);

@@ -334,8 +334,8 @@ router.get('/view/:userId((\\d+|me))', function(req, res, next) {
 
 		if (req.user_id == data.user_id && data.user_is_activated == 0) {
 			messages.push({
-				type: 'warn',
-				body: 'Каждый наш пользователь должен заполнить и сохнанить анкету, что начать использование сайта'
+				type: 'info',
+				text: 'Заполните и сохраните <a href="/profile/edit/me" title="Профиль">анкету</a>, чтобы другие пользователи могли найти Вас в Поиске'
 			});
 		}
 

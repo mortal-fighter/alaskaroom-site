@@ -12,8 +12,8 @@ function handlersHeader() {
 /* message */
 function newMessage(message) {
 	var newElem = $('<div class="top-message"></div>')
-		.append('<div class="content">' + message + '</div>')
-		.append( $('<a class="close">x</a>').on('click', function(e) {
+		.append('<div class="top-message-content">' + message + '</div>')
+		.append( $('<a class="top-message-close">x</a>').on('click', function(e) {
 			e.preventDefault();
 			$(this).parent().fadeOut(200);
 		}) )
@@ -22,7 +22,7 @@ function newMessage(message) {
 
 }
 function showAllMessages() {
-	$('.top-message > .close').on('click', function(e) {
+	$('.top-message-close').on('click', function(e) {
 		e.preventDefault();
 		$(this).parent().fadeOut(200);
 	});
@@ -131,6 +131,7 @@ function indicatorNewRequests() {
 
 $(document).ready(function() {
 	initPopup();
+	showAllMessages();
 	handlersHeader();
 	
 	if ( $('#isAuthorized').val() === '1' ) {

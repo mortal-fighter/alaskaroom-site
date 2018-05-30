@@ -904,7 +904,5 @@ $(document).ready(function() {
 	} else if (window.location.href.lastIndexOf('unsubscribe') !== -1) {
 		handlersProfileUnsubscribe();
 	}
-	
-	showAllMessages();
 });
 

@@ -1,5 +1,5 @@
 if locals.messages && locals.messages.length
 	for message in locals.messages
 		div.top-message
-			div.content= message.body
-			a.close x
+			div.top-message-content!= message.text
+			a.top-message-close x

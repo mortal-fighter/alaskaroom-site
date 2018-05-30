@@ -1002,7 +1002,7 @@ ol, ul {
 	display: none;
 }
 
-.top-message > a.close {
+a.top-message-close {
 	position: absolute;
 	right: 3px;
 	top: 3px;

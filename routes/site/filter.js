@@ -31,10 +31,12 @@ router.get('/get_faculties_by_university_id/:universityId(-?\\d+)', function(req
 
 router.get('/:type(\\S+)?', function(req, res, next) {
 	var db = null;
+	var sql = null;
 	var records = [];
 	var recordsCountTotal = 0;
 	var priorities = [];
 	var universities = [];
+	var messages = [];
 
 	req.params.type = (req.params.type) ? req.params.type : 'find-flat';
 
@@ -46,6 +48,25 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 	connectionPromise().then(function(connection) {
 
 		db = connection;
+		
+		sql = ` SELECT is_activated FROM user WHERE id = ${req.user_id};`;
+
+		return db.queryAsync(sql);
+
+	}).then(function(result) {
+
+		if (result[0].is_activated === 0) {
+			messages.push({
+				type: 'info',
+				text: 'Отредактируйте <a href="/profile/edit/me" title="Профиль">информацию о себе</a>, чтобы увидеть анкеты других пользователей'
+			});
+		} else {
+			messages.push({
+				type: 'info',
+				text: 'Совет: Предлагайте соседство румейтам, даже если у них нет квартиры; объединяйтесь и начинайте вместе искать жилье.'
+			});
+		}
+
 		return util.generatePrioritySelects(req, { fill: false });
 
 	}).then(function(result) {
@@ -60,13 +81,12 @@ router.get('/:type(\\S+)?', function(req, res, next) {
 		universities = result;
 
 		res.render('site/filter.pug', {
-			message: '',
-			messageType: '',
 			priorities: priorities,
 			universities: universities,
 			type: req.params.type,
 			isAuthorized: req.isAuthorized,
-			userId: req.user_id
+			userId: req.user_id,
+			messages: messages
 		});
 
 	}).catch(function(err) {
