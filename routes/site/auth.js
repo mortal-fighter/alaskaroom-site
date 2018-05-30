@@ -322,8 +322,7 @@ router.get('/login_vk_callback', function(req, res, next) {
 				logger.debug(result);
 				newUserId = result.insertId;
 				//auth.sessionStart(newUserId);
-
-				userHasPhoto = (user.photo_200 !== 'https://vk.com/images/camera_200.png') ? true : false;		
+				userHasPhoto = (!user.photo_200.match(/camera_200\.png/)) ? true : false;		
 				
 				var promiseChain = Promise.resolve();
 
@@ -333,15 +332,16 @@ router.get('/login_vk_callback', function(req, res, next) {
 					promiseChain = promiseChain.then(function() {
 						fs.mkdirSync(path.normalize(__dirname + '/../../public/images/uploads/user_'+newUserId), 0o755);
 					}).then(function() {
-						var ext = user.photo_200.substr(user.photo_200.lastIndexOf('.') + 1);
+						var ext = user.photo_200.substr(user.photo_200.lastIndexOf('.') + 1, 3);
 						var time = (new Date()).getTime();
 						avatarPath = path.normalize(`${__dirname}/../../public/images/uploads/user_${newUserId}/avatar_${time}.${ext}`);
 						avatarHref = `/images/uploads/user_${newUserId}/avatar_${time}.${ext}`;
-						
+
 						const options = {
 							url: user.photo_200,
 							dest: avatarPath                 
 						}
+
 						return imageDownloader.image(options);
 					}).then(function(res) {
 						isAvatarFileCreated = true;
